@@ -1,0 +1,88 @@
+---
+title: "chooseGCM Tutorial"
+author: "Luíz Fernando Esser"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Downloading WorldClim 2.1 data
+
+First, we need to use only one time period. Here we use 2090 so the difference between models is more conspicuous. In the same way we are considering the SSP585, which is the more dramatic pathway. The resolution is the lowest to be quicker. The aim here is to maintain all parameters equal, but General Circulation Models (GCMs). In this way we know that the only source of variation comes from them.
+
+```{r WorldClim_data}
+gcm_names <- sort(c('me','mi','mp','ml','ip'))
+WorldClim_data(period = 'future', variable = 'bioc', year = '2090', gcm = gcm_names, ssp = '585', resolution = 10)
+```
+
+
+## Importing and transforming data
+
+Now let's import GCMs to R in a list of stacks and name the list with the names of the GCMs.
+
+```{r import_data}
+s <- list.files('input_data/WorldClim_data_future', pattern = '.tif', full.names = T) |>
+  lapply(function(x){s <- raster::stack(x)
+                     names(s) <- paste0('bio_',1:19) # Rename rasters
+                     return(s)})
+names(s) <- gcm_names
+```
+
+
+We have a function to transform GCMs. You need to provide variables you want to use in analysis and the shapefile of your study area.
+
+```{r transform_gcms}
+var_names <- c('bio_1', 'bio_12')
+study_area <- raster::extent(c(-57, -22, -48, -33)) # you can use a shapefile here
+s <- trasform_gcms(s, var_names, study_area)
+```
+
+
+## Exploratory analysis
+
+In chooseGCM we implemented functions to analyze GCMs attributes.
+
+```{r exploratory_analysis}
+# Summary of GCMs
+summary_gcms(s)
+
+# Pearson Correlation between GCMs
+cor_gcms(s, method = "pearson")
+```
+
+
+## Obtain clusters
+
+Clusters in chooseGCM are obtained through k-means, a unsupervised machine learning algorithm. k is the number of clusters, which in this case is the number of GCMs the modeller wants to use in projections.To build a distance matrix considering multiple variables to each GCM we use a flattening strategy, where values are concatenated in one unique vector to each GCM. In the process, we need to scale variables so they end up with the same measure. This matrix will be used to calculate the clusters.
+
+```{r kmeans_gcms}
+kmeans_gcms(s, k=3)
+```
+
+
+We can also obtain clusters through hierarchical clustering.
+
+```{r hclust_gcms}
+hclust_gcms(flatten_vars, k=3)
+```
+
+
+But how many clusters are good? There is metrics to understand that.
+
+```{r optimize_clusters}
+optimize_clusters(flatten_vars, method = 'wss')
+optimize_clusters(flatten_vars, method = 'silhouette')
+```
+
+
+## Putting everything together
+
+There is the option to run each function in a separate to better understand what is happening and to better parameterize each step. However there is a wrapper to help run everything at once.
+
+```{r wrapper}
+compare_gcms('input_data/WorldClim_data_future', study_area, var_names, gcm_names, k=3)
+```
