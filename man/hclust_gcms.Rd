@@ -7,7 +7,7 @@
 hclust_gcms(x, k = 3, n = 1000)
 }
 \arguments{
-\item{x}{A list of stacks containing GCMs.}
+\item{x}{A flatten data frame: the output of flatten_gcms function.}
 
 \item{k}{The number of clusters to identify.}
 
@@ -17,7 +17,7 @@ hclust_gcms(x, k = 3, n = 1000)
 A dendrogram visualizing the clusters.
 }
 \description{
-Given a list of stacks containing GCMs, this function performs hierarchical clustering on a random subset of the raster values and produces a dendrogram visualization of the clusters.
+Given the output of flatten_gcms function containing GCMs, this function performs hierarchical clustering on a random subset of the raster values and produces a dendrogram visualization of the clusters.
 }
 \examples{
 s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))

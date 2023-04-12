@@ -4,22 +4,14 @@
 \alias{compare_gcms}
 \title{Compare GCMS}
 \usage{
-compare_gcms(
-  folder_future_rasters_gcms,
-  grid_study_area,
-  var_names = c("bio_1", "bio_12"),
-  gcm_names,
-  k = 3
-)
+compare_gcms(s, study_area = NULL, var_names = c("bio_1", "bio_12"), k = 3)
 }
 \arguments{
-\item{folder_future_rasters_gcms}{Character. Path to the folder containing the future stack files for the GCMs.}
+\item{s}{Character. Path to the folder containing the future stack files for the GCMs.}
 
-\item{grid_study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
+\item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
 
 \item{var_names}{Character. The names of the bioclimatic variables to compare.}
-
-\item{gcm_names}{Character. The names of the GCMs to include in the analysis.}
 
 \item{k}{Numeric. The number of clusters to use for k-means clustering.}
 }
@@ -32,7 +24,7 @@ This function compares future climate projections from multiple Global Circulati
 \examples{
 # compare GCMS
 compare_gcms(folder_future_rasters_gcms = "path/to/folder",
-grid_study_area = raster("path/to/raster"),
+study_area = raster("path/to/raster"),
 var_names = c('bio_1', 'bio_12'),
 gcm_names = c('gcm1', 'gcm2', 'gcm3'),
 k = 3)

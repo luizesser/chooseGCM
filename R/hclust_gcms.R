@@ -1,8 +1,8 @@
 #' Hierarchical Clustering of GCMs
 #'
-#' Given a list of stacks containing GCMs, this function performs hierarchical clustering on a random subset of the raster values and produces a dendrogram visualization of the clusters.
+#' Given the output of flatten_gcms function containing GCMs, this function performs hierarchical clustering on a random subset of the raster values and produces a dendrogram visualization of the clusters.
 #'
-#' @param x A list of stacks containing GCMs.
+#' @param x A flatten data frame: the output of flatten_gcms function.
 #' @param k The number of clusters to identify.
 #' @param n The number of values to use in the clustering (default: 1000).
 #' @author Luíz Fernando Esser (luizesser@gmail.com)

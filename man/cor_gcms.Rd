@@ -7,7 +7,7 @@
 cor_gcms(x, method = "pearson")
 }
 \arguments{
-\item{x}{A raster stack of General Circulation Models.}
+\item{x}{A list of stacks of General Circulation Models.}
 
 \item{method}{The correlation method to use. Default is "pearson". Possible values are "pearson", "kendall" and "spearman".}
 }

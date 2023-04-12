@@ -2,17 +2,16 @@
 #'
 #' This function compares future climate projections from multiple Global Circulation Models (GCMs) based on their similarity in terms of bioclimatic variables. The function clusters the GCMs using k-means clustering and hierarchical clustering, calculates the Pearson correlation matrix, and generates plots for the clusters and the correlation matrix.
 #'
-#' @param folder_future_rasters_gcms Character. Path to the folder containing the future stack files for the GCMs.
-#' @param grid_study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
+#' @param s Character. Path to the folder containing the future stack files for the GCMs.
+#' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
 #' @param var_names Character. The names of the bioclimatic variables to compare.
-#' @param gcm_names Character. The names of the GCMs to include in the analysis.
 #' @param k Numeric. The number of clusters to use for k-means clustering.
 #' @return A list with two items: suggested_gcms (the names of the GCMs suggested for further analysis) and statistics_gcms (a grid of plots).
 #'
 #' @examples
 #' # compare GCMS
 #' compare_gcms(folder_future_rasters_gcms = "path/to/folder",
-#' grid_study_area = raster("path/to/raster"),
+#' study_area = raster("path/to/raster"),
 #' var_names = c('bio_1', 'bio_12'),
 #' gcm_names = c('gcm1', 'gcm2', 'gcm3'),
 #' k = 3)
@@ -27,30 +26,10 @@
 #' @importFrom ggcorrplot ggcorrplot
 #' @importFrom factoextra fviz_cluster fviz_nbclust fviz_dend
 #' @export
-compare_gcms <- function(folder_future_rasters_gcms, grid_study_area, var_names=c('bio_1','bio_12'), gcm_names, k=3){
-  # Get stacks files
-  l <- list.files(folder_future_rasters_gcms, pattern='.tif', rec=T, full.names = T)
-  # Import stacks
-  s <- lapply(l[grep(gcm_names,l)], function(x){s <- stack(x)
-                                                    names(s) <- paste0('bio_',1:19) # Rename rasters
-                                                    return(s)})
-  # Name list itens
-  names(s) <- sort(gcm_names)
-
+compare_gcms <- function(s, study_area=NULL, var_names=c('bio_1','bio_12'), k=3){
   # Transform stacks
-  s <- sapply(s, function(x){# Subset stacks to keep only var_names
-    x <- x[[var_names]]
-    # Reproject to match grid_study_area crs.
-    if(!as.character(crs(x))==as.character(CRS(crs(grid_study_area)))){
-      x <- projectRaster(x, crs=CRS(crs(grid_study_area)))
-    }
-    # Crop and mask stacks
-    x <- mask(crop(x, grid_study_area),grid_study_area)
-    # Transform in data.frames
-    x <- x %>% as.data.frame()
-    return(x)},
-    USE.NAMES = T,
-    simplify = F)
+  s <- transform_gcms(s, c('bio_1', 'bio_2'), study_area=study_area)
+
 
   # Scale and flatten variables into one column.
   flatten_vars <- sapply(s, function(x){x <- scale(x)

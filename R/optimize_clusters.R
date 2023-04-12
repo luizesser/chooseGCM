@@ -2,9 +2,9 @@
 #'
 #' This function performs clustering analysis on a dataset and determines the optimal number of clusters based on a specified method.
 #'
-#' @param x A numeric matrix or data frame containing the dataset to be clustered.
+#' @param x a flatten gcm, output of flatten_gcms function.
 #' @param n An integer specifying the number of randomly selected samples to use in the clustering analysis. Default is 10000.
-#' @param method A character string specifying the method to use for determining the optimal number of clusters. Options are 'wss' for within-cluster sum of squares and 'gap' for the gap statistic method. Default is 'wss'.
+#' @param method A character string specifying the method to use for determining the optimal number of clusters. Options are 'wss' for within-cluster sum of squares, 'silhouette' for average silhouette width and 'gap' for the gap statistic method. Default is 'wss'.
 #'
 #' @return A ggplot object representing the optimal number of clusters.
 #'

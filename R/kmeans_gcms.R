@@ -2,7 +2,7 @@
 #'
 #' This function performs k-means clustering on a distance matrix and produces a scatter plot of the resulting clusters.
 #'
-#' @param dist_matrix A list of stacks representing GCMs.
+#' @param s A list of stacks representing GCMs.
 #' @param k Number of clusters.
 #' @param method The method for distance matrix computation. Standard value is "euclidean". Possible values are: "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski".
 #' @return A scatter plot of the resulting clusters.
@@ -22,7 +22,7 @@
 #' kmeans_gcms(s, k=3)
 #'
 #' @export
-kmeans_gcms <- function(dist_matrix, k=3, method='euclidean'){
+kmeans_gcms <- function(s, k=3, method='euclidean'){
   # Scale and flatten variables into one column.
   flatten_vars <- flatten_gcms(s)
 

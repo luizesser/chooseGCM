@@ -31,21 +31,21 @@
 #' @export
 summary_gcms <- function(s){
   s <- lapply(s, function(x) data.frame(raster::values(x)))
-  m <- sapply(s, function(x){
-                             apply(s[[1]], 2, function(x) {
+  m <- sapply(s, function(y){
+                             apply(y, 2, function(x) {
                                data.frame(min=min(x, na.rm=T),
-                                          quantile_0.25=quantile(x, 0.25),
+                                          quantile_0.25=quantile(x, 0.25, na.rm=T),
                                           median=median(x, na.rm=T),
                                           mean=mean(x, na.rm=T),
-                                          quantile_0.75=quantile(x, 0.75),
+                                          quantile_0.75=quantile(x, 0.75, na.rm=T),
                                           max=max(x, na.rm=T),
                                           sd=sd(x, na.rm=T),
-                                          NAs=sum(is.na(x[,1])),
-                                          n_cells=nrow(s[[1]]))
+                                          NAs=sum(is.na(x)),
+                                          n_cells=length(x))
                                })
                              },
               USE.NAMES = T, simplify = F)
-  m <- m %>% as.data.frame() %>% t()
-
+  #m <- m %>% as.data.frame() %>% t()
+  m <- lapply(m, function(x){do.call(rbind, x)})
   return(m)
 }

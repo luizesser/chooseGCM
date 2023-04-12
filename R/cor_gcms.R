@@ -1,6 +1,6 @@
 #' Compute and plot correlation matrix for a set of General Circulation Models.
 #'
-#' @param x A raster stack of General Circulation Models.
+#' @param x A list of stacks of General Circulation Models.
 #' @param method The correlation method to use. Default is "pearson". Possible values are "pearson", "kendall" and "spearman".
 #'
 #' @return A correlation matrix plot.

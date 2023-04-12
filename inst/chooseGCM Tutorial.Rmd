@@ -9,6 +9,17 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+---
+title: "chooseGCM Tutorial"
+author: "Luíz Fernando Esser"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
 
 ## Downloading WorldClim 2.1 data
 
@@ -86,3 +97,4 @@ There is the option to run each function in a separate to better understand what
 ```{r wrapper}
 compare_gcms('input_data/WorldClim_data_future', study_area, var_names, gcm_names, k=3)
 ```
+

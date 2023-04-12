@@ -4,10 +4,10 @@
 \alias{kmeans_gcms}
 \title{Perform k-means clustering on GCMs}
 \usage{
-kmeans_gcms(dist_matrix, k = 3, method = "euclidean")
+kmeans_gcms(s, k = 3, method = "euclidean")
 }
 \arguments{
-\item{dist_matrix}{A list of stacks representing GCMs.}
+\item{s}{A list of stacks representing GCMs.}
 
 \item{k}{Number of clusters.}
 

@@ -23,19 +23,22 @@
 #' @import dplyr
 #'
 #' @export
-trasform_gcms <- function(s, var_names, study_area){
+transform_gcms <- function(s, var_names, study_area=NULL){
   s <- sapply(s, function(x){# Subset stacks to keep only var_names
-    x <- x[[var_names]]
-    # Reproject to match study_area crs.
-    if(!as.character(crs(x))==as.character(CRS(crs(study_area)))){
-      x <- projectRaster(x, crs=CRS(crs(study_area)))
-    }
-    # Crop and mask stacks
-    x <- mask(crop(x, study_area),study_area)
-    # Transform in data.frames
-    x <- x %>% as.data.frame()
-    return(x)},
-    USE.NAMES = T,
-    simplify = F)
+                             x <- x[[var_names]]
+                             # Reproject to match study_area crs.
+                             if(!is.null(study_area)){
+                               if(!as.character(crs(x))==as.character(CRS(crs(study_area)))){
+                                 x <- projectRaster(x, crs=CRS(crs(study_area)))
+                                 # Crop and mask stacks
+                                 x <- mask(crop(x, study_area),study_area)
+                               }
+                             }
+                             # Transform in data.frames
+                             x <- x %>% as.data.frame()
+                             return(x)},
+              USE.NAMES = T,
+              simplify = F)
   return(s)
 }
+

@@ -7,7 +7,7 @@
 flatten_gcms(s)
 }
 \arguments{
-\item{s}{A list of stacks (GCMs)}
+\item{s}{A list of transformed data frames (GCMs)}
 }
 \value{
 A named list of flattened data.frame
@@ -22,6 +22,9 @@ var_names <- c("bio_1", "bio_12")
 s <- transform_gcms(s, var_names, study_area)
 flattened_gcms <- flatten_gcms(s)
 
+}
+\seealso{
+\code{\link{transform_gcms}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)
