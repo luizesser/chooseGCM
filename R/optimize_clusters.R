@@ -26,7 +26,7 @@
 #' optimize_clusters(flattened_gcms)
 #'
 #' @export
-optimize_clusters <- function(x, n = 10000, method = 'wss') {
+optimize_clusters <- function(x, n = 1000, method = 'wss') {
   flatten_subset <- na.omit(x)
   flatten_subset <- flatten_subset[sample(nrow(flatten_subset), n),]
   y <- fviz_nbclust(flatten_subset, FUN = hcut, method)

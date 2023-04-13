@@ -4,7 +4,7 @@
 \alias{optimize_clusters}
 \title{Optimize number of clusters for a dataset}
 \usage{
-optimize_clusters(x, n = 10000, method = "wss")
+optimize_clusters(x, n = 1000, method = "wss")
 }
 \arguments{
 \item{x}{a flatten gcm, output of flatten_gcms function.}

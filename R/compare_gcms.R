@@ -56,7 +56,7 @@ compare_gcms <- function(s, study_area=NULL, var_names=c('bio_1','bio_12'), k=3)
   # hclust_plot <- hclust(dist_matrix)
   # Include elbow, silhouette and gap methods
   flatten_subset <- na.omit(flatten_vars)
-  flatten_subset <- flatten_subset[sample(nrow(flatten_subset), nrow(flatten_subset)/20),]
+  flatten_subset <- flatten_subset[sample(nrow(flatten_subset), 1000),]
   wss <- fviz_nbclust(flatten_subset, FUN = hcut, method = "wss")
   sil <- fviz_nbclust(flatten_subset, FUN = hcut, method = "silhouette")
   #gap <- fviz_gap_stat(flatten_subset, maxSE = list(method = "globalmax"))

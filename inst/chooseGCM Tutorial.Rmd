@@ -7,23 +7,13 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-```
-
----
-title: "chooseGCM Tutorial"
-author: "Luíz Fernando Esser"
-date: "`r Sys.Date()`"
-output: html_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+library(chooseGCM)
 ```
 
 
 ## Downloading WorldClim 2.1 data
 
-First, we need to use only one time period. Here we use 2090 so the difference between models is more conspicuous. In the same way we are considering the SSP585, which is the more dramatic pathway. The resolution is the lowest to be quicker. The aim here is to maintain all parameters equal, but General Circulation Models (GCMs). In this way we know that the only source of variation comes from them.
+First, we need to use only one time period. Here we use 2090 so the difference between models is more conspicuous. In the same way we are considering the SSP585, which is the more dramatic pathway. The resolution is the lowest to be quicker. The aim here is to maintain all parameters equal, but General Circulation Models (GCMs). In this way we know that the only source of variation comes from them. Note that if you receive a timeout error you can increase timeout value by running `r options(timeout = 600)`, where 600 is the value in seconds that will be enough to download the data.
 
 ```{r WorldClim_data}
 gcm_names <- sort(c('me','mi','mp','ml','ip'))
@@ -44,12 +34,13 @@ names(s) <- gcm_names
 ```
 
 
-We have a function to transform GCMs. You need to provide variables you want to use in analysis and the shapefile of your study area.
+We have a function to transform GCMs. You need to provide variables you want to use in analysis and the shapefile of your study area. We also 
 
 ```{r transform_gcms}
 var_names <- c('bio_1', 'bio_12')
 study_area <- raster::extent(c(-57, -22, -48, -33)) # you can use a shapefile here
-s <- trasform_gcms(s, var_names, study_area)
+s_trans <- transform_gcms(s, var_names, study_area)
+s_flat <- flatten_gcms(s_trans)
 ```
 
 
@@ -59,10 +50,11 @@ In chooseGCM we implemented functions to analyze GCMs attributes.
 
 ```{r exploratory_analysis}
 # Summary of GCMs
-summary_gcms(s)
-
+s_sum <- summary_gcms(s)
+s_sum
 # Pearson Correlation between GCMs
-cor_gcms(s, method = "pearson")
+s_cor <- cor_gcms(s_flat, method = "pearson")
+s_cor
 ```
 
 
@@ -78,15 +70,16 @@ kmeans_gcms(s, k=3)
 We can also obtain clusters through hierarchical clustering.
 
 ```{r hclust_gcms}
-hclust_gcms(flatten_vars, k=3)
+hclust_gcms(s_flat, k=3)
 ```
 
 
 But how many clusters are good? There is metrics to understand that.
 
 ```{r optimize_clusters}
-optimize_clusters(flatten_vars, method = 'wss')
-optimize_clusters(flatten_vars, method = 'silhouette')
+optimize_clusters(s_flat, method = 'wss')
+optimize_clusters(s_flat, method = 'silhouette')
+#optimize_clusters(s_flat, method = 'gap_stat')
 ```
 
 
@@ -95,6 +88,6 @@ optimize_clusters(flatten_vars, method = 'silhouette')
 There is the option to run each function in a separate to better understand what is happening and to better parameterize each step. However there is a wrapper to help run everything at once.
 
 ```{r wrapper}
-compare_gcms('input_data/WorldClim_data_future', study_area, var_names, gcm_names, k=3)
+compare_gcms(s, study_area, var_names, k=3)
 ```
 

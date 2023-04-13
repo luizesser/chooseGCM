@@ -28,10 +28,12 @@ transform_gcms <- function(s, var_names, study_area=NULL){
                              x <- x[[var_names]]
                              # Reproject to match study_area crs.
                              if(!is.null(study_area)){
-                               if(!as.character(crs(x))==as.character(CRS(crs(study_area)))){
-                                 x <- projectRaster(x, crs=CRS(crs(study_area)))
-                                 # Crop and mask stacks
-                                 x <- mask(crop(x, study_area),study_area)
+                               if(!class(study_area)=='Extent'){
+                                 if(!as.character(crs(x))==as.character(CRS(crs(study_area)))){
+                                   x <- projectRaster(x, crs=CRS(crs(study_area)))
+                                   # Crop and mask stacks
+                                   x <- mask(crop(x, study_area),study_area)
+                                 }
                                }
                              }
                              # Transform in data.frames
