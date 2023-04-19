@@ -12,6 +12,7 @@ Description: This package is intended to help modelers to
     another, avoiding highly correlated GCMs.
 License: MIT
 Imports:
+    checkmate,
     cowplot,
     dplyr,
     factoextra,
