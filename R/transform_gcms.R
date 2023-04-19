@@ -24,6 +24,8 @@
 #'
 #' @export
 transform_gcms <- function(s, var_names, study_area=NULL){
+  assertList(s, types='RasterStack')
+  assertCharacter(var_names, unique=T, any.missing=F)
   s <- sapply(s, function(x){# Subset stacks to keep only var_names
                              x <- x[[var_names]]
                              # Reproject to match study_area crs.

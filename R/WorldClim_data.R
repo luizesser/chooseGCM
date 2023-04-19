@@ -3,6 +3,7 @@
 #' @description This function allows to download data from WorldClim v.2.1
 #' (https://www.worldclim.org/data/index.html) considering multiple GCMs, time periods and SSPs.
 #' @usage WorldClim_data(variable='bioc', year = '2030', gcm = 'mi', ssp = '126', resolution = 10)
+#' @param period Can be 'current' or 'future'.
 #' @param variable Allows to specify which variables you want to retrieve Possible entries are:
 #' 'tmax',''tmin,'prec' and/or 'bioc'.
 #' @param year Specify the year you want to retrieve data. Possible entries are:
@@ -55,6 +56,19 @@
 #' @export
 
 WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030', gcm = 'mi', ssp = '126', resolution = 10){
+
+  assertChoice(period, c('current', 'future'))
+  assertChoice(variable, c('tmax', 'tmin', 'prec', 'bioc'))
+  if(is.numeric(year)){assertChoice(year, c(2030, 2050, 2070, 2090))}
+  if(is.character(year)){assertChoice(year, c('2030', '2050', '2070', '2090'))}
+  assertCharacter(gcm, n.chars = 2)
+  assertSubset(gcm, c('ac','ae','bc','ca','cc','ce','cn','ch','cr','ec','ev',
+                            'fi','gf','gg','gh','hg','in','ic','ip','me','mi','mp',
+                            'ml','mr','uk'), empty.ok = FALSE)
+  if(is.numeric(ssp)){assertChoice(ssp, c(126, 245, 370, 585))}
+  if(is.character(ssp)){assertChoice(ssp, c('126', '245', '370', '585'))}
+  if(is.numeric(resolution)){assertChoice(resolution, c(10, 5, 2.5, 30))}
+  if(is.character(resolution)){assertChoice(resolution, c('10', '5', '2.5', '30'))}
 
   res = ifelse(resolution==30,'s','m')
 

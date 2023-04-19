@@ -23,6 +23,8 @@
 #'
 #' @export
 cor_gcms <- function(x, method = "pearson"){
+  assertMatrix(x)
+  assertChoice(method, c("pearson", "kendall", "spearman"))
   cor_matrix <- cor(x, use='complete.obs', method = method)
   cor_plot <- ggcorrplot(cor_matrix,
                          method='circle',

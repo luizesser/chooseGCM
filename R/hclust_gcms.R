@@ -27,6 +27,10 @@
 #'
 #' @export
 hclust_gcms <- function(x, k=3, n=1000){
+  assertMatrix(x)
+  assertCount(k, positive = T)
+  assertCount(n, positive = T)
+
   flatten_subset <- na.omit(x)
   flatten_subset <- flatten_subset[sample(nrow(flatten_subset), n),]
   res <- hcut(t(x), k = k)

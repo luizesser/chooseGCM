@@ -30,6 +30,7 @@
 #'
 #' @export
 summary_gcms <- function(s){
+  assertList(s, types='RasterStack')
   s <- lapply(s, function(x) data.frame(raster::values(x)))
   m <- sapply(s, function(y){
                              apply(y, 2, function(x) {

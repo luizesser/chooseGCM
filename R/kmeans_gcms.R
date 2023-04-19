@@ -23,6 +23,10 @@
 #'
 #' @export
 kmeans_gcms <- function(s, k=3, method='euclidean'){
+  assertList(s, types='RasterStack')
+  assertCount(k, positive = T)
+  assertChoice(method, c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"))
+
   # Scale and flatten variables into one column.
   flatten_vars <- flatten_gcms(s)
 

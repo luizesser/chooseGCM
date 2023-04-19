@@ -27,6 +27,11 @@
 #' @importFrom factoextra fviz_cluster fviz_nbclust fviz_dend
 #' @export
 compare_gcms <- function(s, study_area=NULL, var_names=c('bio_1','bio_12'), k=3){
+
+  assertList(s, types='RasterStack')
+  assertCharacter(var_names, unique=T, any.missing=F)
+  assertCount(k, positive = T)
+
   # Transform stacks
   s <- transform_gcms(s, c('bio_1', 'bio_2'), study_area=study_area)
 

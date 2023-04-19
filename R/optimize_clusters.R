@@ -27,6 +27,10 @@
 #'
 #' @export
 optimize_clusters <- function(x, n = 1000, method = 'wss') {
+  assertMatrix(x)
+  assertCount(n, positive = T)
+  assertChoice(method, c("silhouette", "wss", "gap_stat"))
+
   flatten_subset <- na.omit(x)
   flatten_subset <- flatten_subset[sample(nrow(flatten_subset), n),]
   y <- fviz_nbclust(flatten_subset, FUN = hcut, method)
