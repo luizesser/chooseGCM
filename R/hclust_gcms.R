@@ -2,7 +2,9 @@
 #'
 #' Given the output of flatten_gcms function containing GCMs, this function performs hierarchical clustering on a random subset of the raster values and produces a dendrogram visualization of the clusters.
 #'
-#' @param x A flatten data frame: the output of flatten_gcms function.
+#' @param s A list of stacks of General Circulation Models.
+#' @param var_names Character. The names of the bioclimatic variables to compare.
+#' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
 #' @param k The number of clusters to identify.
 #' @param n The number of values to use in the clustering (default: 1000).
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
@@ -26,11 +28,14 @@
 #' plot(dend)
 #'
 #' @export
-hclust_gcms <- function(x, k=3, n=1000){
-  assertMatrix(x)
+hclust_gcms <- function(s, var_names, study_area=NULL, k=3, n=1000){
+  assertList(s, types='RasterStack')
+  assertCharacter(var_names, unique=T, any.missing=F)
   assertCount(k, positive = T)
   assertCount(n, positive = T)
 
+  x <- transform_gcms(s, var_names, study_area)
+  x <- flatten_gcms(x)
   flatten_subset <- na.omit(x)
   flatten_subset <- flatten_subset[sample(nrow(flatten_subset), n),]
   res <- hcut(t(x), k = k)

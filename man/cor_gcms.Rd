@@ -4,10 +4,14 @@
 \alias{cor_gcms}
 \title{Compute and plot correlation matrix for a set of General Circulation Models.}
 \usage{
-cor_gcms(x, method = "pearson")
+cor_gcms(s, var_names, study_area = NULL, method = "pearson")
 }
 \arguments{
-\item{x}{A list of stacks of General Circulation Models.}
+\item{s}{A list of stacks of General Circulation Models.}
+
+\item{var_names}{Character. The names of the bioclimatic variables to compare.}
+
+\item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
 
 \item{method}{The correlation method to use. Default is "pearson". Possible values are "pearson", "kendall" and "spearman".}
 }

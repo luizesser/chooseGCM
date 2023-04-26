@@ -4,14 +4,14 @@
 \alias{compare_gcms}
 \title{Compare GCMS}
 \usage{
-compare_gcms(s, study_area = NULL, var_names = c("bio_1", "bio_12"), k = 3)
+compare_gcms(s, var_names = c("bio_1", "bio_12"), study_area = NULL, k = 3)
 }
 \arguments{
-\item{s}{Character. Path to the folder containing the future stack files for the GCMs.}
-
-\item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
+\item{s}{A list of stacks of General Circulation Models.}
 
 \item{var_names}{Character. The names of the bioclimatic variables to compare.}
+
+\item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
 
 \item{k}{Numeric. The number of clusters to use for k-means clustering.}
 }

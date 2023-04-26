@@ -4,14 +4,18 @@
 \alias{optimize_clusters}
 \title{Optimize number of clusters for a dataset}
 \usage{
-optimize_clusters(x, n = 1000, method = "wss")
+optimize_clusters(s, var_names, study_area = NULL, method = "wss", n = 1000)
 }
 \arguments{
-\item{x}{a flatten gcm, output of flatten_gcms function.}
+\item{s}{A list of stacks of General Circulation Models.}
 
-\item{n}{An integer specifying the number of randomly selected samples to use in the clustering analysis. Default is 10000.}
+\item{var_names}{Character. The names of the bioclimatic variables to compare.}
+
+\item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
 
 \item{method}{A character string specifying the method to use for determining the optimal number of clusters. Options are 'wss' for within-cluster sum of squares, 'silhouette' for average silhouette width and 'gap' for the gap statistic method. Default is 'wss'.}
+
+\item{n}{An integer specifying the number of randomly selected samples to use in the clustering analysis. Default is 10000.}
 }
 \value{
 A ggplot object representing the optimal number of clusters.

@@ -2,9 +2,9 @@
 #'
 #' This function compares future climate projections from multiple Global Circulation Models (GCMs) based on their similarity in terms of bioclimatic variables. The function clusters the GCMs using k-means clustering and hierarchical clustering, calculates the Pearson correlation matrix, and generates plots for the clusters and the correlation matrix.
 #'
-#' @param s Character. Path to the folder containing the future stack files for the GCMs.
-#' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
+#' @param s A list of stacks of General Circulation Models.
 #' @param var_names Character. The names of the bioclimatic variables to compare.
+#' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
 #' @param k Numeric. The number of clusters to use for k-means clustering.
 #' @return A list with two items: suggested_gcms (the names of the GCMs suggested for further analysis) and statistics_gcms (a grid of plots).
 #'
@@ -26,7 +26,7 @@
 #' @importFrom ggcorrplot ggcorrplot
 #' @importFrom factoextra fviz_cluster fviz_nbclust fviz_dend
 #' @export
-compare_gcms <- function(s, study_area=NULL, var_names=c('bio_1','bio_12'), k=3){
+compare_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3){
 
   assertList(s, types='RasterStack')
   assertCharacter(var_names, unique=T, any.missing=F)

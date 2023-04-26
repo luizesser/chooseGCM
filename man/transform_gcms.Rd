@@ -7,11 +7,11 @@
 transform_gcms(s, var_names, study_area = NULL)
 }
 \arguments{
-\item{s}{A list of stacks of GCMs.}
+\item{s}{A list of stacks of General Circulation Models.}
 
-\item{var_names}{A character vector specifying the names of the variables to keep.}
+\item{var_names}{Character. The names of the bioclimatic variables to compare.}
 
-\item{study_area}{Extent object, or any object from which an Extent object can be extracted.}
+\item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
 }
 \value{
 A list of data frames, with each element of the list corresponding to a GCM in the input list.

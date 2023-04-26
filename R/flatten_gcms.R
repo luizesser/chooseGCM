@@ -19,7 +19,7 @@
 #'
 #' @import raster
 flatten_gcms <- function(s){
-  assertList(s_trans, types='data.frame')
+  assertList(s, types='data.frame')
   sapply(s, function(x){x <- scale(x)
                         x <- as.vector(x)}, USE.NAMES=T)
 }

@@ -1,6 +1,8 @@
 #' Compute and plot correlation matrix for a set of General Circulation Models.
 #'
-#' @param x A list of stacks of General Circulation Models.
+#' @param s A list of stacks of General Circulation Models.
+#' @param var_names Character. The names of the bioclimatic variables to compare.
+#' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
 #' @param method The correlation method to use. Default is "pearson". Possible values are "pearson", "kendall" and "spearman".
 #'
 #' @return A correlation matrix plot.
@@ -22,9 +24,13 @@
 #' cor_gcms(quick_example, method = "spearman")
 #'
 #' @export
-cor_gcms <- function(x, method = "pearson"){
+cor_gcms <- function(s, var_names, study_area=NULL, method = "pearson"){
   assertMatrix(x)
+  assertCharacter(var_names, unique=T, any.missing=F)
   assertChoice(method, c("pearson", "kendall", "spearman"))
+
+  x <- transform_gcms(s, var_names, study_area)
+  x <- flatten_gcms(x)
   cor_matrix <- cor(x, use='complete.obs', method = method)
   cor_plot <- ggcorrplot(cor_matrix,
                          method='circle',

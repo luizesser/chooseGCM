@@ -4,10 +4,14 @@
 \alias{kmeans_gcms}
 \title{Perform k-means clustering on GCMs}
 \usage{
-kmeans_gcms(s, k = 3, method = "euclidean")
+kmeans_gcms(s, var_names, study_area = NULL, k = 3, method = "euclidean")
 }
 \arguments{
-\item{s}{A list of stacks representing GCMs.}
+\item{s}{A list of stacks of General Circulation Models.}
+
+\item{var_names}{Character. The names of the bioclimatic variables to compare.}
+
+\item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
 
 \item{k}{Number of clusters.}
 

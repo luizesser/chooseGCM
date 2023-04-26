@@ -4,10 +4,14 @@
 \alias{hclust_gcms}
 \title{Hierarchical Clustering of GCMs}
 \usage{
-hclust_gcms(x, k = 3, n = 1000)
+hclust_gcms(s, var_names, study_area = NULL, k = 3, n = 1000)
 }
 \arguments{
-\item{x}{A flatten data frame: the output of flatten_gcms function.}
+\item{s}{A list of stacks of General Circulation Models.}
+
+\item{var_names}{Character. The names of the bioclimatic variables to compare.}
+
+\item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
 
 \item{k}{The number of clusters to identify.}
 

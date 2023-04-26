@@ -4,10 +4,14 @@
 \alias{summary_gcms}
 \title{Summarize General Circulation Model (GCM) data}
 \usage{
-summary_gcms(s)
+summary_gcms(s, var_names, study_area = NULL)
 }
 \arguments{
-\item{s}{a transformed list of stacks representing GCM data}
+\item{s}{A list of stacks of General Circulation Models.}
+
+\item{var_names}{Character. The names of the bioclimatic variables to compare.}
+
+\item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
 }
 \value{
 a data frame with the summary statistics for each variable
