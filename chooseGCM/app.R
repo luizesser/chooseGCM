@@ -78,46 +78,45 @@ parameter_tabs <- tabsetPanel(
 # Define UI
 ui <- fluidPage(
       sidebarPanel(h1("chooseGCM"),
-               fluidPage(
-                 h3("Environment"),
-                 fileInput(inputId = "s",
-                           label = "Upload GCMs. Choose rasterStacks (.tif):",
-                           multiple = TRUE,
-                           accept = c('.tif')),
-                 fileInput(inputId = "study_area",
-                           label = "Upload shapefile of study area:",
-                           multiple = TRUE,
-                           accept = c('.shp','.dbf','.sbn','.sbx','.shx','.prj')),
-                 selectInput(inputId = "var_names",
-                             choices = paste0('bio_',1:19),
-                             label = "Variables:",
-                             multiple=T,
-                             selected=c('bio_1', 'bio_12')),
-                 actionButton("plot_map", "Plot map",
-                              style="color: #fff; background-color: #337ab7; border-color: #2e6da4; margin-bottom: 5")
-               ),
+                   fluidPage(
+                     h3("Environment"),
+                     fileInput(inputId = "s",
+                               label = "Upload GCMs. Choose rasterStacks (.tif):",
+                               multiple = TRUE,
+                               accept = c('.tif')),
+                     fileInput(inputId = "study_area",
+                               label = "Upload shapefile of study area:",
+                               multiple = TRUE,
+                               accept = c('.shp','.dbf','.sbn','.sbx','.shx','.prj')),
+                     selectInput(inputId = "var_names",
+                                 choices = paste0('bio_',1:19),
+                                 label = "Variables:",
+                                 multiple=T,
+                                 selected=c('bio_1', 'bio_12')),
+                     actionButton("plot_map", "Plot map",
+                                  style="color: #fff; background-color: #337ab7; border-color: #2e6da4; margin-bottom: 5")
+                   ),
 
-               fluidPage(
-                 h3("Functions"),
-                   style = "background-color: gray99;",
-                   selectInput("select",
-                               label = "Select Function:",
-                               choices = list("Optimize Clusters" = 'optimize_clusters',
-                                              "Hierarchical Clustering" = 'hclust_gcms',
-                                              "K-means" = 'kmeans_gcms',
-                                              "Correlation" = "cor_gcms"
-                                              #"Summary" = "summary_gcms"
-                                              ),
-                               selected = 1),
-                    parameter_tabs,
-                    actionButton("do", "Run",
-                                 style="color: #fff; background-color: #337ab7; border-color: #2e6da4")
-               ),
-
-               mainPanel(
-                 plotOutput("map"),
-                 plotOutput("opt_clust")
-               )
+                   fluidPage(
+                     h3("Functions"),
+                       style = "background-color: gray99;",
+                       selectInput("select",
+                                   label = "Select Function:",
+                                   choices = list("Optimize Clusters" = 'optimize_clusters',
+                                                  "Hierarchical Clustering" = 'hclust_gcms',
+                                                  "K-means" = 'kmeans_gcms',
+                                                  "Correlation" = "cor_gcms"
+                                                  #"Summary" = "summary_gcms"
+                                                  ),
+                                   selected = 1),
+                        parameter_tabs,
+                        actionButton("do", "Run",
+                                     style="color: #fff; background-color: #337ab7; border-color: #2e6da4")
+                   )
+      ),
+      mainPanel(
+          plotOutput("map"),
+          plotOutput("opt_clust")
       )
 )
 
@@ -129,11 +128,12 @@ server <- function(input, output) {
 
   s_input <- reactive({
     if (!is.null(input$s)){
-      lapply(input$s$datapath, function(x){
+      l <- lapply(input$s$datapath, function(x){
         s <- raster::stack(x)
         names(s) <- paste0('bio_',1:19) # Rename rasters
         return(s)})
-
+      names(l) <- input$s$names
+      return(l)
     } else {
       return()
     }
@@ -176,49 +176,6 @@ server <- function(input, output) {
       }
     })
   })
-
-  #observeEvent(input$do, {
-  #  output$opt_clust <- renderPlot({
-  #      if(input$select == 'optimize_clusters'){
-  #          optimize_clusters(s_input(), input$var_names, study_area=upload_study_area(), method = input$method_opt, n = input$n)
-  #      }
-  #      if(input$select == 'hclust_gcms'){
-  #          hclust_gcms(s_input(), input$var_names, study_area=upload_study_area(), k = input$k, n = input$n)
-  #      }
-  #      if(input$select == 'kmeans_gcms'){
-  #          kmeans_gcms(s_input(), input$var_names, study_area=upload_study_area(), k = input$k, method = input$method)
-  #      }
-  #      if(input$select == 'cor_gcms'){
-  #          cor_gcms(s_input(), input$var_names, study_area=upload_study_area(), method = input$method_cor)
-  #      }
-  #      if(input$select == 'summary_gcms'){
-  #          summary_gcms(s_input(), input$var_names, study_area=upload_study_area())
-  #      }
-  #  })
-  #})
-
-  #output$opt_clust <- renderPlot({
-  #  if (input$do == 0)
-  #    return()
-  #  isolate({
-  #    if(input$select == 'optimize_clusters'){
-  #        optimize_clusters(s_input(), input$var_names, study_area=upload_study_area(), method = input$method, n = input$n)
-  #    }
-  #    if(input$select == 'hclust_gcms'){
-  #        hclust_gcms(s_input(), input$var_names, study_area=upload_study_area(), k = input$k, n = input$n)
-  #    }
-  #    if(input$select == 'kmeans_gcms'){
-  #        kmeans_gcms(s_input(), input$var_names, study_area=upload_study_area(), k = input$k, method = input$method)
-  #    }
-  #    if(input$select == 'cor_gcms'){
-  #        cor_gcms(s_input(), input$var_names, study_area=upload_study_area(), method = input$method)
-  #    }
-  #    if(input$select == 'summary_gcms'){
-  #        summary_gcms(s_input(), input$var_names, study_area=upload_study_area())
-  #    }
-  #  })
-  #})
-
 
   observeEvent(input$do, {
     if(input$select == 'optimize_clusters'){
