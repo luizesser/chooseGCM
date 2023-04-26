@@ -19,7 +19,6 @@ library(ggcorrplot)
 parameter_tabs <- tabsetPanel(
   id = "params",
   type = "hidden",
-  selected = "summary_gcms",
 
   tabPanel("optimize_clusters",
              selectInput("method_opt", "Method:",
@@ -70,18 +69,17 @@ parameter_tabs <- tabsetPanel(
                            "Spearman" = "spearman"))
   ),
 
-  tabPanel("summary_gcms"
-  )
+  #tabPanel("summary_gcms"
+  #)
 )
 
 
 
 # Define UI
 ui <- fluidPage(
-    navbarPage(
-      "chooseGCM",
-      tabPanel("chooseGCM",
-               sidebarPanel(
+      sidebarPanel(h1("chooseGCM"),
+               fluidPage(
+                 h3("Environment"),
                  fileInput(inputId = "s",
                            label = "Upload GCMs. Choose rasterStacks (.tif):",
                            multiple = TRUE,
@@ -95,26 +93,32 @@ ui <- fluidPage(
                              label = "Variables:",
                              multiple=T,
                              selected=c('bio_1', 'bio_12')),
-                 actionButton("plot_map", "Plot map"),
-
-                 selectInput("select",
-                             label = "Select Function:",
-                             choices = list("Optimize Clusters" = 'optimize_clusters',
-                                            "Hierarchical Clustering" = 'hclust_gcms',
-                                            "K-means" = 'kmeans_gcms',
-                                            "Correlation" = "cor_gcms",
-                                            "Summary" = "summary_gcms"),
-                             selected = 1),
-                 parameter_tabs,
-                 actionButton("do", "Run")
+                 actionButton("plot_map", "Plot map",
+                              style="color: #fff; background-color: #337ab7; border-color: #2e6da4; margin-bottom: 5")
                ),
+
+               fluidPage(
+                 h3("Functions"),
+                   style = "background-color: gray99;",
+                   selectInput("select",
+                               label = "Select Function:",
+                               choices = list("Optimize Clusters" = 'optimize_clusters',
+                                              "Hierarchical Clustering" = 'hclust_gcms',
+                                              "K-means" = 'kmeans_gcms',
+                                              "Correlation" = "cor_gcms"
+                                              #"Summary" = "summary_gcms"
+                                              ),
+                               selected = 1),
+                    parameter_tabs,
+                    actionButton("do", "Run",
+                                 style="color: #fff; background-color: #337ab7; border-color: #2e6da4")
+               ),
+
                mainPanel(
                  plotOutput("map"),
                  plotOutput("opt_clust")
                )
-      ),
-
-    )
+      )
 )
 
 
@@ -237,11 +241,11 @@ server <- function(input, output) {
         cor_gcms(s_input(), input$var_names, study_area=upload_study_area(), method = input$method_cor)
       })
     }
-    if(input$select == 'summary_gcms'){ # change to render table.
-      output$opt_clust <- renderPlot({
-        summary_gcms(s_input(), input$var_names, study_area=upload_study_area())
-      })
-    }
+    #if(input$select == 'summary_gcms'){ # change to render table.
+    #  output$opt_clust <- renderPlot({
+    #    summary_gcms(s_input(), input$var_names, study_area=upload_study_area())
+    #  })
+    #}
   })
 }
 
