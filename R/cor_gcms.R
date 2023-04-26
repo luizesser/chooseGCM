@@ -25,7 +25,7 @@
 #'
 #' @export
 cor_gcms <- function(s, var_names, study_area=NULL, method = "pearson"){
-  assertMatrix(x)
+  assertList(s, types='RasterStack')
   assertCharacter(var_names, unique=T, any.missing=F)
   assertChoice(method, c("pearson", "kendall", "spearman"))
 

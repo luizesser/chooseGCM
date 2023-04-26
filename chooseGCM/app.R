@@ -14,11 +14,12 @@ library(sf)
 library(raster)
 library(checkmate)
 library(factoextra)
-
+library(ggcorrplot)
 
 parameter_tabs <- tabsetPanel(
   id = "params",
   type = "hidden",
+  selected = "summary_gcms",
 
   tabPanel("optimize_clusters",
              selectInput("method_opt", "Method:",
@@ -62,24 +63,20 @@ parameter_tabs <- tabsetPanel(
                            "Minkowski" = "minkowski"))
   ),
 
-  tabPanel("Correlation",
+  tabPanel("cor_gcms",
              selectInput("method_cor", "Correlation method:",
                          c("Pearson" = "pearson",
                            "Kendall" = "kendall",
                            "Spearman" = "spearman"))
   ),
 
-  tabPanel("Summary",
-             selectInput("method", "Correlation method:",
-                         c("Pearson" = "pearson",
-                           "Kendall" = "kendall",
-                           "Spearman" = "spearman"))
+  tabPanel("summary_gcms"
   )
 )
 
 
 
-# Define UI for application that draws a histogram
+# Define UI
 ui <- fluidPage(
     navbarPage(
       "chooseGCM",
@@ -121,7 +118,7 @@ ui <- fluidPage(
 )
 
 
-# Define server logic required to draw a histogram
+# Define Server
 server <- function(input, output) {
 
   options(shiny.maxRequestSize=500*1024^2)
@@ -132,6 +129,7 @@ server <- function(input, output) {
         s <- raster::stack(x)
         names(s) <- paste0('bio_',1:19) # Rename rasters
         return(s)})
+
     } else {
       return()
     }
@@ -218,8 +216,6 @@ server <- function(input, output) {
   #})
 
 
-
-
   observeEvent(input$do, {
     if(input$select == 'optimize_clusters'){
       output$opt_clust <- renderPlot({
@@ -241,7 +237,7 @@ server <- function(input, output) {
         cor_gcms(s_input(), input$var_names, study_area=upload_study_area(), method = input$method_cor)
       })
     }
-    if(input$select == 'summary_gcms'){
+    if(input$select == 'summary_gcms'){ # change to render table.
       output$opt_clust <- renderPlot({
         summary_gcms(s_input(), input$var_names, study_area=upload_study_area())
       })
