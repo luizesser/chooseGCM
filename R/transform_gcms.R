@@ -36,10 +36,13 @@ transform_gcms <- function(s, var_names, study_area=NULL){
                                    # Crop and mask stacks
                                    x <- mask(crop(x, study_area),study_area)
                                  }
+                               } else {
+                                 # Crop and mask stacks
+                                 x <- crop(x, study_area)
                                }
                              }
                              # Transform in data.frames
-                             x <- x %>% as.data.frame()
+                             x <- x %>% stack() %>% as.data.frame()
                              return(x)},
               USE.NAMES = T,
               simplify = F)

@@ -16,7 +16,7 @@ library(chooseGCM)
 First, we need to use only one time period. Here we use 2090 so the difference between models is more conspicuous. In the same way we are considering the SSP585, which is the more dramatic pathway. The resolution is the lowest to be quicker. The aim here is to maintain all parameters equal, but General Circulation Models (GCMs). In this way we know that the only source of variation comes from them. Note that if you receive a timeout error you can increase timeout value by running `r options(timeout = 6000)`, where 600 is the value in seconds that will be enough to download the data.
 
 ```{r WorldClim_data}
-gcm_names <- sort(c('ac','ae','ip','me','mi','mp','ml'))
+gcm_names <- sort(c('ac','ip','me','mi','mp','ml'))
 
 # WorldClim_data(period = 'future', variable = 'bioc', year = '2090', gcm = gcm_names, ssp = '585', resolution = 10)
 ```

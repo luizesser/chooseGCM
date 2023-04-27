@@ -48,7 +48,7 @@ parameter_tabs <- tabsetPanel(
   ),
 
   tabPanel("kmeans_gcms",
-             sliderInput("k",
+             sliderInput("k2",
                          "Number of clusters (k)",
                          min = 1,
                          max = 24,
@@ -190,7 +190,7 @@ server <- function(input, output) {
     }
     if(input$select == 'kmeans_gcms'){
       output$opt_clust <- renderPlot({
-        kmeans_gcms(s_input(), input$var_names, study_area=upload_study_area(), k = input$k, method = input$method)
+        kmeans_gcms(s_input(), input$var_names, study_area=upload_study_area(), k = input$k2, method = input$method)
       })
     }
     if(input$select == 'cor_gcms'){

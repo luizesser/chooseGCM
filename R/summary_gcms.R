@@ -35,10 +35,9 @@ summary_gcms <- function(s, var_names, study_area=NULL){
   assertList(s, types='RasterStack')
   assertCharacter(var_names, unique=T, any.missing=F)
 
-  s <- transform_gcms(s, var_names, study_area)
-  s <- lapply(s, function(x) data.frame(raster::values(x)))
-  m <- sapply(s, function(y){
-                             apply(y, 2, function(x) {
+  s2 <- transform_gcms(s, var_names, study_area)
+  m <- sapply(s2, function(y){
+                             df_m <- apply(y, 2, function(x) {
                                data.frame(min=min(x, na.rm=T),
                                           quantile_0.25=quantile(x, 0.25, na.rm=T),
                                           median=median(x, na.rm=T),

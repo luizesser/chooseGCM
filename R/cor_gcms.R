@@ -31,7 +31,7 @@ cor_gcms <- function(s, var_names, study_area=NULL, method = "pearson"){
 
   x <- transform_gcms(s, var_names, study_area)
   x <- flatten_gcms(x)
-  cor_matrix <- cor(x, use='complete.obs', method = method)
+  cor_matrix <- cor(as.matrix(x), use='complete.obs', method = method)
   cor_plot <- ggcorrplot(cor_matrix,
                          method='circle',
                          type='lower',
