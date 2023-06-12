@@ -8,8 +8,6 @@
 #'
 #' @return A list of data frames, with each element of the list corresponding to a GCM in the input list.
 #'
-#' @seealso \code{\link{summary_gcms}}
-#'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
 #'
@@ -23,7 +21,7 @@
 #' @import dplyr
 #'
 #' @export
-transform_gcms <- function(s, var_names, study_area=NULL){
+transform_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL){
   assertList(s, types='RasterStack')
   assertCharacter(var_names, unique=T, any.missing=F)
   s <- sapply(s, function(x){# Subset stacks to keep only var_names

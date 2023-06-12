@@ -5,18 +5,8 @@
 #' @param s A list of stacks of General Circulation Models.
 #' @param var_names Character. The names of the bioclimatic variables to compare.
 #' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
+#'
 #' @return a data frame with the summary statistics for each variable
-#'
-#' @examples
-#' s <- list(stack("file1.nc"), stack("file2.nc"))
-#' summary_gcms(s)
-#'
-#' @import raster
-#' @import dplyr
-#'
-#' @export
-#'
-#' @keywords GCM, summary, raster
 #'
 #' @seealso \code{\link{transform_gcms}}
 #'
@@ -30,8 +20,11 @@
 #' s <- transform_gcms(s, var_names, study_area)
 #' summary_gcms(s)
 #'
+#' @import raster
+#' @import dplyr
+#'
 #' @export
-summary_gcms <- function(s, var_names, study_area=NULL){
+summary_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL){
   assertList(s, types='RasterStack')
   assertCharacter(var_names, unique=T, any.missing=F)
 

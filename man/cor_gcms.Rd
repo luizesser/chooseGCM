@@ -4,7 +4,12 @@
 \alias{cor_gcms}
 \title{Compute and plot correlation matrix for a set of General Circulation Models.}
 \usage{
-cor_gcms(s, var_names, study_area = NULL, method = "pearson")
+cor_gcms(
+  s,
+  var_names = c("bio_1", "bio_12"),
+  study_area = NULL,
+  method = "pearson"
+)
 }
 \arguments{
 \item{s}{A list of stacks of General Circulation Models.}
@@ -13,10 +18,10 @@ cor_gcms(s, var_names, study_area = NULL, method = "pearson")
 
 \item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
 
-\item{method}{The correlation method to use. Default is "pearson". Possible values are "pearson", "kendall" and "spearman".}
+\item{method}{The correlation method to use. Default is "pearson". Possible values are "pearson", "kendall" or "spearman".}
 }
 \value{
-A correlation matrix plot.
+A list with two items: cor_matrix (the correlations between GCMs) and cor_plot (a correlation plot).
 }
 \description{
 Compute and plot correlation matrix for a set of General Circulation Models.

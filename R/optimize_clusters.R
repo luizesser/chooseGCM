@@ -5,12 +5,10 @@
 #' @param s A list of stacks of General Circulation Models.
 #' @param var_names Character. The names of the bioclimatic variables to compare.
 #' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
-#' @param method A character string specifying the method to use for determining the optimal number of clusters. Options are 'wss' for within-cluster sum of squares, 'silhouette' for average silhouette width and 'gap' for the gap statistic method. Default is 'wss'.
+#' @param method A character string specifying the method to use for determining the optimal number of clusters. Options are 'wss' for within-cluster sum of squares, 'silhouette' for average silhouette width and 'gap_stat' for the gap statistic method. Default is 'wss'.
 #' @param n An integer specifying the number of randomly selected samples to use in the clustering analysis. Default is 10000.
 #'
 #' @return A ggplot object representing the optimal number of clusters.
-#'
-#' @importFrom factoextra fviz_nbclust hcut
 #'
 #' @seealso \code{\link{transform_gcms}} \code{\link{flatten_gcms}}
 #'
@@ -22,10 +20,10 @@
 #' s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
 #' study_area <- extent(c(-57, -22, -48, -33))
 #' var_names <- c("bio_1", "bio_12")
-#' s <- transform_gcms(s, var_names, study_area)
-#' flattened_gcms <- flatten_gcms(s)
 #'
 #' optimize_clusters(flattened_gcms)
+#'
+#' @importFrom factoextra fviz_nbclust hcut
 #'
 #' @export
 optimize_clusters <- function(s, var_names, study_area=NULL, method = 'wss', n = 1000) {
@@ -34,7 +32,6 @@ optimize_clusters <- function(s, var_names, study_area=NULL, method = 'wss', n =
   assertCharacter(var_names, unique=T, any.missing=F)
   assertChoice(method, c("silhouette", "wss", "gap_stat"))
   assertCount(n, positive = T)
-
 
   x <- transform_gcms(s, var_names, study_area)
   x <- flatten_gcms(x)

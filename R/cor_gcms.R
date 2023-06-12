@@ -3,17 +3,14 @@
 #' @param s A list of stacks of General Circulation Models.
 #' @param var_names Character. The names of the bioclimatic variables to compare.
 #' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
-#' @param method The correlation method to use. Default is "pearson". Possible values are "pearson", "kendall" and "spearman".
+#' @param method The correlation method to use. Default is "pearson". Possible values are "pearson", "kendall" or "spearman".
 #'
-#' @return A correlation matrix plot.
+#' @return A list with two items: cor_matrix (the correlations between GCMs) and cor_plot (a correlation plot).
 #'
 #' @seealso \code{\link{transform_gcms}} \code{\link{flatten_gcms}} \code{\link{summary_gcms}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
-#'
-#' @import ggcorrplot
-#' @importFrom stringr str_to_title
 #'
 #' @examples
 #' s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
@@ -23,8 +20,11 @@
 #' flattened_gcms <- flatten_gcms(s)
 #' cor_gcms(quick_example, method = "spearman")
 #'
+#' @import ggcorrplot
+#' @importFrom stringr str_to_title
+#'
 #' @export
-cor_gcms <- function(s, var_names, study_area=NULL, method = "pearson"){
+cor_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, method = "pearson"){
   assertList(s, types='RasterStack')
   assertCharacter(var_names, unique=T, any.missing=F)
   assertChoice(method, c("pearson", "kendall", "spearman"))
@@ -33,7 +33,6 @@ cor_gcms <- function(s, var_names, study_area=NULL, method = "pearson"){
   x <- flatten_gcms(x)
   cor_matrix <- cor(as.matrix(x), use='complete.obs', method = method)
   cor_plot <- ggcorrplot(cor_matrix,
-                         method='circle',
                          type='lower',
                          lab=T,
                          lab_size = 3,
@@ -41,4 +40,6 @@ cor_gcms <- function(s, var_names, study_area=NULL, method = "pearson"){
                          hc.method = 'ward.D2',
                          show.legend = F,
                          title=paste0(stringr::str_to_title(method),' Correlation'))
+  return(list(cor_matrix=cor_matrix,
+              cor_plot=cor_plot))
 }

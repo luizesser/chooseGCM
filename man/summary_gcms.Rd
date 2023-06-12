@@ -4,7 +4,7 @@
 \alias{summary_gcms}
 \title{Summarize General Circulation Model (GCM) data}
 \usage{
-summary_gcms(s, var_names, study_area = NULL)
+summary_gcms(s, var_names = c("bio_1", "bio_12"), study_area = NULL)
 }
 \arguments{
 \item{s}{A list of stacks of General Circulation Models.}
@@ -20,9 +20,6 @@ a data frame with the summary statistics for each variable
 This function summarizes GCM data by calculating several statistics for each variable
 }
 \examples{
-s <- list(stack("file1.nc"), stack("file2.nc"))
-summary_gcms(s)
-
 s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
 study_area <- extent(c(-57, -22, -48, -33))
 var_names <- c("bio_1", "bio_12")
@@ -37,6 +34,3 @@ summary_gcms(s)
 Luíz Fernando Esser (luizesser@gmail.com)
 https://luizfesser.wordpress.com
 }
-\keyword{GCM,}
-\keyword{raster}
-\keyword{summary,}

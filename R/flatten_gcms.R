@@ -3,12 +3,11 @@
 #' Scale and flatten a list of rasters (GCMs) to a vector.
 #'
 #' @param s A list of transformed data frames (GCMs)
+#'
 #' @return A named list of flattened data.frame
-#' @export
+#'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
-#'
-#' @seealso \code{\link{transform_gcms}}
 #'
 #' @examples
 #' s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
@@ -18,6 +17,8 @@
 #' flattened_gcms <- flatten_gcms(s)
 #'
 #' @import raster
+#'
+#' @export
 flatten_gcms <- function(s){
   assertList(s, types='data.frame')
   sapply(s, function(x){x <- scale(x)

@@ -6,7 +6,11 @@
 #' @param var_names Character. The names of the bioclimatic variables to compare.
 #' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
 #' @param k Numeric. The number of clusters to use for k-means clustering.
+#'
 #' @return A list with two items: suggested_gcms (the names of the GCMs suggested for further analysis) and statistics_gcms (a grid of plots).
+#'
+#' @author Luíz Fernando Esser (luizesser@gmail.com)
+#' https://luizfesser.wordpress.com
 #'
 #' @examples
 #' # compare GCMS
@@ -25,6 +29,7 @@
 #' @import cowplot
 #' @importFrom ggcorrplot ggcorrplot
 #' @importFrom factoextra fviz_cluster fviz_nbclust fviz_dend
+#'
 #' @export
 compare_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3){
 
@@ -33,7 +38,7 @@ compare_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3)
   assertCount(k, positive = T)
 
   # Transform stacks
-  s <- transform_gcms(s, c('bio_1', 'bio_2'), study_area=study_area)
+  s <- transform_gcms(s, var_names, study_area=study_area)
 
 
   # Scale and flatten variables into one column.
@@ -77,7 +82,6 @@ compare_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3)
   # Run Correlation
   cor_matrix <- cor(flatten_vars, use='complete.obs')
   cor_plot <- ggcorrplot(cor_matrix,
-                         method='circle',
                          type='lower',
                          lab=T,
                          lab_size = 3,

@@ -4,7 +4,13 @@
 \alias{kmeans_gcms}
 \title{Perform k-means clustering on GCMs}
 \usage{
-kmeans_gcms(s, var_names, study_area = NULL, k = 3, method = "euclidean")
+kmeans_gcms(
+  s,
+  var_names = c("bio_1", "bio_12"),
+  study_area = NULL,
+  k = 3,
+  method = NULL
+)
 }
 \arguments{
 \item{s}{A list of stacks of General Circulation Models.}
@@ -15,7 +21,7 @@ kmeans_gcms(s, var_names, study_area = NULL, k = 3, method = "euclidean")
 
 \item{k}{Number of clusters.}
 
-\item{method}{The method for distance matrix computation. Standard value is "euclidean". Possible values are: "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski".}
+\item{method}{The method for distance matrix computation. Standard value is "euclidean". Possible values are: "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski". If NULL, will perform the clustering on raw variables data.}
 }
 \value{
 A scatter plot of the resulting clusters.
@@ -24,12 +30,16 @@ A scatter plot of the resulting clusters.
 This function performs k-means clustering on a distance matrix and produces a scatter plot of the resulting clusters.
 }
 \examples{
+
 s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
 study_area <- extent(c(-57, -22, -48, -33))
 var_names <- c("bio_1", "bio_12")
-s <- transform_gcms(s, var_names, study_area)
+
 kmeans_gcms(s, k=3)
 
+}
+\seealso{
+\code{\link{transform_gcms}} \code{\link{flatten_gcms}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

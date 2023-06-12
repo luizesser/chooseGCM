@@ -30,3 +30,7 @@ gcm_names = c('gcm1', 'gcm2', 'gcm3'),
 k = 3)
 
 }
+\author{
+Luíz Fernando Esser (luizesser@gmail.com)
+https://luizfesser.wordpress.com
+}

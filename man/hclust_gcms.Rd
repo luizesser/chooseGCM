@@ -4,7 +4,13 @@
 \alias{hclust_gcms}
 \title{Hierarchical Clustering of GCMs}
 \usage{
-hclust_gcms(s, var_names, study_area = NULL, k = 3, n = 1000)
+hclust_gcms(
+  s,
+  var_names = c("bio_1", "bio_12"),
+  study_area = NULL,
+  k = 3,
+  n = 1000
+)
 }
 \arguments{
 \item{s}{A list of stacks of General Circulation Models.}
@@ -21,14 +27,13 @@ hclust_gcms(s, var_names, study_area = NULL, k = 3, n = 1000)
 A dendrogram visualizing the clusters.
 }
 \description{
-Given the output of flatten_gcms function containing GCMs, this function performs hierarchical clustering on a random subset of the raster values and produces a dendrogram visualization of the clusters.
+This function performs hierarchical clustering on a random subset of the raster values and produces a dendrogram visualization of the clusters.
 }
 \examples{
+
 s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
 study_area <- extent(c(-57, -22, -48, -33))
 var_names <- c("bio_1", "bio_12")
-s <- transform_gcms(s, var_names, study_area)
-flattened_gcms <- flatten_gcms(s)
 dend <- hclust_gcms(stack, k=4, n=500)
 plot(dend)
 

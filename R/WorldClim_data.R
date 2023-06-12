@@ -1,8 +1,9 @@
 #' Download WorldClim v.2.1 bioclimatic data
 #'
-#' @description This function allows to download data from WorldClim v.2.1
-#' (https://www.worldclim.org/data/index.html) considering multiple GCMs, time periods and SSPs.
-#' @usage WorldClim_data(variable='bioc', year = '2030', gcm = 'mi', ssp = '126', resolution = 10)
+#' This function allows to download data from WorldClim v.2.1 (https://www.worldclim.org/data/index.html) considering multiple GCMs, time periods and SSPs.
+#'
+#' @usage WorldClim_data(period = 'current', variable = 'bioc', year = '2030', gcm = 'mi', ssp = '126', resolution = 10)
+#'
 #' @param period Can be 'current' or 'future'.
 #' @param variable Allows to specify which variables you want to retrieve Possible entries are:
 #' 'tmax',''tmin,'prec' and/or 'bioc'.
@@ -36,15 +37,17 @@
 #'  | ml  | MPI-ESM1-2-LR |
 #'  | mr  | MRI-ESM2-0 |
 #'  | uk  | UKESM1-0-LL |
-#'
-#' @md
 #' @param ssp SSPs for future data. Possible entries are: '126', '245', '370' and/or '585'.
 #' You can use a vector to provide more than one entry.
 #' @param resolution You can select one resolution from the following alternatives: 10, 5, 2.5 OR 30.
+#'
 #' @details This function will create a folder entitled 'WorldClim_data'. All the data downloaded will be stored in this folder. Note that, despite being possible to retrieve a lot of data at once, it is not recommended to do so, since the data is very heavy.
+#'
 #' @references https://www.worldclim.org/data/index.html
+#'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
+#'
 #' @examples
 #' \dontrun{# download data from multiple periods:
 #' year <- c(2050, 2090)
@@ -52,39 +55,23 @@
 #'
 #' # download data from one specific period
 #' WorldClim_data('bioc',2070,'mi',585,10)}
+#'
 #' @importFrom utils download.file
+#'
 #' @export
 
 WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030', gcm = 'mi', ssp = '126', resolution = 10){
 
-  assertChoice(period, c('current', 'future'))
-  assertChoice(variable, c('tmax', 'tmin', 'prec', 'bioc'))
-  if(is.numeric(year)){assertChoice(year, c(2030, 2050, 2070, 2090))}
-  if(is.character(year)){assertChoice(year, c('2030', '2050', '2070', '2090'))}
-  assertCharacter(gcm, n.chars = 2)
-  assertSubset(gcm, c('ac','ae','bc','ca','cc','ce','cn','ch','cr','ec','ev',
-                            'fi','gf','gg','gh','hg','in','ic','ip','me','mi','mp',
-                            'ml','mr','uk'), empty.ok = FALSE)
-  if(is.numeric(ssp)){assertChoice(ssp, c(126, 245, 370, 585))}
-  if(is.character(ssp)){assertChoice(ssp, c('126', '245', '370', '585'))}
-  if(is.numeric(resolution)){assertChoice(resolution, c(10, 5, 2.5, 30))}
-  if(is.character(resolution)){assertChoice(resolution, c('10', '5', '2.5', '30'))}
-
   res = ifelse(resolution==30,'s','m')
-
-  if(!dir.exists('input_data/')){
-    dir.create('input_data/')
-  }
-
+  #GET(url, write_disk("iris.xlsx", overwrite=TRUE))
   if(period=='current'){
     if(!dir.exists('input_data/WorldClim_data_current')){ dir.create('input_data/WorldClim_data_current') }
     if(length(list.files("input_data/WorldClim_data_current",pattern='.tif$', full.names=T))==0){
       print(paste0('current_',resolution,res))
-      download.file(url = paste0('https://geodata.ucdavis.edu/climate/worldclim/2_1/base/wc2.1_',
-                                 resolution,
-                                 res,'_bio.zip'),
-                    destfile = paste0('input_data/current_', resolution, res,'.zip'),
-                    method = 'auto')
+      GET(url = paste0('https://geodata.ucdavis.edu/climate/worldclim/2_1/base/wc2.1_',
+                       resolution,
+                       res,'_bio.zip'),
+          write_disk(paste0('input_data/current_', resolution, res,'.zip')))
       unzip(zipfile = paste0('input_data/current_', resolution, res,'.zip'),
             exdir = paste0('input_data/WorldClim_data_current'))
     } else {
@@ -112,13 +99,12 @@ WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030',
         for (y in 1:length(year)) {
           if(!file.exists(paste0('input_data/WorldClim_data_future/',gcm[g], '_ssp', ssp[s],'_', resolution, '_', year[y],'.tif'))){
             print(paste0(gcm[g], '_ssp', ssp[s], '_', resolution, '_', year[y]))
-            download.file(url = paste0('https://geodata.ucdavis.edu/cmip6/',resolution,
-                                       res,'/',gcm3[g],'/ssp',ssp[s],'/wc2.1_',resolution,
-                                       res,'_',variable,'_',gcm3[g],'_ssp',ssp[s],'_',
-                                       year3[y],'.tif'),
-                          destfile = paste0('input_data/WorldClim_data_future/',gcm[g], '_ssp', ssp[s],
-                                            '_', resolution, '_', year[y],'.tif'),
-                          method = 'auto')
+            GET(url = paste0('https://geodata.ucdavis.edu/cmip6/',resolution,
+                             res,'/',gcm3[g],'/ssp',ssp[s],'/wc2.1_',resolution,
+                             res,'_',variable,'_',gcm3[g],'_ssp',ssp[s],'_',
+                             year3[y],'.tif'),
+                write_disk(paste0('input_data/WorldClim_data_future/',gcm[g], '_ssp', ssp[s],
+                                  '_', resolution, '_', year[y],'.tif')))
           } else {
             print(paste0('The file for future scenario (',
                          paste0('input_data/WorldClim_data_future/',gcm[g], '_ssp', ssp[s],'_', resolution,res, '_', year[y],'.tif'),

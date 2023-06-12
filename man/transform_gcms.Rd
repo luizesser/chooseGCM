@@ -4,7 +4,7 @@
 \alias{transform_gcms}
 \title{Transform General Circulation Model (GCM) stacks}
 \usage{
-transform_gcms(s, var_names, study_area = NULL)
+transform_gcms(s, var_names = c("bio_1", "bio_12"), study_area = NULL)
 }
 \arguments{
 \item{s}{A list of stacks of General Circulation Models.}
@@ -25,9 +25,6 @@ study_area <- extent(c(-57, -22, -48, -33))
 var_names <- c("bio_1", "bio_12")
 t <- transform_gcms(s, var_names, study_area)
 
-}
-\seealso{
-\code{\link{summary_gcms}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)
