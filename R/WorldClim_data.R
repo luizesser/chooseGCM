@@ -37,6 +37,7 @@
 #'  | ml  | MPI-ESM1-2-LR |
 #'  | mr  | MRI-ESM2-0 |
 #'  | uk  | UKESM1-0-LL |
+#' @md
 #' @param ssp SSPs for future data. Possible entries are: '126', '245', '370' and/or '585'.
 #' You can use a vector to provide more than one entry.
 #' @param resolution You can select one resolution from the following alternatives: 10, 5, 2.5 OR 30.
