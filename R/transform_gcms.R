@@ -26,7 +26,8 @@
 transform_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL){
   assertList(s, types='RasterStack')
   assertCharacter(var_names, unique=T, any.missing=F)
-  s <- sapply(s, function(x){# Subset stacks to keep only var_names
+  if(var_names %in% names(s[[1]]) %>% all()){
+    s <- sapply(s, function(x){# Subset stacks to keep only var_names
                              x <- x[[var_names]]
                              # Reproject to match study_area crs.
                              if(!is.null(study_area)){
@@ -47,5 +48,8 @@ transform_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL){
               USE.NAMES = T,
               simplify = F)
   return(s)
+  } else {
+    stop('Variables names in s object do not match var_names!')
+  }
 }
 
