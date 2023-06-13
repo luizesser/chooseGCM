@@ -20,8 +20,9 @@
 #' s <- transform_gcms(s, var_names, study_area)
 #' summary_gcms(s)
 #'
-#' @import raster
+#' @import checkmate
 #' @import dplyr
+#' @import raster
 #'
 #' @export
 summary_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL){

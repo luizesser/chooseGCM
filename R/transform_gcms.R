@@ -8,6 +8,8 @@
 #'
 #' @return A list of data frames, with each element of the list corresponding to a GCM in the input list.
 #'
+#' @seealso \code{\link{summary_gcms}}
+#'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
 #'

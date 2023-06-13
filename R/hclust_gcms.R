@@ -23,8 +23,9 @@
 #' dend <- hclust_gcms(stack, k=4, n=500)
 #' plot(dend)
 #'
-#' @import ggplot2
+#' @import checkmate
 #' @import factoextra
+#' @import ggplot2
 #' @import raster
 #' @importFrom grDevices colors
 #'
@@ -38,12 +39,19 @@ hclust_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3, 
   x <- transform_gcms(s, var_names, study_area)
   x <- flatten_gcms(x)
   flatten_subset <- na.omit(x)
+  if(is.null(n) | n > nrow(flatten_subset) ){
+    if(nrow(flatten_subset)>1000){
+      n <- 1000
+    } else {
+      n <- nrow(flatten_subset)
+    }
+  }
   flatten_subset <- flatten_subset[sample(nrow(flatten_subset), n),]
   res <- hcut(t(x), k = k)
   dend <- fviz_dend(res,
                     cex = 0.5,
                     ylim = c(max(res$height)*1.1/5*-1, max(res$height)*1.1),
-                    palette="Set1",
+                    palette="jco",
                     main = "Hierarchical Clustering")
   return(dend)
 }

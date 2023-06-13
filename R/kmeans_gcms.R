@@ -23,6 +23,7 @@
 #'
 #' kmeans_gcms(s, k=3)
 #'
+#' @import checkmate
 #' @importFrom factoextra fviz_cluster
 #' @importFrom stats kmeans
 #' @importFrom ggplot2 theme_minimal
@@ -68,7 +69,8 @@ kmeans_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3, 
                                 ggtheme = theme_minimal(),
                                 check_overlap = T,
                                 main = "K-means Clustering Plot",
-                                legend = 'none', repel = TRUE)
+                                legend = 'none',
+                                repel = TRUE)
   }
 
   return(kmeans_plot)

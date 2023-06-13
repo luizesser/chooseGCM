@@ -20,6 +20,7 @@
 #' flattened_gcms <- flatten_gcms(s)
 #' cor_gcms(quick_example, method = "spearman")
 #'
+#' @import checkmate
 #' @import ggcorrplot
 #' @importFrom stringr str_to_title
 #'

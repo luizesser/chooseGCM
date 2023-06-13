@@ -20,15 +20,16 @@
 #' gcm_names = c('gcm1', 'gcm2', 'gcm3'),
 #' k = 3)
 #'
-#' @importFrom raster stack projectRaster mask crop
+#' @import checkmate
+#' @import cowplot
 #' @import ggplot2
 #' @import ggpubr
+#' @import plyr
 #' @import stats
 #' @import utils
-#' @import plyr
-#' @import cowplot
-#' @importFrom ggcorrplot ggcorrplot
 #' @importFrom factoextra fviz_cluster fviz_nbclust fviz_dend
+#' @importFrom ggcorrplot ggcorrplot
+#' @importFrom raster stack projectRaster mask crop
 #'
 #' @export
 compare_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3){
@@ -38,15 +39,19 @@ compare_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3)
   assertCount(k, positive = T)
 
   # Transform stacks
-  s <- transform_gcms(s, var_names, study_area=study_area)
-
-
-  # Scale and flatten variables into one column.
-  flatten_vars <- sapply(s, function(x){x <- scale(x)
-                                        x <- as.vector(x)}, USE.NAMES=T)
+  x <- transform_gcms(s, var_names, study_area=study_area)
+  flatten_vars <- flatten_gcms(x)
 
   # Calculate the distance matrix
   dist_matrix <- dist(t(flatten_vars))
+  hm <- fviz_dist(
+    dist_matrix,
+    order = TRUE,
+    show_labels = TRUE,
+    lab_size = NULL,
+    gradient = list(low = "#FDE725FF", mid = "#21908CFF", high = "#440154FF")) +
+    ggtitle("Distance Matrix Heatmap")
+
 
   # Run K-means
   cl <- kmeans(dist_matrix, k, nstart=1000)
@@ -54,20 +59,25 @@ compare_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3)
   # plot
   kmeans_plot <- fviz_cluster(cl,
                               data = dist_matrix,
-                              palette = "Set1",
-                              labelsize = 10,
+                              palette = "jco",
                               ggtheme = theme_minimal(),
+                              check_overlap = T,
                               main = "K-means Clustering Plot",
-                              xlim=c(-3,3),
-                              ylim=c(-3,3),
-                              legend = 'none')
+                              legend = 'none', repel = TRUE)
 
   # Run Hierarchical Cluster
   # hclust_plot <- hclust(dist_matrix)
   # Include elbow, silhouette and gap methods
   flatten_subset <- na.omit(flatten_vars)
-  flatten_subset <- flatten_subset[sample(nrow(flatten_subset), 1000),]
-  wss <- fviz_nbclust(flatten_subset, FUN = hcut, method = "wss")
+
+  if(nrow(flatten_subset)>1000){
+    n <- 1000
+  } else {
+    n <- nrow(flatten_subset)
+  }
+
+  flatten_subset <- flatten_subset[sample(nrow(flatten_subset), n),]
+  #wss <- fviz_nbclust(flatten_subset, FUN = hcut, method = "wss")
   sil <- fviz_nbclust(flatten_subset, FUN = hcut, method = "silhouette")
   #gap <- fviz_gap_stat(flatten_subset, maxSE = list(method = "globalmax"))
 
@@ -76,33 +86,39 @@ compare_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3)
   dend <- fviz_dend(res,
                     cex = 0.5,
                     ylim = c(max(res$height)*1.1/5*-1, max(res$height)*1.1),
-                    palette="Set1",
+                    palette="jco",
                     main = "Hierarchical Clustering")
 
   # Run Correlation
-  cor_matrix <- cor(flatten_vars, use='complete.obs')
-  cor_plot <- ggcorrplot(cor_matrix,
-                         type='lower',
-                         lab=T,
-                         lab_size = 3,
-                         hc.order=T,
-                         hc.method = 'ward.D2',
-                         show.legend = F,
-                         title='Pearson Correlation')
+  #cor_matrix <- cor(flatten_vars, use='complete.obs')
+  #cor_plot <- ggcorrplot(cor_matrix,
+  #                       type='lower',
+  #                       lab=T,
+  #                       lab_size = 3,
+  #                       hc.order=T,
+  #                       hc.method = 'ward.D2',
+  #                       show.legend = F,
+  #                       title='Pearson Correlation')
 
   # Plot everything together
+  #statistics_gcms <- plot_grid(kmeans_plot,
+  #                             cor_plot,
+  #                             dend,
+  #                             plot_grid(wss,
+  #                                       sil,
+  #                                       ncol=1,
+  #                                       labels=c("D", "E"),
+  #                                       label_x = -0.05),
+  #                             labels = c("A", "B", "C"),
+  #                             ncol = 2,
+  #                             rel_widths = 4)
   statistics_gcms <- plot_grid(kmeans_plot,
-                               cor_plot,
+                               hm,
                                dend,
-                               plot_grid(wss,
-                                         sil,
-                                         ncol=1,
-                                         labels=c("D", "E"),
-                                         label_x = -0.05),
-                               labels = c("A", "B", "C"),
+                               sil,
+                               labels = c("A", "B", "C", "D"),
                                ncol = 2,
                                rel_widths = 4)
-
   gcms <- apply(cl$centers, 1, function(x){which.min(x) %>% names()})
 
 

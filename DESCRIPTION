@@ -19,6 +19,7 @@ Imports:
     ggcorrplot,
     ggplot2,
     ggpubr,
+    httr,
     plyr,
     raster,
     stats,

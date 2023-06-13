@@ -23,6 +23,7 @@
 #'
 #' optimize_clusters(flattened_gcms)
 #'
+#' @import checkmate
 #' @importFrom factoextra fviz_nbclust hcut
 #'
 #' @export
@@ -36,6 +37,13 @@ optimize_clusters <- function(s, var_names, study_area=NULL, method = 'wss', n =
   x <- transform_gcms(s, var_names, study_area)
   x <- flatten_gcms(x)
   flatten_subset <- na.omit(x)
+  if(is.null(n) | n > nrow(flatten_subset) ){
+    if(nrow(flatten_subset)>1000){
+      n <- 1000
+    } else {
+      n <- nrow(flatten_subset)
+    }
+  }
   flatten_subset <- flatten_subset[sample(nrow(flatten_subset), n),]
   y <- fviz_nbclust(flatten_subset, FUN = hcut, method)
   return(y)

@@ -10,7 +10,7 @@ WorldClim_data(period = 'current', variable = 'bioc', year = '2030', gcm = 'mi',
 \item{period}{Can be 'current' or 'future'.}
 
 \item{variable}{Allows to specify which variables you want to retrieve Possible entries are:
-'tmax',''tmin,'prec' and/or 'bioc'.}
+'tmax','tmin','prec' and/or 'bioc'.}
 
 \item{year}{Specify the year you want to retrieve data. Possible entries are:
 '2030', '2050', '2070' and/or '2090'. You can  use a vector to provide more than one entry.}

@@ -16,6 +16,7 @@
 #' s <- transform_gcms(s, var_names, study_area)
 #' flattened_gcms <- flatten_gcms(s)
 #'
+#' @import checkmate
 #' @import raster
 #'
 #' @export

@@ -1,4 +1,4 @@
-#' Distance Matrix
+#' Distance between GCMs
 #'
 #' This function compares future climate projections from multiple Global Circulation Models (GCMs) based on their similarity in terms of bioclimatic variables. The function calculates distance metrics and plot it on a heatmap.
 #'
@@ -9,29 +9,32 @@
 #'
 #' @return A list with two items: distances (the distances between GCMs) and heatmap (a plot).
 #'
-#' @examples
-#' # compare GCMS
-#' compare_gcms(folder_future_rasters_gcms = "path/to/folder",
-#' study_area = raster("path/to/raster"),
-#' var_names = c('bio_1', 'bio_12'),
-#' gcm_names = c('gcm1', 'gcm2', 'gcm3'),
-#' k = 3)
+#' @seealso \code{\link{transform_gcms}} \code{\link{flatten_gcms}}
 #'
+#' @author Luíz Fernando Esser (luizesser@gmail.com)
+#' https://luizfesser.wordpress.com
+#'
+#' @examples
+#'
+#' s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
+#' study_area <- extent(c(-57, -22, -48, -33))
+#' var_names <- c("bio_1", "bio_12")
+#'
+#' dist_gcms(s, method='euclidean')
+#'
+#' @import checkmate
 #' @importFrom factoextra fviz_dist get_dist
+#'
 #' @export
-distance_matrix <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, method = 'euclidean'){
+dist_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, method = 'euclidean'){
 
   assertList(s, types='RasterStack')
   assertCharacter(var_names, unique=T, any.missing=F)
   assertChoice(method, c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "pearson", "spearman", "kendall"))
 
-  # Transform stacks
-  s <- transform_gcms(s, var_names, study_area=study_area)
-
-
   # Scale and flatten variables into one column.
-  flatten_vars <- sapply(s, function(x){x <- scale(x)
-                                        x <- as.vector(x)}, USE.NAMES=T)
+  x <- transform_gcms(s, var_names, study_area)
+  flatten_vars <- flatten_gcms(x)
 
   # Calculate the distance matrix
   dist_matrix <- get_dist(t(flatten_vars), method=method)
@@ -41,8 +44,8 @@ distance_matrix <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, m
     order = TRUE,
     show_labels = TRUE,
     lab_size = NULL,
-    gradient = list(low = "red", mid = "white", high = "blue")
-  )
+    gradient = list(low = "#FDE725FF", mid = "#21908CFF", high = "#440154FF")) +
+    ggtitle("Distance Matrix Heatmap")
 
   return(list(distances=dist_matrix,
               heatmap=hm))

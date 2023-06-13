@@ -26,6 +26,9 @@ var_names <- c("bio_1", "bio_12")
 t <- transform_gcms(s, var_names, study_area)
 
 }
+\seealso{
+\code{\link{summary_gcms}}
+}
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)
 https://luizfesser.wordpress.com

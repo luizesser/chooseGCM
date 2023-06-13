@@ -6,7 +6,7 @@
 #'
 #' @param period Can be 'current' or 'future'.
 #' @param variable Allows to specify which variables you want to retrieve Possible entries are:
-#' 'tmax',''tmin,'prec' and/or 'bioc'.
+#' 'tmax','tmin','prec' and/or 'bioc'.
 #' @param year Specify the year you want to retrieve data. Possible entries are:
 #' '2030', '2050', '2070' and/or '2090'. You can  use a vector to provide more than one entry.
 #' @param gcm GCMs to be considered in future scenarios. You can use a vector to provide more than one entry.
@@ -57,14 +57,24 @@
 #' # download data from one specific period
 #' WorldClim_data('bioc',2070,'mi',585,10)}
 #'
-#' @importFrom utils download.file
+#' @import checkmate
+#' @importFrom httr GET
 #'
 #' @export
 
 WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030', gcm = 'mi', ssp = '126', resolution = 10){
 
+  assertChoice(period, c('current', 'future'))
+  assertChoice(variable, c('bioc', 'tmax','tmin','prec'))
+  assertChoice(year, c('2030', '2050', '2070', '2090'))
+  assertChoice(gcm, c('ac', 'ae', 'bc', 'ca', 'cc', 'ce','cn', 'ch', 'cr', 'ec','ev', 'fi',
+                      'gf', 'gg','gh', 'hg', 'in', 'ic', 'ip', 'me', 'mi', 'mp','ml',
+                      'mr', 'uk'))
+  assertChoice(ssp, c('126', '245', '370', '585'))
+  assertChoice(resolution, c(10, 5, 2.5, 30))
+
   res = ifelse(resolution==30,'s','m')
-  #GET(url, write_disk("iris.xlsx", overwrite=TRUE))
+
   if(period=='current'){
     if(!dir.exists('input_data/WorldClim_data_current')){ dir.create('input_data/WorldClim_data_current') }
     if(length(list.files("input_data/WorldClim_data_current",pattern='.tif$', full.names=T))==0){

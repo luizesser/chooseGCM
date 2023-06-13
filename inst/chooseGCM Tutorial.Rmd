@@ -47,15 +47,23 @@ study_area <- raster::extent(c(-57, -22, -48, -33)) # you can use a shapefile he
 
 In chooseGCM we implemented functions to analyze GCMs attributes.
 
-```{r exploratory_analysis}
+```{r exploratory_analysis_summary}
 # Summary of GCMs
 s_sum <- summary_gcms(s, var_names, study_area)
 s_sum
+```
+
+```{r exploratory_analysis_correlation}
 # Pearson Correlation between GCMs
 s_cor <- cor_gcms(s, var_names, study_area, method = "pearson")
 s_cor
 ```
 
+```{r exploratory_analysis_distance}
+# Euvlidean Distance between GCMs
+s_dist <- dist_gcms(s, var_names, study_area, method = "euclidean")
+s_dist
+```
 
 ## Obtain clusters
 
@@ -66,6 +74,12 @@ kmeans_gcms(s, var_names, study_area, k = 3,  method = "euclidean")
 ```
 
 
+Alternatively, one could run the analysis with raw environmental data by not setting any value to method.
+
+```{r kmeans_gcms_raw}
+kmeans_gcms(s, var_names, study_area, k = 3)
+```
+
 We can also obtain clusters through hierarchical clustering.
 
 ```{r hclust_gcms}
@@ -75,12 +89,17 @@ hclust_gcms(s, var_names, study_area, k = 3, n = 1000)
 
 But how many clusters are good? There is metrics to understand that.
 
-```{r optimize_clusters}
+```{r optimize_clusters_wss}
 optimize_clusters(s, var_names, study_area, method = 'wss', n = 1000)
-optimize_clusters(s, var_names, study_area, method = 'silhouette', n = 1000)
-#optimize_clusters(s_flat, method = 'gap_stat')
 ```
 
+```{r optimize_clusters_silhouette}
+optimize_clusters(s, var_names, study_area, method = 'silhouette', n = 1000)
+```
+
+```{r optimize_clusters_gap}
+optimize_clusters(s, var_names, study_area, method = 'gap_stat', n = 1000)
+```
 
 ## Putting everything together
 
