@@ -33,7 +33,7 @@ devtools::install_github("luizesser/chooseGCM")
 
 This is a basic tutorial which shows you how to use the functions in chooseGCM. After installing the package, we need to open it:
 
-```{r setup}
+```{r setup, warning=FALSE}
 library(chooseGCM)
 ```
 

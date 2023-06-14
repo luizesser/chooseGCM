@@ -27,62 +27,10 @@ chooseGCM. After installing the package, we need to open it:
 
 ``` r
 library(chooseGCM)
-#> Warning: replacing previous import 'cowplot::get_legend' by
-#> 'ggpubr::get_legend' when loading 'chooseGCM'
-#> Warning: replacing previous import 'dplyr::failwith' by 'plyr::failwith' when
-#> loading 'chooseGCM'
-#> Warning: replacing previous import 'dplyr::id' by 'plyr::id' when loading
-#> 'chooseGCM'
-#> Warning: replacing previous import 'dplyr::summarize' by 'plyr::summarize' when
-#> loading 'chooseGCM'
-#> Warning: replacing previous import 'dplyr::count' by 'plyr::count' when loading
-#> 'chooseGCM'
-#> Warning: replacing previous import 'dplyr::desc' by 'plyr::desc' when loading
-#> 'chooseGCM'
-#> Warning: replacing previous import 'ggpubr::mutate' by 'plyr::mutate' when
-#> loading 'chooseGCM'
-#> Warning: replacing previous import 'dplyr::arrange' by 'plyr::arrange' when
-#> loading 'chooseGCM'
-#> Warning: replacing previous import 'dplyr::rename' by 'plyr::rename' when
-#> loading 'chooseGCM'
-#> Warning: replacing previous import 'dplyr::summarise' by 'plyr::summarise' when
-#> loading 'chooseGCM'
 #> The legacy packages maptools, rgdal, and rgeos, underpinning this package
 #> will retire shortly. Please refer to R-spatial evolution reports on
 #> https://r-spatial.org/r/2023/05/15/evolution4.html for details.
 #> This package is now running under evolution status 0
-#> Warning: replacing previous import 'dplyr::union' by 'raster::union' when
-#> loading 'chooseGCM'
-#> Warning: replacing previous import 'ggpubr::rotate' by 'raster::rotate' when
-#> loading 'chooseGCM'
-#> Warning: replacing previous import 'dplyr::select' by 'raster::select' when
-#> loading 'chooseGCM'
-#> Warning: replacing previous import 'dplyr::intersect' by 'raster::intersect'
-#> when loading 'chooseGCM'
-#> Warning: replacing previous import 'raster::density' by 'stats::density' when
-#> loading 'chooseGCM'
-#> Warning: replacing previous import 'raster::weighted.mean' by
-#> 'stats::weighted.mean' when loading 'chooseGCM'
-#> Warning: replacing previous import 'raster::predict' by 'stats::predict' when
-#> loading 'chooseGCM'
-#> Warning: replacing previous import 'raster::aggregate' by 'stats::aggregate'
-#> when loading 'chooseGCM'
-#> Warning: replacing previous import 'dplyr::filter' by 'stats::filter' when
-#> loading 'chooseGCM'
-#> Warning: replacing previous import 'dplyr::lag' by 'stats::lag' when loading
-#> 'chooseGCM'
-#> Warning: replacing previous import 'raster::quantile' by 'stats::quantile' when
-#> loading 'chooseGCM'
-#> Warning: replacing previous import 'raster::update' by 'stats::update' when
-#> loading 'chooseGCM'
-#> Warning: replacing previous import 'raster::tail' by 'utils::tail' when loading
-#> 'chooseGCM'
-#> Warning: replacing previous import 'raster::stack' by 'utils::stack' when
-#> loading 'chooseGCM'
-#> Warning: replacing previous import 'raster::unstack' by 'utils::unstack' when
-#> loading 'chooseGCM'
-#> Warning: replacing previous import 'raster::head' by 'utils::head' when loading
-#> 'chooseGCM'
 ```
 
 ### Downloading WorldClim 2.1 data
