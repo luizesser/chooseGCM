@@ -21,6 +21,8 @@
 #'
 #' @import raster
 #' @import dplyr
+#' @import sf
+#' @importFrom sp CRS
 #'
 #' @export
 transform_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL){
@@ -31,25 +33,33 @@ transform_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL){
                              x <- x[[var_names]]
                              # Reproject to match study_area crs.
                              if(!is.null(study_area)){
-                               if(!class(study_area)=='Extent'){
-                                 if(!as.character(crs(x))==as.character(CRS(crs(study_area)))){
-                                   x <- projectRaster(x, crs=CRS(crs(study_area)))
-                                   # Crop and mask stacks
-                                   x <- mask(crop(x, study_area),study_area)
-                                 }
-                               } else {
+                               if(any(class(study_area) %in% c("Extent"))){
                                  # Crop and mask stacks
                                  x <- crop(x, study_area)
                                }
-                             }
+                               if(any(class(study_area) %in% c("RasterLayer"))){
+                                 if(!as.character(crs(s[[1]]))==as.character(crs(study_area))){
+                                   x <- projectRaster(x, crs=crs(study_area))
+                                   # Crop and mask stacks
+                                   x <- mask(crop(x, study_area),study_area)
+                                 }
+                               }
+                               if(!any(class(study_area) %in% c("Extent", "RasterLayer"))){
+                                 if(!as.character(crs(x))==as.character(CRS(crs(study_area)))){
+                                     x <- projectRaster(x, crs=CRS(crs(study_area)))
+                                     # Crop and mask stacks
+                                     x <- mask(crop(x, study_area),study_area)
+                                 }
+                               }
+                              }
+
                              # Transform in data.frames
                              x <- x %>% stack() %>% as.data.frame()
                              return(x)},
-              USE.NAMES = T,
-              simplify = F)
+                USE.NAMES = T,
+                simplify = F)
   return(s)
   } else {
     stop('Variables names in s object do not match var_names!')
   }
 }
-
