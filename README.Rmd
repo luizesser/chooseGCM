@@ -1,17 +1,44 @@
 ---
-title: "chooseGCM Tutorial"
-author: "Luíz Fernando Esser"
-date: "`r Sys.Date()`"
-output: html_document
+output: github_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# chooseGCM
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of chooseGCM is to help researchers aiming to project Species Distribution Models and Ecological Niche Models to future scenarios by applying a selection routing to the General Circulation Models.
+
+## Installation
+
+You can install the development version of chooseGCM from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("luizesser/chooseGCM")
+```
+
+## Tutorial
+
+This is a basic tutorial which shows you how to use the functions in chooseGCM. After installing the package, we need to open it:
+
+```{r setup}
 library(chooseGCM)
 ```
 
 
-## Downloading WorldClim 2.1 data
+### Downloading WorldClim 2.1 data
 
 First, we need to use only one time period. Here we use 2090 so the difference between models is more conspicuous. In the same way we are considering the SSP585, which is the more dramatic pathway. The resolution is the lowest to be quicker. The aim here is to maintain all parameters equal, but General Circulation Models (GCMs). In this way we know that the only source of variation comes from them. Note that if you receive a timeout error you can increase timeout value by running `r options(timeout = 6000)`, where 600 is the value in seconds that will be enough to download the data.
 
@@ -22,12 +49,12 @@ gcm_names <- sort(c('ac','ip','me','mi','mp','ml'))
 ```
 
 
-## Importing and transforming data
+### Importing and transforming data
 
 Now let's import GCMs to R in a list of stacks and name the list with the names of the GCMs.
 
 ```{r import_data}
-s <- list.files('input_data/WorldClim_data_future', pattern = '.tif', full.names = T) |>
+s <- list.files('inst/input_data/WorldClim_data_future', pattern = '.tif', full.names = T) |>
   lapply(function(x){s <- raster::stack(x)
                      names(s) <- paste0('bio_',1:19) # Rename rasters
                      return(s)})
@@ -43,7 +70,7 @@ study_area <- raster::extent(c(-57, -22, -48, -33)) # you can use a shapefile he
 ```
 
 
-## Exploratory analysis
+### Exploratory analysis
 
 In chooseGCM we implemented functions to analyze GCMs attributes.
 
@@ -53,11 +80,13 @@ s_sum <- summary_gcms(s, var_names, study_area)
 s_sum
 ```
 
+
 ```{r exploratory_analysis_correlation}
 # Pearson Correlation between GCMs
 s_cor <- cor_gcms(s, var_names, study_area, method = "pearson")
 s_cor
 ```
+
 
 ```{r exploratory_analysis_distance}
 # Euclidean Distance between GCMs
@@ -65,7 +94,8 @@ s_dist <- dist_gcms(s, var_names, study_area, method = "euclidean")
 s_dist
 ```
 
-## Obtain clusters
+
+### Obtain clusters
 
 Clusters in chooseGCM are obtained through k-means, a unsupervised machine learning algorithm. k is the number of clusters, which in this case is the number of GCMs the modeller wants to use in projections.To build a distance matrix considering multiple variables to each GCM we use a flattening strategy, where values are concatenated in one unique vector to each GCM. In the process, we need to scale variables so they end up with the same measure. This matrix will be used to calculate the clusters.
 
@@ -80,6 +110,7 @@ Alternatively, one could run the analysis with raw environmental data by not set
 kmeans_gcms(s, var_names, study_area, k = 3)
 ```
 
+
 We can also obtain clusters through hierarchical clustering.
 
 ```{r hclust_gcms}
@@ -93,15 +124,18 @@ But how many clusters are good? There is metrics to understand that.
 optimize_clusters(s, var_names, study_area, method = 'wss', n = 1000)
 ```
 
+
 ```{r optimize_clusters_silhouette}
 optimize_clusters(s, var_names, study_area, method = 'silhouette', n = 1000)
 ```
+
 
 ```{r optimize_clusters_gap}
 optimize_clusters(s, var_names, study_area, method = 'gap_stat', n = 1000)
 ```
 
-## Putting everything together
+
+### Putting everything together
 
 There is the option to run each function in a separate to better understand what is happening and to better parameterize each step. However there is a wrapper to help run everything at once.
 
