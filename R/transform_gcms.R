@@ -37,11 +37,19 @@ transform_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL){
                                  # Crop and mask stacks
                                  x <- crop(x, study_area)
                                }
-                               if(any(class(study_area) %in% c("RasterLayer"))){
-                                 if(!as.character(crs(s[[1]]))==as.character(crs(study_area))){
-                                   x <- projectRaster(x, crs=crs(study_area))
+                               if(any(class(study_area) %in% c("RasterLayer", "RasterStack", "RasterBrick"))){
+                                 if(!as.character(crs(x))==as.character(crs(study_area))){
+                                   if(any(class(study_area) %in% c("RasterStack", "RasterBrick"))){
+                                     if(any(class(study_area) %in% c("RasterStack"))){
+                                       study_area <- study_area[[1]]
+                                     } else{
+                                       study_area <- study_area[[1]][[1]]
+                                     }
+                                   }
+                                   x <- stack(projectRaster(x, crs=as.character(crs(study_area))))
+                                   e <- rasterToPolygons(study_area)
                                    # Crop and mask stacks
-                                   x <- mask(crop(x, study_area),study_area)
+                                   x <- mask(stack(crop(x, e)),e)
                                  }
                                }
                                if(!any(class(study_area) %in% c("Extent", "RasterLayer"))){

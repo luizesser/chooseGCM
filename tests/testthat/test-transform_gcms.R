@@ -128,6 +128,20 @@ test_that("study_area as projected sf", {
   expect_no_error(transform_gcms(s, var_names = var_names, study_area))
 })
 
+test_that("study_area as projected sf (different projection)", {
+  bio_1 = raster(matrix(runif(1000), ncol=50))
+  bio_2 = raster(matrix(runif(1000), ncol=50))
+  bio_12 = raster(matrix(runif(1000), ncol=50))
+  ab = stack(bio_1, bio_2, bio_12)
+  crs(ab) <- 4326
+  var_names <- c('bio_1','bio_2','bio_12')
+  names(ab) <- var_names
+  s <- list(ab, ab, ab)
+  names(s) <- c('ab', 'cd', 'ef')
+  study_area = st_sf(st_sfc(st_buffer(st_point(c(0.5, 0.5)), 0.2), crs = 4689))
+  expect_no_error(transform_gcms(s, var_names = var_names, study_area))
+})
+
 test_that("study_area is a projected raster", {
   bio_1 = raster(matrix(runif(1000), ncol=50))
   bio_2 = raster(matrix(runif(1000), ncol=50))
@@ -144,6 +158,23 @@ test_that("study_area is a projected raster", {
   expect_no_error(transform_gcms(s, var_names = var_names, study_area))
 })
 
+test_that("study_area is a projected raster (different projection)", {
+  bio_1 = raster(matrix(runif(1000), ncol=50))
+  bio_2 = raster(matrix(runif(1000), ncol=50))
+  bio_12 = raster(matrix(runif(1000), ncol=50))
+  ab = stack(bio_1, bio_2, bio_12)
+  crs(ab) <- 4326
+  var_names <- c('bio_1','bio_2','bio_12')
+  names(ab) <- var_names
+  s <- list(ab, ab, ab)
+  names(s) <- c('ab', 'cd', 'ef')
+  study_area <- raster(matrix(runif(100), ncol=10))
+  crs(study_area) <- 4689
+  extent(study_area) <- c(0.4, 0.5, 0.4, 0.5)
+  expect_no_error(transform_gcms(s, var_names = var_names, study_area))
+})
+
+
 test_that("study_area is a raster not projected", {
   bio_1 = raster(matrix(runif(1000), ncol=50))
   bio_2 = raster(matrix(runif(1000), ncol=50))
@@ -156,3 +187,68 @@ test_that("study_area is a raster not projected", {
   study_area <- raster(matrix(runif(1000), ncol=50))
   expect_error(transform_gcms(s, var_names = var_names, study_area))
 })
+
+test_that("study_area is a stack not projected", {
+  bio_1 = raster(matrix(runif(1000), ncol=50))
+  bio_2 = raster(matrix(runif(1000), ncol=50))
+  bio_12 = raster(matrix(runif(1000), ncol=50))
+  ab = stack(bio_1, bio_2, bio_12)
+  var_names <- c('bio_1','bio_2','bio_12')
+  names(ab) <- var_names
+  s <- list(ab, ab, ab)
+  names(s) <- c('ab', 'cd', 'ef')
+  study_area <- stack(raster(matrix(runif(1000), ncol=50)),
+                      raster(matrix(runif(1000), ncol=50)))
+  extent(study_area) <- c(0.4, 0.5, 0.4, 0.5)
+  expect_error(transform_gcms(s, var_names = var_names, study_area))
+})
+
+test_that("study_area is a stack projected", {
+  bio_1 = raster(matrix(runif(1000), ncol=50))
+  bio_2 = raster(matrix(runif(1000), ncol=50))
+  bio_12 = raster(matrix(runif(1000), ncol=50))
+  ab = stack(bio_1, bio_2, bio_12)
+  crs(ab) <- 4326
+  var_names <- c('bio_1','bio_2','bio_12')
+  names(ab) <- var_names
+  s <- list(ab, ab, ab)
+  names(s) <- c('ab', 'cd', 'ef')
+  study_area <- stack(raster(matrix(runif(100), ncol=10)),
+                      raster(matrix(runif(100), ncol=10)))
+  crs(study_area) <- 4689
+  extent(study_area) <- c(0.4, 0.5, 0.4, 0.5)
+  expect_no_error(transform_gcms(s, var_names = var_names, study_area))
+})
+
+test_that("study_area is a brick not projected", {
+  bio_1 = raster(matrix(runif(1000), ncol=50))
+  bio_2 = raster(matrix(runif(1000), ncol=50))
+  bio_12 = raster(matrix(runif(1000), ncol=50))
+  ab = stack(bio_1, bio_2, bio_12)
+  var_names <- c('bio_1','bio_2','bio_12')
+  names(ab) <- var_names
+  s <- list(ab, ab, ab)
+  names(s) <- c('ab', 'cd', 'ef')
+  study_area <- brick(stack(raster(matrix(runif(1000), ncol=50)),
+                            raster(matrix(runif(1000), ncol=50))))
+  extent(study_area) <- c(0.4, 0.5, 0.4, 0.5)
+  expect_error(transform_gcms(s, var_names = var_names, study_area))
+})
+
+test_that("study_area is a brick projected", {
+  bio_1 = raster(matrix(runif(1000), ncol=50))
+  bio_2 = raster(matrix(runif(1000), ncol=50))
+  bio_12 = raster(matrix(runif(1000), ncol=50))
+  ab = stack(bio_1, bio_2, bio_12)
+  crs(ab) <- 4326
+  var_names <- c('bio_1','bio_2','bio_12')
+  names(ab) <- var_names
+  s <- list(ab, ab, ab)
+  names(s) <- c('ab', 'cd', 'ef')
+  study_area <- brick(stack(raster(matrix(runif(1000), ncol=50)),
+                            raster(matrix(runif(1000), ncol=50))))
+  crs(study_area) <- 4689
+  extent(study_area) <- c(0.4, 0.5, 0.4, 0.5)
+  expect_no_error(transform_gcms(s, var_names = var_names, study_area))
+})
+
