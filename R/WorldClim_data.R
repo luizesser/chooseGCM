@@ -64,17 +64,37 @@
 
 WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030', gcm = 'mi', ssp = '126', resolution = 10){
 
-  assertChoice(period, c('current', 'future'))
-  assertChoice(variable, c('bioc', 'tmax','tmin','prec'))
-  assertChoice(year, c('2030', '2050', '2070', '2090'))
-  assertChoice(gcm, c('ac', 'ae', 'bc', 'ca', 'cc', 'ce','cn', 'ch', 'cr', 'ec','ev', 'fi',
-                      'gf', 'gg','gh', 'hg', 'in', 'ic', 'ip', 'me', 'mi', 'mp','ml',
-                      'mr', 'uk'))
-  assertChoice(ssp, c('126', '245', '370', '585'))
-  assertChoice(resolution, c(10, 5, 2.5, 30))
+  if(!all(period %in% c('current', 'future'))){
+    stop("Assertion on 'period' failed: Must be element of set {'current', 'future'}.")
+  }
+  if(!all(variable %in% c('bioc', 'tmax','tmin','prec'))){
+    stop("Assertion on 'variable' failed: Must be element of set {'bioc', 'tmax','tmin','prec'}.")
+  }
+  if(!all(year %in% c('2030', '2050', '2070', '2090'))){
+    stop("Assertion on 'year' failed: Must be element of set {'2030', '2050', '2070', '2090'}.")
+  }
+  if(!all(gcm %in% c('ac', 'ae', 'bc', 'ca', 'cc', 'ce','cn', 'ch', 'cr', 'ec','ev', 'fi',
+                          'gf', 'gg','gh', 'hg', 'in', 'ic', 'ip', 'me', 'mi', 'mp','ml',
+                          'mr', 'uk'))){
+    stop("Assertion on 'gcm' failed: Must be element of set {'ac','ae','bc','ca','cc','ce','cn','ch','cr','ec','ev','fi','gf','gg','gh','hg','in','ic','ip','me','mi','mp','ml','mr','uk'}.")
+  }
+  if(!all(ssp %in% c('126', '245', '370', '585'))){
+    stop("Assertion on 'ssp' failed: Must be element of set {'126', '245', '370', '585'}.")
+  }
+  if(!all(resolution %in% c(10, 5, 2.5, 30))){
+    stop("Assertion on 'resolution' failed: Must be element of set {10, 5, 2.5, 30}.")
+  }
+
+  assertCharacter(period)
+  assertCharacter(variable)
+  assertCharacter(year)
+  assertCharacter(gcm)
+  assertCharacter(ssp)
+  assertNumeric(resolution)
 
   res = ifelse(resolution==30,'s','m')
 
+  if(!dir.exists('input_data/')){ dir.create('input_data/') }
   if(period=='current'){
     if(!dir.exists('input_data/WorldClim_data_current')){ dir.create('input_data/WorldClim_data_current') }
     if(length(list.files("input_data/WorldClim_data_current",pattern='.tif$', full.names=T))==0){

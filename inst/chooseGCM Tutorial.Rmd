@@ -18,7 +18,7 @@ First, we need to use only one time period. Here we use 2090 so the difference b
 ```{r WorldClim_data}
 gcm_names <- sort(c('ac','ip','me','mi','mp','ml'))
 
-# WorldClim_data(period = 'future', variable = 'bioc', year = '2090', gcm = gcm_names, ssp = '585', resolution = 10)
+WorldClim_data(period = 'future', variable = 'bioc', year = '2090', gcm = gcm_names, ssp = '585', resolution = 10)
 ```
 
 
