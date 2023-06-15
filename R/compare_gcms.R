@@ -1,6 +1,6 @@
 #' Compare GCMS
 #'
-#' This function compares future climate projections from multiple Global Circulation Models (GCMs) based on their similarity in terms of bioclimatic variables. The function clusters the GCMs using k-means clustering and hierarchical clustering, calculates the Euclidean distance matrix, and generates plots for the clusters and the correlation matrix.
+#' This function compares future climate projections from multiple Global Circulation Models (GCMs) based on their similarity in terms of bioclimatic variables. The function clusters the GCMs using k-means clustering and hierarchical clustering, calculates the Euclidean distance matrix, and generates plots for the clusters and the distance matrix.
 #'
 #' @param s A list of stacks of General Circulation Models.
 #' @param var_names Character. The names of the bioclimatic variables to compare.
