@@ -19,7 +19,7 @@ compare_gcms(s, var_names = c("bio_1", "bio_12"), study_area = NULL, k = 3)
 A list with two items: suggested_gcms (the names of the GCMs suggested for further analysis) and statistics_gcms (a grid of plots).
 }
 \description{
-This function compares future climate projections from multiple Global Circulation Models (GCMs) based on their similarity in terms of bioclimatic variables. The function clusters the GCMs using k-means clustering and hierarchical clustering, calculates the Pearson correlation matrix, and generates plots for the clusters and the correlation matrix.
+This function compares future climate projections from multiple Global Circulation Models (GCMs) based on their similarity in terms of bioclimatic variables. The function clusters the GCMs using k-means clustering and hierarchical clustering, calculates the Euclidean distance matrix, and generates plots for the clusters and the distance matrix.
 }
 \examples{
 # compare GCMS

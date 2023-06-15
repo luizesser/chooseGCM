@@ -19,8 +19,9 @@
 #' var_names <- c("bio_1", "bio_12")
 #' t <- transform_gcms(s, var_names, study_area)
 #'
-#' @import raster
+#' @import checkmate
 #' @import dplyr
+#' @import raster
 #' @import sf
 #' @importFrom sp CRS
 #'

@@ -58,7 +58,7 @@
 #' WorldClim_data('bioc',2070,'mi',585,10)}
 #'
 #' @import checkmate
-#' @import httr
+#' @importFrom httr GET write_disk
 #'
 #' @export
 
