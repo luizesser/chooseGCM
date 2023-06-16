@@ -62,6 +62,8 @@ kmeans_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3, 
     # Run K-means
     cl <- kmeans(dist_matrix, k, nstart=1000)
 
+    gcms <- apply(cl$centers, 1, function(x){which.min(x) %>% names()})
+
     # plot
     kmeans_plot <- fviz_cluster(cl,
                                 data = dist_matrix,
@@ -73,7 +75,8 @@ kmeans_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3, 
                                 repel = TRUE)
   }
 
-  return(kmeans_plot)
+  return(list(suggested_gcms=gcms,
+              kmeans_plot=kmeans_plot))
 }
 
 

@@ -1,13 +1,13 @@
 test_that("import_gcms standard", {
-  expect_no_error(import_gcms(path='input_data/WorldClim_data_future', extension=".tif", recursive=TRUE, gcm_names=NULL))
+  expect_no_error(import_gcms(path='inst/input_data/WorldClim_data_future', extension=".tif", recursive=TRUE, gcm_names=NULL))
 })
 
 test_that("import_gcms less gcm_names", {
-  expect_error(import_gcms(path='input_data/WorldClim_data_future', extension=".tif", recursive=TRUE, gcm_names=c('a')))
+  expect_error(import_gcms(path='inst/input_data/WorldClim_data_future', extension=".tif", recursive=TRUE, gcm_names=c('a')))
 })
 
 test_that("import_gcms more gcm_names", {
-  expect_error(import_gcms(path='input_data/WorldClim_data_future', extension=".tif", recursive=TRUE, gcm_names=rep('a', 100)))
+  expect_error(import_gcms(path='inst/input_data/WorldClim_data_future', extension=".tif", recursive=TRUE, gcm_names=rep('a', 100)))
 })
 
 test_that("import_gcms wrong path", {
@@ -19,15 +19,15 @@ test_that("import_gcms wrong path (numeric)", {
 })
 
 test_that("import_gcms wrong extension", {
-  expect_error(import_gcms(path='input_data/WorldClim_data_future', extension=".jpeg", recursive=TRUE, gcm_names=NULL))
+  expect_error(import_gcms(path='inst/input_data/WorldClim_data_future', extension=".jpeg", recursive=TRUE, gcm_names=NULL))
 })
 
 test_that("import_gcms wrong extension (numeric)", {
-  expect_error(import_gcms(path='input_data/WorldClim_data_future', extension=4, recursive=TRUE, gcm_names=NULL))
+  expect_error(import_gcms(path='inst/input_data/WorldClim_data_future', extension=4, recursive=TRUE, gcm_names=NULL))
 })
 
 test_that("import_gcms wrong recursive (character)", {
-  expect_error(import_gcms(path='input_data/WorldClim_data_future', extension=".tif", recursive="A", gcm_names=NULL))
+  expect_error(import_gcms(path='inst/input_data/WorldClim_data_future', extension=".tif", recursive="A", gcm_names=NULL))
 })
 
 

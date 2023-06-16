@@ -21,13 +21,13 @@
 #' study_area <- extent(c(-57, -22, -48, -33))
 #' var_names <- c("bio_1", "bio_12")
 #'
-#' optimize_clusters(flattened_gcms)
+#' optk_gcms(flattened_gcms)
 #'
 #' @import checkmate
 #' @importFrom factoextra fviz_nbclust hcut
 #'
 #' @export
-optimize_clusters <- function(s, var_names, study_area=NULL, method = 'wss', n = 1000) {
+optk_gcms <- function(s, var_names, study_area=NULL, method = 'wss', n = 1000) {
 
   assertList(s, types='RasterStack')
   assertCharacter(var_names, unique=T, any.missing=F)
