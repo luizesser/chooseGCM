@@ -20,7 +20,7 @@
 #' var_names <- c("bio_1", "bio_12")
 #' t <- transform_gcms(s, var_names, study_area)
 #'
-#' @import chackmate
+#' @import checkmate
 #' @import raster
 #'
 #' @export
