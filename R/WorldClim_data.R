@@ -75,8 +75,8 @@ WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030',
   }
   if(!all(gcm %in% c('ac', 'ae', 'bc', 'ca', 'cc', 'ce','cn', 'ch', 'cr', 'ec','ev', 'fi',
                           'gf', 'gg','gh', 'hg', 'in', 'ic', 'ip', 'me', 'mi', 'mp','ml',
-                          'mr', 'uk'))){
-    stop("Assertion on 'gcm' failed: Must be element of set {'ac','ae','bc','ca','cc','ce','cn','ch','cr','ec','ev','fi','gf','gg','gh','hg','in','ic','ip','me','mi','mp','ml','mr','uk'}.")
+                          'mr', 'uk', 'all'))){
+    stop("Assertion on 'gcm' failed: Must be element of set {'ac','ae','bc','ca','cc','ce','cn','ch','cr','ec','ev','fi','gf','gg','gh','hg','in','ic','ip','me','mi','mp','ml','mr','uk', 'all'}.")
   }
   if(!all(ssp %in% c('126', '245', '370', '585'))){
     stop("Assertion on 'ssp' failed: Must be element of set {'126', '245', '370', '585'}.")
@@ -121,6 +121,9 @@ WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030',
               'GISS-E2-1-H','HadGEM3-GC31-LL','INM-CM4-8','INM-CM5-0',
               'IPSL-CM6A-LR','MIROC-ES2L','MIROC6','MPI-ESM1-2-HR',
               'MPI-ESM1-2-LR','MRI-ESM2-0','UKESM1-0-LL')
+    if(gcm=='all'){
+      gcm <- gcm2
+    }
     gcm3 <- gcm2[match(gcm,all_gcm)]
     all_year <- c('2030', '2050', '2070', '2090')
     year2 <- c('2021-2040', '2041-2060', '2061-2080', '2081-2100')
@@ -130,12 +133,12 @@ WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030',
         for (y in 1:length(year)) {
           if(!file.exists(paste0('input_data/WorldClim_data_future/',gcm[g], '_ssp', ssp[s],'_', resolution, '_', year[y],'.tif'))){
             print(paste0(gcm[g], '_ssp', ssp[s], '_', resolution, '_', year[y]))
-            GET(url = paste0('https://geodata.ucdavis.edu/cmip6/',resolution,
+            try(GET(url = paste0('https://geodata.ucdavis.edu/cmip6/',resolution,
                              res,'/',gcm3[g],'/ssp',ssp[s],'/wc2.1_',resolution,
                              res,'_',variable,'_',gcm3[g],'_ssp',ssp[s],'_',
                              year3[y],'.tif'),
-                write_disk(paste0('input_data/WorldClim_data_future/',gcm[g], '_ssp', ssp[s],
-                                  '_', resolution, '_', year[y],'.tif')))
+                    write_disk(paste0('input_data/WorldClim_data_future/',gcm[g], '_ssp', ssp[s],
+                                  '_', resolution, '_', year[y],'.tif'))))
           } else {
             print(paste0('The file for future scenario (',
                          paste0('input_data/WorldClim_data_future/',gcm[g], '_ssp', ssp[s],'_', resolution,res, '_', year[y],'.tif'),
