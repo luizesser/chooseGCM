@@ -8,7 +8,7 @@
 
 The goal of chooseGCM is to help researchers aiming to project Species
 Distribution Models and Ecological Niche Models to future scenarios by
-applying a selection routing to the General Circulation Models.
+applying a selection routine to the General Circulation Models.
 
 ## Installation
 
@@ -48,7 +48,13 @@ data.
 ``` r
 gcm_names <- sort(c('ac','ip','me','mi','mp','ml'))
 
-# WorldClim_data(period = 'future', variable = 'bioc', year = '2090', gcm = gcm_names, ssp = '585', resolution = 10)
+WorldClim_data(period = 'future', variable = 'bioc', year = '2090', gcm = gcm_names, ssp = '585', resolution = 10)
+#> [1] "The file for future scenario (input_data/WorldClim_data_future/ac_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_future/ip_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_future/me_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_future/mi_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_future/ml_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_future/mp_ssp585_10m_2090.tif) is already downloaded."
 ```
 
 ### Importing and transforming data
@@ -57,11 +63,7 @@ Now let’s import GCMs to R in a list of stacks and name the list with
 the names of the GCMs.
 
 ``` r
-s <- list.files('inst/input_data/WorldClim_data_future', pattern = '.tif', full.names = T) |>
-  lapply(function(x){s <- raster::stack(x)
-                     names(s) <- paste0('bio_',1:19) # Rename rasters
-                     return(s)})
-names(s) <- gcm_names
+s <- import_gcms(gcm_names=gcm_names)
 ```
 
 In each function, data will be transformed. To do that you will always
@@ -178,6 +180,11 @@ clusters.
 
 ``` r
 kmeans_gcms(s, var_names, study_area, k = 3,  method = "euclidean")
+#> $suggested_gcms
+#>    1    2    3 
+#> "ac" "ml" "me" 
+#> 
+#> $kmeans_plot
 ```
 
 <img src="man/figures/README-kmeans_gcms-1.png" width="100%" />
@@ -187,6 +194,11 @@ not setting any value to method.
 
 ``` r
 kmeans_gcms(s, var_names, study_area, k = 3)
+#> $suggested_gcms
+#>       1       2       3 
+#> "bio_1" "bio_1" "bio_1" 
+#> 
+#> $kmeans_plot
 ```
 
 <img src="man/figures/README-kmeans_gcms_raw-1.png" width="100%" />
@@ -209,22 +221,22 @@ hclust_gcms(s, var_names, study_area, k = 3, n = 1000)
 But how many clusters are good? There is metrics to understand that.
 
 ``` r
-optimize_clusters(s, var_names, study_area, method = 'wss', n = 1000)
+optk_gcms(s, var_names, study_area, method = 'wss', n = 1000)
 ```
 
-<img src="man/figures/README-optimize_clusters_wss-1.png" width="100%" />
+<img src="man/figures/README-optk_gcms_wss-1.png" width="100%" />
 
 ``` r
-optimize_clusters(s, var_names, study_area, method = 'silhouette', n = 1000)
+optk_gcms(s, var_names, study_area, method = 'silhouette', n = 1000)
 ```
 
-<img src="man/figures/README-optimize_clusters_silhouette-1.png" width="100%" />
+<img src="man/figures/README-optk_gcms_silhouette-1.png" width="100%" />
 
 ``` r
-optimize_clusters(s, var_names, study_area, method = 'gap_stat', n = 1000)
+optk_gcms(s, var_names, study_area, method = 'gap_stat', n = 1000)
 ```
 
-<img src="man/figures/README-optimize_clusters_gap-1.png" width="100%" />
+<img src="man/figures/README-optk_gcms_gap-1.png" width="100%" />
 
 ### Putting everything together
 

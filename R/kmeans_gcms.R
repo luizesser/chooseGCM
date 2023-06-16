@@ -41,6 +41,8 @@ kmeans_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3, 
     # Run K-means
     cl <- kmeans(t(flatten_vars), k, nstart=1000)
 
+    gcms <- apply(cl$centers, 1, function(x){which.min(x) %>% names()})
+
     # plot
     kmeans_plot <- fviz_cluster(cl,
                                 data = t(flatten_vars),

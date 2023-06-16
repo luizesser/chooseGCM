@@ -22,6 +22,7 @@
 #'
 #' @import checkmate
 #' @import raster
+#' @importFrom here here
 #'
 #' @export
 import_gcms <- function(path="input_data/WorldClim_data_future", extension=".tif", recursive=TRUE, gcm_names=NULL){
@@ -29,6 +30,8 @@ import_gcms <- function(path="input_data/WorldClim_data_future", extension=".tif
   assertCharacter(extension, len=1)
   assertLogical(recursive)
   assertCharacter(gcm_names, null.ok = T)
+
+  path <- here(path)
 
   l <- list.files(path, pattern = extension, full.names = T, rec=recursive)
   if(length(l)==0){
