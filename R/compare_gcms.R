@@ -21,10 +21,10 @@
 #' k = 3)
 #'
 #' @import checkmate
-#' @import cowplot
+# @import cowplot
 #' @import ggplot2
 #' @import ggpubr
-#' @import plyr
+# @import plyr
 #' @import stats
 #' @import utils
 #' @importFrom factoextra fviz_cluster fviz_nbclust fviz_dend
