@@ -58,7 +58,7 @@
 #' WorldClim_data('bioc',2070,'mi',585,10)}
 #'
 #' @import checkmate
-#' @importFrom httr GET write_disk
+#' @importFrom httr
 #'
 #' @export
 
@@ -122,7 +122,7 @@ WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030',
               'IPSL-CM6A-LR','MIROC-ES2L','MIROC6','MPI-ESM1-2-HR',
               'MPI-ESM1-2-LR','MRI-ESM2-0','UKESM1-0-LL')
     if(gcm=='all'){
-      gcm <- gcm2
+      gcm <- all_gcm
     }
     gcm3 <- gcm2[match(gcm,all_gcm)]
     all_year <- c('2030', '2050', '2070', '2090')
@@ -133,12 +133,18 @@ WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030',
         for (y in 1:length(year)) {
           if(!file.exists(paste0('input_data/WorldClim_data_future/',gcm[g], '_ssp', ssp[s],'_', resolution, '_', year[y],'.tif'))){
             print(paste0(gcm[g], '_ssp', ssp[s], '_', resolution, '_', year[y]))
-            try(GET(url = paste0('https://geodata.ucdavis.edu/cmip6/',resolution,
+            if(!http_error(paste0('https://geodata.ucdavis.edu/cmip6/',resolution,
+                                  res,'/',gcm3[g],'/ssp',ssp[s],'/wc2.1_',resolution,
+                                  res,'_',variable,'_',gcm3[g],'_ssp',ssp[s],'_',
+                                  year3[y],'.tif'))){
+              try(GET(url = paste0('https://geodata.ucdavis.edu/cmip6/',resolution,
                              res,'/',gcm3[g],'/ssp',ssp[s],'/wc2.1_',resolution,
                              res,'_',variable,'_',gcm3[g],'_ssp',ssp[s],'_',
                              year3[y],'.tif'),
-                    write_disk(paste0('input_data/WorldClim_data_future/',gcm[g], '_ssp', ssp[s],
+                      write_disk(paste0('input_data/WorldClim_data_future/',gcm[g], '_ssp', ssp[s],
                                   '_', resolution, '_', year[y],'.tif'))))
+            }
+
           } else {
             print(paste0('The file for future scenario (',
                          paste0('input_data/WorldClim_data_future/',gcm[g], '_ssp', ssp[s],'_', resolution,res, '_', year[y],'.tif'),
