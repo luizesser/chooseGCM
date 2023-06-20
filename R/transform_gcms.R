@@ -54,9 +54,15 @@ transform_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL){
                                  }
                                }
                                if(!any(class(study_area) %in% c("Extent", "RasterLayer"))){
-                                 if(!as.character(crs(x))==as.character(CRS(crs(study_area)))){
-                                     x <- projectRaster(x, crs=CRS(crs(study_area)))
+
+                                 if(!as.character(crs(x))==as.character(CRS(crs(study_area))) |
+                                    is.na(as.character(crs(x))==as.character(CRS(crs(study_area))))){
+                                     if(!crs(study_area) == ""){
+                                       x <- projectRaster(x, crs=CRS(crs(study_area)))
+                                     }
                                      # Crop and mask stacks
+                                     x <- mask(crop(x, study_area),study_area)
+                                 } else {
                                      x <- mask(crop(x, study_area),study_area)
                                  }
                                }
