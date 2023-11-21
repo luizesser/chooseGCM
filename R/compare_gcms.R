@@ -3,7 +3,7 @@
 #' This function compares future climate projections from multiple Global Circulation Models (GCMs) based on their similarity in terms of bioclimatic variables. The function clusters the GCMs using k-means clustering and hierarchical clustering, calculates the Euclidean distance matrix, and generates plots for the clusters and the distance matrix.
 #'
 #' @param s A list of stacks of General Circulation Models.
-#' @param var_names Character. The names of the bioclimatic variables to compare.
+#' @param var_names Character. A vector with names of the bioclimatic variables to compare OR 'all'.
 #' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
 #' @param k Numeric. The number of clusters to use for k-means clustering.
 #'
@@ -21,10 +21,8 @@
 #' k = 3)
 #'
 #' @import checkmate
-# @import cowplot
 #' @import ggplot2
 #' @import ggpubr
-# @import plyr
 #' @import stats
 #' @import utils
 #' @importFrom factoextra fviz_cluster fviz_nbclust fviz_dend
@@ -38,6 +36,10 @@ compare_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3)
   assertList(s, types='RasterStack')
   assertCharacter(var_names, unique=T, any.missing=F)
   assertCount(k, positive = T)
+
+  if('all' %in% var_names){
+    var_names <- names(s[[1]])
+  }
 
   # Transform stacks
   x <- transform_gcms(s, var_names, study_area=study_area)
@@ -122,10 +124,6 @@ compare_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3)
                                rel_widths = 4)
   gcms <- apply(cl$centers, 1, function(x){which.min(x) %>% names()})
 
-
   return(list(suggested_gcms=gcms,
               statistics_gcms=statistics_gcms))
 }
-
-
-

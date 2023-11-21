@@ -48,6 +48,8 @@ WorldClim_data(period = 'current', variable = 'bioc', year = '2030', gcm = 'mi',
 You can use a vector to provide more than one entry.}
 
 \item{resolution}{You can select one resolution from the following alternatives: 10, 5, 2.5 OR 30.}
+
+\item{path}{Directory path to save downloads.}
 }
 \description{
 This function allows to download data from WorldClim v.2.1 (https://www.worldclim.org/data/index.html) considering multiple GCMs, time periods and SSPs.

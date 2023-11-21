@@ -3,7 +3,7 @@
 #' This function summarizes GCM data by calculating several statistics for each variable
 #'
 #' @param s A list of stacks of General Circulation Models.
-#' @param var_names Character. The names of the bioclimatic variables to compare.
+#' @param var_names Character. A vector with names of the bioclimatic variables to compare OR 'all'.
 #' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
 #'
 #' @return a data frame with the summary statistics for each variable
@@ -28,6 +28,10 @@
 summary_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL){
   assertList(s, types='RasterStack')
   assertCharacter(var_names, unique=T, any.missing=F)
+
+  if('all' %in% var_names){
+    var_names <- names(s[[1]])
+  }
 
   s2 <- transform_gcms(s, var_names, study_area)
   m <- sapply(s2, function(y){

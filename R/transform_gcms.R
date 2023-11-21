@@ -3,7 +3,7 @@
 #' This function transforms a list of stacks of GCMs by subsetting it to only include the variable names specified in \code{var_names}, reprojecting it to match the CRS of \code{study_area}, cropping and masking it to \code{study_area}, and returning a list of data frames.
 #'
 #' @param s A list of stacks of General Circulation Models.
-#' @param var_names Character. The names of the bioclimatic variables to compare.
+#' @param var_names Character. A vector with names of the bioclimatic variables to compare OR 'all'.
 #' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
 #'
 #' @return A list of data frames, with each element of the list corresponding to a GCM in the input list.
@@ -29,6 +29,11 @@
 transform_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL){
   assertList(s, types='RasterStack')
   assertCharacter(var_names, unique=T, any.missing=F)
+
+  if('all' %in% var_names){
+    var_names <- names(s[[1]])
+  }
+
   if(var_names %in% names(s[[1]]) %>% all()){
     s <- sapply(s, function(x){# Subset stacks to keep only var_names
                              x <- x[[var_names]]

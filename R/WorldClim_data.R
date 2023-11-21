@@ -41,6 +41,7 @@
 #' @param ssp SSPs for future data. Possible entries are: '126', '245', '370' and/or '585'.
 #' You can use a vector to provide more than one entry.
 #' @param resolution You can select one resolution from the following alternatives: 10, 5, 2.5 OR 30.
+#' @param path Directory path to save downloads.
 #'
 #' @details This function will create a folder entitled 'WorldClim_data'. All the data downloaded will be stored in this folder. Note that, despite being possible to retrieve a lot of data at once, it is not recommended to do so, since the data is very heavy.
 #'
@@ -62,10 +63,10 @@
 #'
 #' @export
 
-WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030', gcm = 'mi', ssp = '126', resolution = 10){
+WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030', gcm = 'mi', ssp = '126', resolution = 10, path=NULL){
 
-  if(!all(period %in% c('current', 'future'))){
-    stop("Assertion on 'period' failed: Must be element of set {'current', 'future'}.")
+  if(!all(period %in% c('current', 'future')) | !length(period)==1){
+    stop("Assertion on 'period' failed: Must be one element of set {'current', 'future'}.")
   }
   if(!all(variable %in% c('bioc', 'tmax','tmin','prec'))){
     stop("Assertion on 'variable' failed: Must be element of set {'bioc', 'tmax','tmin','prec'}.")
@@ -91,27 +92,29 @@ WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030',
   assertCharacter(gcm)
   assertCharacter(ssp)
   assertNumeric(resolution)
+  assertCharacter(path, null.ok = TRUE, len=1)
 
   res = ifelse(resolution==30,'s','m')
 
   if(!dir.exists('input_data/')){ dir.create('input_data/') }
   if(period=='current'){
-    if(!dir.exists('input_data/WorldClim_data_current')){ dir.create('input_data/WorldClim_data_current') }
-    if(length(list.files("input_data/WorldClim_data_current",pattern='.tif$', full.names=T))==0){
+    if(is.null(path)){path <- 'input_data/WorldClim_data_current'}
+    if(!dir.exists(path)){ dir.create(path) }
+    if(length(list.files(path,pattern='.tif$', full.names=T))==0){
       print(paste0('current_',resolution,res))
       GET(url = paste0('https://geodata.ucdavis.edu/climate/worldclim/2_1/base/wc2.1_',
                        resolution,
                        res,'_bio.zip'),
-          write_disk(paste0('input_data/current_', resolution, res,'.zip')))
-      unzip(zipfile = paste0('input_data/current_', resolution, res,'.zip'),
-            exdir = paste0('input_data/WorldClim_data_current'))
+          write_disk(paste0(path,'/current_', resolution, "_",res,'.zip')))
+      unzip(zipfile = paste0(path,'/current_', resolution, "_",res,'.zip'),
+            exdir = paste0(path))
     } else {
       print(paste0('The file for current scenario is already downloaded.'))
     }
   }
 
   if(period=='future'){
-    if(!dir.exists('input_data/WorldClim_data_future')){ dir.create('input_data/WorldClim_data_future') }
+    if(is.null(path)){path <- 'input_data/WorldClim_data_future'}
     all_gcm <- c('ac', 'ae', 'bc', 'ca', 'cc', 'ce','cn', 'ch', 'cr', 'ec','ev', 'fi',
                  'gf', 'gg','gh', 'hg', 'in', 'ic', 'ip', 'me', 'mi', 'mp','ml',
                  'mr', 'uk')
@@ -123,7 +126,9 @@ WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030',
               'MPI-ESM1-2-LR','MRI-ESM2-0','UKESM1-0-LL')
     if(gcm=='all'){
       gcm <- all_gcm
+      path <- 'input_data/WorldClim_data_gcms'
     }
+    if(!dir.exists(path)){ dir.create(path) }
     gcm3 <- gcm2[match(gcm,all_gcm)]
     all_year <- c('2030', '2050', '2070', '2090')
     year2 <- c('2021-2040', '2041-2060', '2061-2080', '2081-2100')
@@ -131,7 +136,7 @@ WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030',
     for (g in 1:length(gcm)) {
       for (s in 1:length(ssp)) {
         for (y in 1:length(year)) {
-          if(!file.exists(paste0('input_data/WorldClim_data_future/',gcm[g], '_ssp', ssp[s],'_', resolution, '_', year[y],'.tif'))){
+          if(!file.exists(paste0(path,'/',gcm[g], '_ssp', ssp[s],'_', resolution, '_', year[y],'.tif'))){
             print(paste0(gcm[g], '_ssp', ssp[s], '_', resolution, '_', year[y]))
             if(!http_error(paste0('https://geodata.ucdavis.edu/cmip6/',resolution,
                                   res,'/',gcm3[g],'/ssp',ssp[s],'/wc2.1_',resolution,
@@ -141,13 +146,13 @@ WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030',
                              res,'/',gcm3[g],'/ssp',ssp[s],'/wc2.1_',resolution,
                              res,'_',variable,'_',gcm3[g],'_ssp',ssp[s],'_',
                              year3[y],'.tif'),
-                      write_disk(paste0('input_data/WorldClim_data_future/',gcm[g], '_ssp', ssp[s],
+                      write_disk(paste0(path,'/',gcm[g], '_ssp', ssp[s],
                                   '_', resolution, '_', year[y],'.tif'))))
             }
 
           } else {
             print(paste0('The file for future scenario (',
-                         paste0('input_data/WorldClim_data_future/',gcm[g], '_ssp', ssp[s],'_', resolution,res, '_', year[y],'.tif'),
+                         paste0(path,'/',gcm[g], '_ssp', ssp[s],'_', resolution,res, '_', year[y],'.tif'),
                          ') is already downloaded.'))
           }
         }

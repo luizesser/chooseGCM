@@ -25,7 +25,7 @@
 #' @importFrom here here
 #'
 #' @export
-import_gcms <- function(path="input_data/WorldClim_data_future", extension=".tif", recursive=TRUE, gcm_names=NULL){
+import_gcms <- function(path="input_data/WorldClim_data_gcms", extension=".tif", recursive=TRUE, gcm_names=NULL){
   assertCharacter(path, len=1)
   assertCharacter(extension, len=1)
   assertLogical(recursive)
@@ -46,5 +46,4 @@ import_gcms <- function(path="input_data/WorldClim_data_future", extension=".tif
   names(s) <- sort(gcm_names)
   return(s)
 }
-
 

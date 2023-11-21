@@ -1,7 +1,7 @@
 #' Compute and plot correlation matrix for a set of General Circulation Models.
 #'
 #' @param s A list of stacks of General Circulation Models.
-#' @param var_names Character. The names of the bioclimatic variables to compare.
+#' @param var_names Character. A vector with names of the bioclimatic variables to compare OR 'all'.
 #' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
 #' @param method The correlation method to use. Default is "pearson". Possible values are "pearson", "kendall" or "spearman".
 #'
@@ -29,6 +29,10 @@ cor_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, method =
   assertList(s, types='RasterStack')
   assertCharacter(var_names, unique=T, any.missing=F)
   assertChoice(method, c("pearson", "kendall", "spearman"))
+
+  if('all' %in% var_names){
+    var_names <- names(s[[1]])
+  }
 
   x <- transform_gcms(s, var_names, study_area)
   x <- flatten_gcms(x)

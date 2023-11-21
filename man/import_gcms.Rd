@@ -5,7 +5,7 @@
 \title{Import GCM data to R}
 \usage{
 import_gcms(
-  path = "input_data/WorldClim_data_future",
+  path = "input_data/WorldClim_data_gcms",
   extension = ".tif",
   recursive = TRUE,
   gcm_names = NULL
