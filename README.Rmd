@@ -25,7 +25,7 @@ The goal of chooseGCM is to help researchers aiming to project Species Distribut
 
 You can install the development version of chooseGCM from [GitHub](https://github.com/) with:
 
-```{r}
+```{r, eval=F}
 install.packages("devtools")
 devtools::install_github("luizesser/chooseGCM")
 ```
@@ -34,75 +34,40 @@ devtools::install_github("luizesser/chooseGCM")
 
 This is a basic tutorial which shows you how to use the functions in chooseGCM. After installing the package, we need to open it:
 
-```{r setup}
+```{r}
 library(chooseGCM)
 ```
 
 ### Downloading WorldClim 2.1 data
 
-To assess the best GCMs for our study, we need first to perform the variables selection. As usual, variable selection routines are made with present data, thus we need to download the current scenarios. Afterwards, to run chooseGCM routine, we need to use only one time period. Here we use 2090 so the difference between models is more conspicuous. Following the same logic, we are considering the SSP/5-8.5, which is the more dramatic pathway included in our study. The resolution is the lowest to be quicker. The aim here is to maintain all parameters equal, but General Circulation Models (GCMs). In this way we know that the only source of variation comes from them. Note that if you receive a timeout error you can increase timeout value by running `options(timeout = 6000)`, where 600 is the value in seconds that will be enough to download the data.
+First, we need to use only one time period. Here we use 2090 so the difference between models is more conspicuous. In the same way we are considering the SSP585, which is the more dramatic pathway. The resolution is the lowest to be quicker. The aim here is to maintain all parameters equal, but General Circulation Models (GCMs). In this way we know that the only source of variation comes from them. Note that if you receive a timeout error you can increase timeout value by running , where 600 is the value in seconds that will be enough to download the data.
 
-```{r WorldClim_data}
-WorldClim_data(period='current', variable = 'bioc', resolution = 10)
+```{r}
 WorldClim_data(period = 'future', variable = 'bioc', year = '2090', gcm = 'all', ssp = '585', resolution = 10)
-```
-
-### Variable Selection
-
-The outputs from chooseGCM are dependent not just from study area, but also variables used in models. Thus, the first thing we need to do is import current data and perform a variables selection routine. Here we will use the package usdm to calculate a VIF routine.
-
-```{r import_current_data}
-# Open packages
-library(raster)
-library(stars)
-library(usdm)
-
-# Import Data
-current <- stack(list.files('input_data/WorldClim_data_current', pattern='.tif', full.names = T))
-study_area <- st_read('input_data/PR_UF_2022.shp')
-
-# Crop and mask current data
-current <- mask(crop(current,study_area),study_area)
-plot(current[[1]])
-```
-
-```{r}
-# Perform VIF analysis
-vifcor(current, th=0.5)
-```
-
-VIF routine returned three variables that together have less than 0.5 of correlation between them for the Paraná State in Brazil: Bio7, Bio9 and Bio13.
-
-In this file we will also obtain GCMs for the Amazon river basin:
-
-```{r}
-# Import Data
-current <- stack(list.files('input_data/WorldClim_data_current', pattern='.tif', full.names = T))
-study_area <- shapefile('input_data/Amazon_grid.shp')
-
-# Crop and mask current data
-current <- mask(crop(current,study_area),study_area)
-plot(current[[1]])
 ```
 
 ### Importing and transforming data
 
 Now let's import GCMs to R in a list of stacks and name the list with the names of the GCMs.
 
-```{r import_gcms_data}
+```{r}
 s <- import_gcms()
 names(s) <- gsub("_ssp585_10_2090","",names(s))
 ```
 
-In the following functions we will always need to provide at least: (1) the list of GCMs, (2) the selected variables we want to use in analysis and (3) the shapefile of the study area. You don't need to mask and subset your GCMs data, once the functions will perform this task internally for you. You only need to do that in your variable selection routine if you want.
+In each function, data will be transformed. To do that you will always need to provide at least: (1) the list of stacks, (2) the variables you want to use in analysis and (3) the shapefile of your study area. You don't need to mask and subset your data, once the functions will perform this task internally for you. We will analyze data through this file in two ways: the straightforward and the deep-dive approach. In the fist, we will simply go directly to a wrapper provided by the package, while in the second, we will use Paraná river basin data to search for the optimal GCMs.
 
-We will analyze data here in two ways: the deep-dive and the straightforward approach. In the fist, we will use Amazon river basin data to search for the optimal GCMs, while in the second we will simply go directly to a wrapper provided by the package.
-
-```{r transform_gcms}
-var_names1 <- c('bio_7', 'bio_9', 'bio_13')
-var_names2 <- 'all'
-study_area_amazon <- sf::st_read('input_data/Amazon_grid.shp')
+```{r}
+var_names <- c('bio_1', 'bio_12')
 study_area_parana <- sf::st_read('input_data/PR_UF_2022.shp')
+```
+
+### Straigthforward Approach
+
+There is the option to run each function in separate to better understand what is happening and to better parameterize each step. However there is a wrapper to help run everything at once:
+
+```{r}
+compare_gcms(s, var_names, study_area_parana, k = 3)
 ```
 
 ### Deep-dive Approach
@@ -111,88 +76,54 @@ study_area_parana <- sf::st_read('input_data/PR_UF_2022.shp')
 
 In chooseGCM we implemented functions to analyze GCMs attributes.
 
-```{r exploratory_analysis_summary}
+```{r}
 # Summary of GCMs
-s_sum <- summary_gcms(s, var_names1, study_area_parana)
+s_sum <- summary_gcms(s, var_names, study_area_parana)
 s_sum
 ```
 
-```{r exploratory_analysis_correlation}
+```{r}
 # Pearson Correlation between GCMs
-s_cor <- cor_gcms(s, var_names1, study_area_parana, method = "pearson")
+s_cor <- cor_gcms(s, var_names, study_area_parana, method = "pearson")
 s_cor
 ```
 
-```{r exploratory_analysis_distance}
-# Euclidean Distance between GCMs using selected variables:
-s_dist <- dist_gcms(s, var_names1, study_area_parana, method = "euclidean")
+```{r}
+# Euclidean Distance between GCMs
+s_dist <- dist_gcms(s, var_names, study_area_parana, method = "euclidean")
 s_dist
-
-# Euclidean Distance between GCMs using all variables:
-s_dist2 <- dist_gcms(s, var_names2, study_area_parana, method = "euclidean")
-s_dist2
 ```
-
-#### Number of clusters
-
-How many clusters are good to represent our study area? There is metrics to understand that. The first is the within-cluster sum of squares (wss), which presents a graph where the optimum number of clusters is in the region of the graph with a "elbow", i.e. a deviation from the route between number of clusters. In the following image, k is equal 2 or 3.
-
-```{r optk_gcms_wss}
-optk_gcms(s, var_names1, study_area_parana, method = 'wss', n = 1000)
-optk_gcms(s, var_names2, study_area_parana, method = 'wss', n = 1000)
-```
-
-The second method is the average silhouette width, which highligths the k in the plot. In the Paraná case-study is k=2.
-
-```{r optk_gcms_silhouette}
-optk_gcms(s, var_names1, study_area_parana, method = 'silhouette', n = 1000)
-optk_gcms(s, var_names2, study_area_parana, method = 'silhouette', n = 1000)
-```
-
-The third and last metric is the gap statistic. This plot, as the previous one, also highlights the optimum number of clusters, which in this study area is 1.
-
-```{r optk_gcms_gap}
-optk_gcms(s, var_names1, study_area_parana, method = 'gap_stat', n = 1000)
-optk_gcms(s, var_names2, study_area_parana, method = 'gap_stat', n = 1000)
-```
-
-Averaging the values, we found that the use of k=2 would be sufficient to represent the amount of variation between GCMs in the study area. It is important to note, however, that this value is a minimum. If researchers have computational power to use a higher number of GCMs, they should do that, but it is important to obtain this minimum value to be sure that we are properly representing the variation in our projections.
 
 #### Obtain clusters
 
-Clusters in chooseGCM are obtained through k-means, a unsupervised machine learning algorithm. k is the number of clusters, which in this case is the number of GCMs the modeler wants to use in projections.To build a distance matrix considering multiple variables to each GCM we use a flattening strategy, where values are concatenated in one unique vector to each GCM. In the process, we need to scale variables so they end up with the same measure. This matrix will be used to calculate the clusters. Here, we will run methods with k=2, due to our previous analysis.
+Clusters in chooseGCM are obtained through k-means, a unsupervised machine learning algorithm. k is the number of clusters, which in this case is the number of GCMs the modeler wants to use in projections.To build a distance matrix considering multiple variables to each GCM we use a flattening strategy, where values are concatenated in one unique vector to each GCM. In the process, we need to scale variables so they end up with the same measure. This matrix will be used to calculate the clusters.
 
-```{r kmeans_gcms}
-# K-Means analysis using selected variables by VIF:
-kmeans_gcms(s, var_names1, study_area_parana, k = 4,  method = "euclidean")
-
-# K-Means analysis using all variables:
-kmeans_gcms(s, var_names2, study_area_parana, k = 4,  method = "euclidean")
+```{r}
+kmeans_gcms(s, var_names, study_area_parana, k = 3,  method = "euclidean")
 ```
 
-Alternatively, one could run the analysis with raw environmental data by not setting any value to method.
+Alternatively, one could run the analysis with raw environmental data by not setting any value to method (note how axis change).
 
-```{r kmeans_gcms_raw}
-kmeans_gcms(s, var_names1, study_area_parana, k = 4)
+```{r}
+kmeans_gcms(s, var_names, study_area_parana, k = 3)
 ```
 
 We can also obtain clusters through hierarchical clustering.
 
-```{r hclust_gcms}
-# Hierarchical analysis using selected variables by VIF:
-hclust_gcms(s, var_names1, study_area_parana, k = 4, n = 1000)
-
-# Hierarchical analysis using all variables:
-hclust_gcms(s, var_names2, study_area_parana, k = 4, n = 1000)
+```{r}
+hclust_gcms(s, var_names, study_area_parana, k = 3, n = 1000)
 ```
 
-### Straigthforward Approach
+But how many clusters are good? There is three metrics implemented to understand that.
 
-#### Putting everything together
+```{r}
+optk_gcms(s, var_names, study_area_parana, method = 'wss', n = 1000)
+```
 
-There is the option to run each function in a separate to better understand what is happening and to better parameterize each step. However there is a wrapper to help run everything at once.
+```{r}
+optk_gcms(s, var_names, study_area_parana, method = 'silhouette', n = 1000)
+```
 
-```{r wrapper}
-compare_gcms(s, var_names1, study_area_parana, k = 4)
-compare_gcms(s, var_names2, study_area_parana, k = 4)
+```{r}
+optk_gcms(s, var_names, study_area_parana, method = 'gap_stat', n = 1000)
 ```
