@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# chooseGCM
+# chooseGCM: an R package with a toolkit to select General Circulation Models
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -27,9 +27,41 @@ chooseGCM. After installing the package, we need to open it:
 
 ``` r
 library(chooseGCM)
+#> Warning: replacing previous import 'dplyr::union' by 'raster::union' when
+#> loading 'chooseGCM'
+#> Warning: replacing previous import 'dplyr::intersect' by 'raster::intersect'
+#> when loading 'chooseGCM'
+#> Warning: replacing previous import 'ggpubr::rotate' by 'raster::rotate' when
+#> loading 'chooseGCM'
+#> Warning: replacing previous import 'dplyr::select' by 'raster::select' when
+#> loading 'chooseGCM'
+#> Warning: replacing previous import 'raster::predict' by 'stats::predict' when
+#> loading 'chooseGCM'
+#> Warning: replacing previous import 'dplyr::lag' by 'stats::lag' when loading
+#> 'chooseGCM'
+#> Warning: replacing previous import 'raster::quantile' by 'stats::quantile' when
+#> loading 'chooseGCM'
+#> Warning: replacing previous import 'dplyr::filter' by 'stats::filter' when
+#> loading 'chooseGCM'
+#> Warning: replacing previous import 'raster::aggregate' by 'stats::aggregate'
+#> when loading 'chooseGCM'
+#> Warning: replacing previous import 'raster::weighted.mean' by
+#> 'stats::weighted.mean' when loading 'chooseGCM'
+#> Warning: replacing previous import 'raster::density' by 'stats::density' when
+#> loading 'chooseGCM'
+#> Warning: replacing previous import 'raster::update' by 'stats::update' when
+#> loading 'chooseGCM'
+#> Warning: replacing previous import 'raster::tail' by 'utils::tail' when loading
+#> 'chooseGCM'
+#> Warning: replacing previous import 'raster::stack' by 'utils::stack' when
+#> loading 'chooseGCM'
+#> Warning: replacing previous import 'raster::head' by 'utils::head' when loading
+#> 'chooseGCM'
+#> Warning: replacing previous import 'raster::unstack' by 'utils::unstack' when
+#> loading 'chooseGCM'
 ```
 
-### Downloading WorldClim 2.1 data
+### Downloading WorldClim 2.1 Data
 
 First, we need to use only one time period. Here we use 2090 so the
 difference between models is more conspicuous. In the same way we are
@@ -43,34 +75,34 @@ data.
 
 ``` r
 WorldClim_data(period = 'future', variable = 'bioc', year = '2090', gcm = 'all', ssp = '585', resolution = 10)
-#> [1] "The file for future scenario (input_data/WorldClim_data_future/ac_ssp585_10m_2090.tif) is already downloaded."
-#> [1] "The file for future scenario (input_data/WorldClim_data_future/ae_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_gcms/ac_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_gcms/ae_ssp585_10m_2090.tif) is already downloaded."
 #> [1] "bc_ssp585_10_2090"
-#> [1] "The file for future scenario (input_data/WorldClim_data_future/ca_ssp585_10m_2090.tif) is already downloaded."
-#> [1] "The file for future scenario (input_data/WorldClim_data_future/cc_ssp585_10m_2090.tif) is already downloaded."
-#> [1] "The file for future scenario (input_data/WorldClim_data_future/ce_ssp585_10m_2090.tif) is already downloaded."
-#> [1] "The file for future scenario (input_data/WorldClim_data_future/cn_ssp585_10m_2090.tif) is already downloaded."
-#> [1] "The file for future scenario (input_data/WorldClim_data_future/ch_ssp585_10m_2090.tif) is already downloaded."
-#> [1] "The file for future scenario (input_data/WorldClim_data_future/cr_ssp585_10m_2090.tif) is already downloaded."
-#> [1] "The file for future scenario (input_data/WorldClim_data_future/ec_ssp585_10m_2090.tif) is already downloaded."
-#> [1] "The file for future scenario (input_data/WorldClim_data_future/ev_ssp585_10m_2090.tif) is already downloaded."
-#> [1] "The file for future scenario (input_data/WorldClim_data_future/fi_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_gcms/ca_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_gcms/cc_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_gcms/ce_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_gcms/cn_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_gcms/ch_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_gcms/cr_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_gcms/ec_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_gcms/ev_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_gcms/fi_ssp585_10m_2090.tif) is already downloaded."
 #> [1] "gf_ssp585_10_2090"
-#> [1] "The file for future scenario (input_data/WorldClim_data_future/gg_ssp585_10m_2090.tif) is already downloaded."
-#> [1] "The file for future scenario (input_data/WorldClim_data_future/gh_ssp585_10m_2090.tif) is already downloaded."
-#> [1] "The file for future scenario (input_data/WorldClim_data_future/hg_ssp585_10m_2090.tif) is already downloaded."
-#> [1] "The file for future scenario (input_data/WorldClim_data_future/in_ssp585_10m_2090.tif) is already downloaded."
-#> [1] "The file for future scenario (input_data/WorldClim_data_future/ic_ssp585_10m_2090.tif) is already downloaded."
-#> [1] "The file for future scenario (input_data/WorldClim_data_future/ip_ssp585_10m_2090.tif) is already downloaded."
-#> [1] "The file for future scenario (input_data/WorldClim_data_future/me_ssp585_10m_2090.tif) is already downloaded."
-#> [1] "The file for future scenario (input_data/WorldClim_data_future/mi_ssp585_10m_2090.tif) is already downloaded."
-#> [1] "The file for future scenario (input_data/WorldClim_data_future/mp_ssp585_10m_2090.tif) is already downloaded."
-#> [1] "The file for future scenario (input_data/WorldClim_data_future/ml_ssp585_10m_2090.tif) is already downloaded."
-#> [1] "The file for future scenario (input_data/WorldClim_data_future/mr_ssp585_10m_2090.tif) is already downloaded."
-#> [1] "The file for future scenario (input_data/WorldClim_data_future/uk_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_gcms/gg_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_gcms/gh_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_gcms/hg_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_gcms/in_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_gcms/ic_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_gcms/ip_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_gcms/me_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_gcms/mi_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_gcms/mp_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_gcms/ml_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_gcms/mr_ssp585_10m_2090.tif) is already downloaded."
+#> [1] "The file for future scenario (input_data/WorldClim_data_gcms/uk_ssp585_10m_2090.tif) is already downloaded."
 ```
 
-### Importing and transforming data
+### Importing and Transforming Data
 
 Now let’s import GCMs to R in a list of stacks and name the list with
 the names of the GCMs.
@@ -83,12 +115,12 @@ names(s) <- gsub("_ssp585_10_2090","",names(s))
 In each function, data will be transformed. To do that you will always
 need to provide at least: (1) the list of stacks, (2) the variables you
 want to use in analysis and (3) the shapefile of your study area. You
-don’t need to mask and subset your data, once the functions will perform
-this task internally for you. We will analyze data through this file in
-two ways: the straightforward and the deep-dive approach. In the fist,
-we will simply go directly to a wrapper provided by the package, while
-in the second, we will use Paraná river basin data to search for the
-optimal GCMs.
+don’t need to previously mask and subset your data, once the functions
+will perform this task internally for you. Note that the results from
+these functions are highly sensitive to variables and to study area. In
+this sense, the decision on what variables should be considered and what
+is the study area must be carefully made considering biological aspects
+of the studied group.
 
 ``` r
 var_names <- c('bio_1', 'bio_12')
@@ -107,7 +139,11 @@ study_area_parana <- sf::st_read('input_data/PR_UF_2022.shp')
 
 There is the option to run each function in separate to better
 understand what is happening and to better parameterize each step.
-However there is a wrapper to help run everything at once:
+However there is a wrapper to help run everything at once and could be
+an alternative to have a broad perspective. `compare_gcms()` will return
+a list with a vector called `suggested_gcms` and a Figure called
+`statistics_gcms`. We suggest that this Figure could also be included as
+it is in supplementary data from studies using this package.
 
 ``` r
 compare_gcms(s, var_names, study_area_parana, k = 3)
@@ -127,11 +163,39 @@ compare_gcms(s, var_names, study_area_parana, k = 3)
 
 <img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
 
+The aim of this function is to inform the minimum required so users can
+follow with their workflow in a more straightforward fashion (more on
+each plot further). If we see the D plot in the Figure, we can infer
+that the minimum number of GCMs to encompass the variety of GCMs,
+according to the Average Silhouette Width is 2. In this way, we should
+include in our study the projections of at least 2 GCMs. Above that, in
+plot B, the Euclidean distance between GCMs is presented as a heatmap.
+Plots A and C are both clusterization methods that can be used to select
+GCMs. Clusterization will be adapted to the number of clusters `k`
+designated in the function. Lastly, suggested GCMs were “fi”, “mp” and
+“cn”. Those suggestions are the gcms that are closer to the centroid of
+each K-means cluster, thus they better represent the variation within
+each cluster.
+
 ### Deep-dive Approach
 
-#### Exploratory analysis
+As an alternative for experienced modelers that want to deeply
+understand the impacts of decisions on GCMs selection, we prepared a set
+of functions to analyze data more carefully. Each function in the
+wrapper mentioned above is available to be explored as stand-alone,
+ranging from exploratory analysis to cluster analysis and methods to
+determine the optimum number of clusters.
+
+#### Exploratory Analysis
 
 In chooseGCM we implemented functions to analyze GCMs attributes.
+`summary_gcms` is the only function available that describes variations
+within GCMs. It returns the internal information regarding each
+variable, as reads: minimum value (min), first quartile (quantile_0.25),
+second quartile (median), average (mean), third quartile
+(quantile_0.75), maximum value (max), standard deviation (sd), number of
+NAs (NAs) and the total number of cells (n_cells). This function returns
+a list of GCMs with a table associated with each of them.
 
 ``` r
 # Summary of GCMs
@@ -322,6 +386,17 @@ s_sum
 #> bio_12 312.548727 343     975
 ```
 
+Regarding the exploratory comparison between GCMs, two functions are
+available: `cor_gcms` and `dist_gcms`. The first is designed to return a
+list with a correlation matrix between GCMs and a plot of this matrix.
+We noticed while building this package that (as expected) Pearson
+correlation values are always very high, rarely reaching values bellow
+0.95. In this way we found that this function could not be so
+informative and decided to present a distance function as seen bellow.
+However it is noteworthy that through this function the user can change
+the method used to obtain correlation values. See `?cor_gcms` for
+available methods.
+
 ``` r
 # Pearson Correlation between GCMs
 s_cor <- cor_gcms(s, var_names, study_area_parana, method = "pearson")
@@ -429,6 +504,20 @@ s_cor
 
 <img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
 
+The function `dist_gcms` is very similar to the previous `cor_gcms`, but
+now for distances. This function has the same output: a list with two
+slots. One is the distance matrix obtained (`distances`), while the
+second is the plotted matrix (`heatmap`). Here the differences between
+GCMs are way more clear than in the previous plot. As in was it the
+previous function, methods can also be changed for a number of different
+distances. For a complete list of available methods see `?dist_gcms`. To
+build a distance matrix considering multiple variables to each GCM we
+use a flattening strategy, where values are concatenated in one unique
+vector to each GCM. In the process, we need to scale variables so they
+end up with the same measure. This matrix is also used to calculate the
+clusters in the `compare_gcms` function and in further presented
+`kmeans_gcms` function.
+
 ``` r
 # Euclidean Distance between GCMs
 s_dist <- dist_gcms(s, var_names, study_area_parana, method = "euclidean")
@@ -532,67 +621,133 @@ s_dist
 
 <img src="man/figures/README-unnamed-chunk-10-1.png" width="100%" />
 
-#### Obtain clusters
+#### Obtain Clusters
 
-Clusters in chooseGCM are obtained through k-means, a unsupervised
-machine learning algorithm. k is the number of clusters, which in this
-case is the number of GCMs the modeler wants to use in projections.To
-build a distance matrix considering multiple variables to each GCM we
-use a flattening strategy, where values are concatenated in one unique
-vector to each GCM. In the process, we need to scale variables so they
-end up with the same measure. This matrix will be used to calculate the
+Clusters in chooseGCM are obtained through K-means, a unsupervised
+machine learning algorithm. K in this case is the number of GCMs the
+modeler wants to use in projections. As in the previous `dist_gcms`
+function, we can address different methods to obtain the distance matrix
+by changing the `method` argument. The K-means algorithm uses the
+distance matrix to obtain clusters, thus a deep analysis of distances
+using `dist_gcms` function could prove to be useful. As in
+`compare_gcms` function, this function returns the K-means plot and a
+set of suggested GCMs, i.e. the GCMs closer to the centroid of each
 clusters.
 
 ``` r
 kmeans_gcms(s, var_names, study_area_parana, k = 3,  method = "euclidean")
 #> $suggested_gcms
 #>    1    2    3 
-#> "fi" "mp" "cn" 
+#> "fi" "cn" "mp" 
 #> 
 #> $kmeans_plot
 ```
 
 <img src="man/figures/README-unnamed-chunk-11-1.png" width="100%" />
 
-Alternatively, one could run the analysis with raw environmental data by
-not setting any value to method (note how axis change).
+Alternatively, instead of using distances, one could run the analysis
+with raw environmental data by not setting any value to method (note how
+axis change). As in the previous case, the function also returns GCMs
+that are closer to the centroids. Note however that the plot below has a
+cluster with two GCMs, thus both have the same distance from the
+centroid. In this case, the function randomly suggests one of them. To
+perform this analysis without a distance matrix, we use only the mean
+values of each variable selected. In this way, the variability within
+variables is not considered, as in the above solution. But we recognize
+that for some purpose it could be useful to have a plot with raw
+variables as axis as provided here.
 
 ``` r
 kmeans_gcms(s, var_names, study_area_parana, k = 3)
 #> $suggested_gcms
-#>       1       2       3 
-#> "bio_1" "bio_1" "bio_1" 
+#> [1] "ca" "ae" "mp"
 #> 
 #> $kmeans_plot
 ```
 
 <img src="man/figures/README-unnamed-chunk-12-1.png" width="100%" />
 
-We can also obtain clusters through hierarchical clustering.
+We can also obtain clusters through hierarchical clustering. In this
+case, however, the function doesn’t suggest any GCM. It is up to the
+user to define which GCMs are most suitable in this case. Hierarchical
+clustering is useful to visually inform the relationship between groups
+and could also be used to choose a number of clusters to build (together
+with metrics in the next section).
+
+``` r
+hclust_gcms(s, var_names, study_area_parana, k = 3)
+```
+
+<img src="man/figures/README-unnamed-chunk-13-1.png" width="100%" />
+
+In this function we also provide a `n` argument to inform the amount of
+data to be used in the clustering. This proved valuable when using high
+resolution data.
 
 ``` r
 hclust_gcms(s, var_names, study_area_parana, k = 3, n = 1000)
 ```
 
-<img src="man/figures/README-unnamed-chunk-13-1.png" width="100%" />
-
-But how many clusters are good? There is three metrics implemented to
-understand that.
-
-``` r
-optk_gcms(s, var_names, study_area_parana, method = 'wss', n = 1000)
-```
-
 <img src="man/figures/README-unnamed-chunk-14-1.png" width="100%" />
 
+#### Number of Clusters
+
+But how many clusters are good? There is three metrics implemented to
+understand that. All of them are a way to see the minimum amount of GCMs
+that are needed to encompass the variability in the whole set of GCMs.
+The three methods are implemented in the same function by adjusting the
+`method` argument. Within-cluster sum of squares (wss) calculates the
+internal variability within clusters. Our goal here is to search for the
+minimum amount of clusters that has the minimum amount of variability.
+This is shown in the graph were the line changes abruptly its direction
+(Number of clusters k = 3). As in the previous function, this function
+provides a `n` argument to inform the amount of data to be used in the
+clustering. Finally, one can also indicate the method to build clusters
+with the argument `clusters`. Available methods are ‘kmeans’ (standard)
+and ‘hclust’.
+
 ``` r
-optk_gcms(s, var_names, study_area_parana, method = 'silhouette', n = 1000)
+optk_gcms(s, var_names, study_area_parana, cluster = 'kmeans', method = 'wss', n = 1000)
 ```
 
 <img src="man/figures/README-unnamed-chunk-15-1.png" width="100%" />
 
+The Average Silhouette Width method, measures the mean distance from all
+individuals to the centroid of their own clusters, while comparing to
+other clusters. This is sometimes also referred as a metric of cluster
+quality (the higher the better). A number of clusters is the best when
+the distance from individuals within the cluster to its centroid is
+lower than the distance from individuals to other clusters centroid
+(maximizing the average silhouette width). In this method, the best
+number of clusters is marked with a dashed line (2 clusters).
+
 ``` r
-optk_gcms(s, var_names, study_area_parana, method = 'gap_stat', n = 1000)
+optk_gcms(s, var_names, study_area_parana, cluster = 'kmeans', method = 'silhouette', n = 1000)
 ```
 
 <img src="man/figures/README-unnamed-chunk-16-1.png" width="100%" />
+
+Our last method is the Gap Statistics. As in the previous method, here
+the optimum number of clusters is showed with a dashed line (1 cluster).
+This method compares the variation within clusters with a set of null
+clusters build through Monte Carlo (“bootstrap”) sampling. Because of
+that, the gap statistics can take a longer time to run when compared to
+previous methods described here. Moreover, some parameters can be
+changed to improve the Monte Carlo process, such as: `nstart`, `K.max`
+and `B`, where `nstart` is the initial number of arrangements to be
+compared, `K.max` is the maximum number of clusters to be created and B
+is the number of bootstrap permutations.
+
+``` r
+optk_gcms(s, var_names, study_area_parana, cluster = 'kmeans', method = 'gap_stat', n = 1000)
+```
+
+<img src="man/figures/README-unnamed-chunk-17-1.png" width="100%" />
+
+#### Wrapping Up
+
+From our analysis, we can infer that something between two and three
+clusters is enough to inform regarding the environmental variation from
+given GCMs. In this way, if we use GCMs CNRM-CM6-1 (cn), FIO-ESM-2-0
+(fi) and MPI-ESM1-2-HR (mp) to project our models into future scenarios
+we would be able to inform a decent variation in our projections.

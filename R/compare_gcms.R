@@ -80,9 +80,7 @@ compare_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3)
   }
 
   flatten_subset <- flatten_subset[sample(nrow(flatten_subset), n),]
-  #wss <- fviz_nbclust(flatten_subset, FUN = hcut, method = "wss")
-  sil <- fviz_nbclust(flatten_subset, FUN = hcut, method = "silhouette")
-  #gap <- fviz_gap_stat(flatten_subset, maxSE = list(method = "globalmax"))
+  sil <- fviz_nbclust(flatten_subset, FUN = kmeans, method = "silhouette")
 
   # Compute hierarchical clustering and cut into k clusters
   res <- hcut(t(flatten_subset), k = k)

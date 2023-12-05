@@ -6,7 +6,7 @@
 #' @param var_names Character. A vector with names of the bioclimatic variables to compare OR 'all'.
 #' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
 #' @param k The number of clusters to identify.
-#' @param n The number of values to use in the clustering (default: 1000).
+#' @param n The number of values to use in the clustering. If NULL (default) all data is used.
 #'
 #' @return A dendrogram visualizing the clusters.
 #'
@@ -30,11 +30,11 @@
 #' @importFrom grDevices colors
 #'
 #' @export
-hclust_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3, n=1000){
+hclust_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3, n=NULL){
   assertList(s, types='RasterStack')
   assertCharacter(var_names, unique=T, any.missing=F)
   assertCount(k, positive = T)
-  assertCount(n, positive = T)
+  if(!is.null(n)){assertCount(n, positive = T)}
 
   if('all' %in% var_names){
     var_names <- names(s[[1]])
@@ -43,14 +43,13 @@ hclust_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3, 
   x <- transform_gcms(s, var_names, study_area)
   x <- flatten_gcms(x)
   flatten_subset <- na.omit(x)
-  if(is.null(n) | n > nrow(flatten_subset) ){
-    if(nrow(flatten_subset)>1000){
-      n <- 1000
-    } else {
-      n <- nrow(flatten_subset)
+
+  if(!is.null(n)){
+    if(nrow(flatten_subset)>n){
+      flatten_subset <- flatten_subset[sample(nrow(flatten_subset), n),]
     }
   }
-  flatten_subset <- flatten_subset[sample(nrow(flatten_subset), n),]
+
   res <- hcut(t(x), k = k)
   dend <- fviz_dend(res,
                     cex = 0.5,

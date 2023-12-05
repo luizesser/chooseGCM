@@ -46,7 +46,14 @@ kmeans_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3, 
     # Run K-means
     cl <- kmeans(t(flatten_vars), k, nstart=1000)
 
-    gcms <- apply(cl$centers, 1, function(x){which.min(x) %>% names()})
+    gcms <- vector()
+    gcms_mat <- as.matrix(dist(t(cbind(t(cl$centers),flatten_vars))))[-c(1:k),c(1:k)]
+    gcms_dist <- apply(gcms_mat, 2, min)[1:k]
+    for(i in 1:length(gcms_dist)){
+      v <- names(which(gcms_mat[,i]==gcms_dist[i]))
+      v <- ifelse(length(v)>1,v[1], v)
+      gcms[i] <- v
+    }
 
     # plot
     kmeans_plot <- fviz_cluster(cl,
@@ -67,7 +74,7 @@ kmeans_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3, 
     dist_matrix <- dist(t(flatten_vars), method=method)
 
     # Run K-means
-    cl <- kmeans(dist_matrix, k, nstart=1000)
+    cl <- kmeans(dist_matrix, k, nstart=1000, iter.max=100)
 
     gcms <- apply(cl$centers, 1, function(x){which.min(x) %>% names()})
 

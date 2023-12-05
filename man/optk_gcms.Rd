@@ -4,7 +4,17 @@
 \alias{optk_gcms}
 \title{Optimize number of clusters for a dataset}
 \usage{
-optk_gcms(s, var_names, study_area = NULL, method = "wss", n = 1000)
+optk_gcms(
+  s,
+  var_names = c("bio_1", "bio_12"),
+  study_area = NULL,
+  cluster = "kmeans",
+  method = "wss",
+  n = NULL,
+  nstart = 10,
+  K.max = 10,
+  B = 100
+)
 }
 \arguments{
 \item{s}{A list of stacks of General Circulation Models.}
@@ -13,9 +23,11 @@ optk_gcms(s, var_names, study_area = NULL, method = "wss", n = 1000)
 
 \item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
 
+\item{cluster}{A character string specifying the method to build the clusters. Options are 'kmeans' (standard) or 'hclust'.}
+
 \item{method}{A character string specifying the method to use for determining the optimal number of clusters. Options are 'wss' for within-cluster sum of squares, 'silhouette' for average silhouette width and 'gap_stat' for the gap statistic method. Default is 'wss'.}
 
-\item{n}{An integer specifying the number of randomly selected samples to use in the clustering analysis. Default is 10000.}
+\item{n}{An integer specifying the number of randomly selected samples to use in the clustering analysis. If NULL (default) all data is used.}
 }
 \value{
 A ggplot object representing the optimal number of clusters.

@@ -9,7 +9,7 @@ hclust_gcms(
   var_names = c("bio_1", "bio_12"),
   study_area = NULL,
   k = 3,
-  n = 1000
+  n = NULL
 )
 }
 \arguments{
@@ -21,7 +21,7 @@ hclust_gcms(
 
 \item{k}{The number of clusters to identify.}
 
-\item{n}{The number of values to use in the clustering (default: 1000).}
+\item{n}{The number of values to use in the clustering. If NULL (default) all data is used.}
 }
 \value{
 A dendrogram visualizing the clusters.
