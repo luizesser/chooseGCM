@@ -124,9 +124,11 @@ WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030',
               'GISS-E2-1-H','HadGEM3-GC31-LL','INM-CM4-8','INM-CM5-0',
               'IPSL-CM6A-LR','MIROC-ES2L','MIROC6','MPI-ESM1-2-HR',
               'MPI-ESM1-2-LR','MRI-ESM2-0','UKESM1-0-LL')
-    if(gcm=='all'){
-      gcm <- all_gcm
-      path <- 'input_data/WorldClim_data_gcms'
+    if(length(gcm) == 1){
+      if(gcm=='all'){
+        gcm <- all_gcm
+        path <- 'input_data/WorldClim_data_gcms'
+      }
     }
     if(!dir.exists(path)){ dir.create(path) }
     gcm3 <- gcm2[match(gcm,all_gcm)]
