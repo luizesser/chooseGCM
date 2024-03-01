@@ -3,7 +3,7 @@ Package: chooseGCM
 Title: chooseGCM: A package for selecting General Circulation
     Models for Species Distribution Modeling in R
 Version: 0.1.0
-Author: Luíz Fernando Esser
+Author: Luíz Fernando Esser, Dayani Baili, Marcos Robalinho and Reginaldo Ré
 Maintainer: Luíz Fernando Esser <luizesser@gmail.com>
 Description: This package is intended to help modelers to
     select General Circulation Models (GCMs) to project Species
