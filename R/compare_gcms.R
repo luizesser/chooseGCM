@@ -47,17 +47,19 @@ compare_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3)
 
   # Calculate the distance matrix
   dist_matrix <- dist(t(flatten_vars))
-  hm <- fviz_dist(
-    dist_matrix,
-    order = TRUE,
-    show_labels = TRUE,
-    lab_size = NULL,
-    gradient = list(low = "#FDE725FF", mid = "#21908CFF", high = "#440154FF")) +
-    ggtitle("Distance Matrix Heatmap")
+  #hm <- fviz_dist(
+  #  dist_matrix,
+  #  order = TRUE,
+  #  show_labels = TRUE,
+  #  lab_size = NULL,
+  #  gradient = list(low = "#FDE725FF", mid = "#21908CFF", high = "#440154FF")) +
+  #  ggtitle("Distance Matrix Heatmap")
 
+  # Calculate the Monte Carlo permutations
+  mc <- montecarlo_gcms(s, var_names, study_area, perm=10000, method='euclidean')
 
   # Run K-means
-  cl <- kmeans(dist_matrix, k, nstart=1000)
+  cl <- kmeans(dist_matrix, k, nstart=10000, iter.max = 1000)
 
   # plot
   kmeans_plot <- fviz_cluster(cl,
@@ -68,19 +70,21 @@ compare_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3)
                               main = "K-means Clustering Plot",
                               legend = 'none', repel = TRUE)
 
-  # Run Hierarchical Cluster
-  # hclust_plot <- hclust(dist_matrix)
   # Include elbow, silhouette and gap methods
   flatten_subset <- na.omit(flatten_vars)
+  #
+  #if(nrow(flatten_subset)>1000){
+  #  n <- 1000
+  #} else {
+  #  n <- nrow(flatten_subset)
+  #}
+  #
+  #flatten_subset <- flatten_subset[sample(nrow(flatten_subset), n),]
+  #sil <- fviz_nbclust(flatten_subset, FUN = kmeans, method = "silhouette")
 
-  if(nrow(flatten_subset)>1000){
-    n <- 1000
-  } else {
-    n <- nrow(flatten_subset)
-  }
-
-  flatten_subset <- flatten_subset[sample(nrow(flatten_subset), n),]
-  sil <- fviz_nbclust(flatten_subset, FUN = kmeans, method = "silhouette")
+  # Plot Environment
+  gcms <- apply(cl$centers, 1, function(x){which.min(x) |> names()})
+  env <- env_gcms(s, var_names, study_area, highlight=gcms)
 
   # Compute hierarchical clustering and cut into k clusters
   res <- hcut(t(flatten_subset), k = k)
@@ -90,37 +94,15 @@ compare_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3)
                     palette="jco",
                     main = "Hierarchical Clustering")
 
-  # Run Correlation
-  #cor_matrix <- cor(flatten_vars, use='complete.obs')
-  #cor_plot <- ggcorrplot(cor_matrix,
-  #                       type='lower',
-  #                       lab=T,
-  #                       lab_size = 3,
-  #                       hc.order=T,
-  #                       hc.method = 'ward.D2',
-  #                       show.legend = F,
-  #                       title='Pearson Correlation')
-
-  # Plot everything together
-  #statistics_gcms <- plot_grid(kmeans_plot,
-  #                             cor_plot,
-  #                             dend,
-  #                             plot_grid(wss,
-  #                                       sil,
-  #                                       ncol=1,
-  #                                       labels=c("D", "E"),
-  #                                       label_x = -0.05),
-  #                             labels = c("A", "B", "C"),
-  #                             ncol = 2,
-  #                             rel_widths = 4)
   statistics_gcms <- plot_grid(kmeans_plot,
-                               hm,
+                               #hm,
+                               mc$montecarlo_plot,
                                dend,
-                               sil,
+                               #sil,
+                               env,
                                labels = c("A", "B", "C", "D"),
                                ncol = 2,
                                rel_widths = 4)
-  gcms <- apply(cl$centers, 1, function(x){which.min(x) %>% names()})
 
   return(list(suggested_gcms=gcms,
               statistics_gcms=statistics_gcms))

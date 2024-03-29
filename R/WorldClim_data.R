@@ -62,7 +62,6 @@
 #' @import httr
 #'
 #' @export
-
 WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030', gcm = 'mi', ssp = '126', resolution = 10, path=NULL){
 
   if(!all(period %in% c('current', 'future')) | !length(period)==1){
@@ -96,17 +95,16 @@ WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030',
 
   res = ifelse(resolution==30,'s','m')
 
-  if(!dir.exists('input_data/')){ dir.create('input_data/') }
   if(period=='current'){
     if(is.null(path)){path <- 'input_data/WorldClim_data_current'}
-    if(!dir.exists(path)){ dir.create(path) }
-    if(length(list.files(path,pattern='.tif$', full.names=T))==0){
+    if(!dir.exists(path)){ dir.create(path, recursive=TRUE) }
+    if(length(list.files(path, pattern='.tif$', full.names=T))==0){
       print(paste0('current_',resolution,res))
       GET(url = paste0('https://geodata.ucdavis.edu/climate/worldclim/2_1/base/wc2.1_',
                        resolution,
                        res,'_bio.zip'),
-          write_disk(paste0(path,'/current_', resolution, "_",res,'.zip')))
-      unzip(zipfile = paste0(path,'/current_', resolution, "_",res,'.zip'),
+          write_disk(paste0('current_', resolution, "_",res,'.zip')))
+      unzip(zipfile = paste0('current_', resolution, "_",res,'.zip'),
             exdir = paste0(path))
     } else {
       print(paste0('The file for current scenario is already downloaded.'))
@@ -127,10 +125,9 @@ WorldClim_data <- function(period = 'current', variable = 'bioc', year = '2030',
     if(length(gcm) == 1){
       if(gcm=='all'){
         gcm <- all_gcm
-        path <- 'input_data/WorldClim_data_gcms'
       }
     }
-    if(!dir.exists(path)){ dir.create(path) }
+    if(!dir.exists(path)){ dir.create(path, recursive = TRUE) }
     gcm3 <- gcm2[match(gcm,all_gcm)]
     all_year <- c('2030', '2050', '2070', '2090')
     year2 <- c('2021-2040', '2041-2060', '2061-2080', '2081-2100')

@@ -42,11 +42,12 @@ hclust_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3, 
 
   x <- transform_gcms(s, var_names, study_area)
   x <- flatten_gcms(x)
-  flatten_subset <- na.omit(x)
+  x <- na.omit(x)
 
   if(!is.null(n)){
+    flatten_subset <- x
     if(nrow(flatten_subset)>n){
-      flatten_subset <- flatten_subset[sample(nrow(flatten_subset), n),]
+      x <- flatten_subset[sample(nrow(flatten_subset), n),]
     }
   }
 

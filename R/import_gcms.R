@@ -5,7 +5,8 @@
 #' @param path A string with the path to GCM files.
 #' @param extension Extension of stack files. Standard is ".tif", which is the extension from WorldClim 2.1.
 #' @param recursive Logical. Should the function import stacks recursively (i.e. search files from folders within folders)? Standard is TRUE.
-#' @param gcm_names A vector with names to be addressed to each GCM. S
+#' @param gcm_names A vector with names to be addressed to each GCM.
+#' @param var_names A vector with names to be addressed to each variable.
 #'
 #' @return A list of stacks, with each element of the list corresponding to a GCM from given path.
 #'
@@ -25,11 +26,13 @@
 #' @importFrom here here
 #'
 #' @export
-import_gcms <- function(path="input_data/WorldClim_data_gcms", extension=".tif", recursive=TRUE, gcm_names=NULL){
+import_gcms <- function(path="input_data/WorldClim_data_gcms", extension=".tif", recursive=TRUE, gcm_names=NULL, var_names=NULL){
   assertCharacter(path, len=1)
   assertCharacter(extension, len=1)
   assertLogical(recursive)
   assertCharacter(gcm_names, null.ok = T)
+
+  if(is.null(var_names)){var_names <- paste0('bio',1:19)}
 
   path <- here(path)
 
@@ -38,7 +41,7 @@ import_gcms <- function(path="input_data/WorldClim_data_gcms", extension=".tif",
     stop('Could not find any file matching the parameters!')
   }
   s <- lapply(l, function(x){s <- raster::stack(x)
-                           names(s) <- paste0('bio_',1:19) # Rename rasters
+                           names(s) <-  # Rename rasters
                            return(s)})
   if(is.null(gcm_names)){
     gcm_names <- gsub(extension,"",list.files(path, pattern = extension, full.names = F, rec=recursive))

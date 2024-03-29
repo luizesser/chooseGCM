@@ -8,7 +8,8 @@ import_gcms(
   path = "input_data/WorldClim_data_gcms",
   extension = ".tif",
   recursive = TRUE,
-  gcm_names = NULL
+  gcm_names = NULL,
+  var_names = NULL
 )
 }
 \arguments{
@@ -18,7 +19,9 @@ import_gcms(
 
 \item{recursive}{Logical. Should the function import stacks recursively (i.e. search files from folders within folders)? Standard is TRUE.}
 
-\item{gcm_names}{A vector with names to be addressed to each GCM. S}
+\item{gcm_names}{A vector with names to be addressed to each GCM.}
+
+\item{var_names}{A vector with names to be addressed to each variable.}
 }
 \value{
 A list of stacks, with each element of the list corresponding to a GCM from given path.

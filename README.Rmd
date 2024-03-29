@@ -42,7 +42,7 @@ library(chooseGCM)
 
 First, we need to use only one time period. Here we use 2090 so the difference between models is more conspicuous. In the same way we are considering the SSP585, which is the more dramatic pathway. The resolution is the lowest to be quicker. The aim here is to maintain all parameters equal, but General Circulation Models (GCMs). In this way we know that the only source of variation comes from them. Note that if you receive a timeout error you can increase timeout value by running , where 600 is the value in seconds that will be enough to download the data.
 
-```{r}
+```{r, eval=F}
 WorldClim_data(period = 'future', variable = 'bioc', year = '2090', gcm = 'all', ssp = '585', resolution = 10)
 ```
 
@@ -50,15 +50,25 @@ WorldClim_data(period = 'future', variable = 'bioc', year = '2090', gcm = 'all',
 
 Now let's import GCMs to R in a list of stacks and name the list with the names of the GCMs.
 
-```{r}
+```{r, include=FALSE}
+s <- import_gcms('/Users/luizesser/Documents/GitHub/input_data/WorldClim_data_future_all')
+names(s) <- gsub("_ssp585_10_2090","",names(s))
+```
+
+```{r, eval=FALSE}
 s <- import_gcms()
 names(s) <- gsub("_ssp585_10_2090","",names(s))
 ```
 
 In each function, data will be transformed. To do that you will always need to provide at least: (1) the list of stacks, (2) the variables you want to use in analysis and (3) the shapefile of your study area. You don't need to previously mask and subset your data, once the functions will perform this task internally for you. Note that the results from these functions are highly sensitive to variables and to study area. In this sense, the decision on what variables should be considered and what is the study area must be carefully made considering biological aspects of the studied group.
 
-```{r}
-var_names <- c('bio_1', 'bio_12')
+```{r, include=FALSE}
+var_names <- c('bio_5', 'bio_13','bio_15')
+study_area_parana <- sf::st_read('/Users/luizesser/Documents/GitHub/input_data/PR_UF_2022.shp')
+```
+
+```{r, eval=FALSE}
+var_names <- c('bio_5', 'bio_13','bio_15')
 study_area_parana <- sf::st_read('input_data/PR_UF_2022.shp')
 ```
 
@@ -67,10 +77,11 @@ study_area_parana <- sf::st_read('input_data/PR_UF_2022.shp')
 There is the option to run each function in separate to better understand what is happening and to better parameterize each step. However there is a wrapper to help run everything at once and could be an alternative to have a broad perspective. `compare_gcms()` will return a list with a vector called `suggested_gcms` and a Figure called `statistics_gcms`. We suggest that this Figure could also be included as it is in supplementary data from studies using this package.
 
 ```{r}
-compare_gcms(s, var_names, study_area_parana, k = 3)
+res <- compare_gcms(s, var_names, study_area_parana, k = 3)
+res$statistics_gcms
 ```
 
-The aim of this function is to inform the minimum required so users can follow with their workflow in a more straightforward fashion (more on each plot further). If we see the D plot in the Figure, we can infer that the minimum number of GCMs to encompass the variety of GCMs, according to the Average Silhouette Width is 2. In this way, we should include in our study the projections of at least 2 GCMs. Above that, in plot B, the Euclidean distance between GCMs is presented as a heatmap. Plots A and C are both clusterization methods that can be used to select GCMs. Clusterization will be adapted to the number of clusters `k` designated in the function. Lastly, suggested GCMs were "fi", "mp" and "cn". Those suggestions are the gcms that are closer to the centroid of each K-means cluster, thus they better represent the variation within each cluster.
+The aim of this function is to inform the minimum required so users can follow with their workflow in a more straightforward fashion (more on each plot further). If we see the D plot in the Figure, we can infer if the selected GCMs encompass the environmental variety of all GCMs. The focus should be to cover the core environment and not outlier regions on the environmental space. Above that, in plot B, the Monte Carlo permutation between GCMs is presented as a violin plot. Plots A and C are both clusterization methods that can be used to select GCMs. Clusterization will be adapted to the number of clusters `k` designated in the function. Lastly, suggested GCMs were "uk", "ml" and "ac". Those suggestions are the gcms that are closer to the centroid of each K-means cluster, thus they better represent the variation within each cluster.
 
 ### Deep-dive Approach
 
@@ -146,6 +157,26 @@ Our last method is the Gap Statistics. As in the previous method, here the optim
 
 ```{r}
 optk_gcms(s, var_names, study_area_parana, cluster = 'kmeans', method = 'gap_stat', n = 1000)
+```
+
+#### Monte Carlo permutations
+
+An alternative way to analyse if the mean distance between GCMs is similar to the mean distance between all GCMs is to use the `montecarlo_gcms` function. This function will build a distance matrix (using `method` argument) and plot the mean distance between all GCMs as a blue line. Afterwards, it will run a Monte Carlo permutation to randomly choose a group size ranging from [2] and [total number of GCMs - 1] and randomly choose a subset of GCMs with that group size. The mean distance between the random set is obtained and ploted in a violin plot. Finally, the function accesses the mean distance between selected GCMs using the kmeans function in all possible values of `k` and plots it in red.
+
+```{r}
+montecarlo_gcms(s, var_names, study_area_parana, perm = 10000, method='euclidean')
+```
+
+#### The environment covered by GCMs selection
+
+We also included in this package a function called `env_gcms`, which is able to project GCMs in the environmental space. With that, researchers are able to see the coverage of GCMs when comparing to all GCMs. It is also possible to see the density of GCMs using the `highlight=sum` as argument.
+
+```{r}
+env_gcms(s, var_names, study_area_parana, highlight=res$suggested_gcms)
+```
+
+```{r}
+env_gcms(s, var_names, study_area_parana, highlight='sum')
 ```
 
 #### Wrapping Up

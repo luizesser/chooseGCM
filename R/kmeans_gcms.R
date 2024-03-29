@@ -44,7 +44,7 @@ kmeans_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3, 
     flatten_vars <- sapply(x, function(y){y <- colMeans(y, na.rm=T)})
 
     # Run K-means
-    cl <- kmeans(t(flatten_vars), k, nstart=1000)
+    cl <- kmeans(t(flatten_vars), k, nstart=10000, iter.max=1000)
 
     gcms <- vector()
     gcms_mat <- as.matrix(dist(t(cbind(t(cl$centers),flatten_vars))))[-c(1:k),c(1:k)]
@@ -74,7 +74,7 @@ kmeans_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3, 
     dist_matrix <- dist(t(flatten_vars), method=method)
 
     # Run K-means
-    cl <- kmeans(dist_matrix, k, nstart=1000, iter.max=100)
+    cl <- kmeans(dist_matrix, k, nstart=10000, iter.max=1000)
 
     gcms <- apply(cl$centers, 1, function(x){which.min(x) %>% names()})
 
