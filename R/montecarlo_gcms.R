@@ -21,31 +21,33 @@
 #' study_area <- extent(c(-57, -22, -48, -33))
 #' var_names <- c("bio_1", "bio_12")
 #'
-#' montecarlo_gcms(s, study_area=study_area)
+#' montecarlo_gcms(s, study_area = study_area)
 #'
 #' @import checkmate
 #' @import ggplot2
 #' @importFrom usedist dist_subset
 #'
 #' @export
-montecarlo_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, perm=10000, method='euclidean'){
-  assertList(s, types='RasterStack')
-  assertCharacter(var_names, unique=T, any.missing=F)
+montecarlo_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, perm = 10000, method = "euclidean") {
+  assertList(s, types = "RasterStack")
+  assertCharacter(var_names, unique = T, any.missing = F)
   assertCount(perm, positive = T)
   assertChoice(method, c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"))
 
-  if('all' %in% var_names){
+  if ("all" %in% var_names) {
     var_names <- names(s[[1]])
   }
 
-  s <- sapply(s, function(x){x <- stack(mask(crop(x,study_area),study_area))}, simplify = FALSE, USE.NAMES = TRUE)
+  s <- sapply(s, function(x) {
+    x <- stack(mask(crop(x, study_area), study_area))
+  }, simplify = FALSE, USE.NAMES = TRUE)
 
   d <- dist_gcms(s, var_names = var_names, method = method)$distances
-  n <- length(s)-1
-  r <- replicate(perm,expr = {
+  n <- length(s) - 1
+  r <- replicate(perm, expr = {
     size <- sample(2:n, 1)
-    gcms <- sample(names(s), size=size, replace = F)
-    df <- data.frame(k=size, mean=mean(dist_subset(d,gcms)))
+    gcms <- sample(names(s), size = size, replace = F)
+    df <- data.frame(k = size, mean = mean(dist_subset(d, gcms)))
     return(df)
   }, simplify = T)
   r <- as.data.frame(t(r))
@@ -53,28 +55,25 @@ montecarlo_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, p
   r$mean <- as.numeric(r$mean)
   mgcms_all <- mean(d)
 
-  df <- data.frame(k=NA, mean=NA)
-  for(i in 2:n){
+  df <- data.frame(k = NA, mean = NA)
+  for (i in 2:n) {
     m <- kmeans_gcms(s, var_names = var_names, k = i, method = method)$suggested_gcms
-    m <- mean(dist_subset(d,m))
-    df[i,] <- c(i, m)
+    m <- mean(dist_subset(d, m))
+    df[i, ] <- c(i, m)
   }
-  df <- df[-1,]
+  df <- df[-1, ]
 
-  violin_plot <- ggplot(r, aes(x=factor(k), y=mean, fill=factor(k))) +
+  violin_plot <- ggplot(r, aes(x = factor(k), y = mean, fill = factor(k))) +
     geom_violin() +
-    geom_boxplot(width=0.1, fill='white') +
-    geom_hline(yintercept=mgcms_all, color = "blue") +
-    geom_line(data=df, aes(x=k-1, y=mean, group=1), linetype = "dashed", color="red") +
-    geom_point(data=df, aes(x=k-1, y=mean, group=1), color="red") +
-    xlab('Number of GCMs/Clusters') +
-    ylab('Mean Distance') +
+    geom_boxplot(width = 0.1, fill = "white") +
+    geom_hline(yintercept = mgcms_all, color = "blue") +
+    geom_line(data = df, aes(x = k - 1, y = mean, group = 1), linetype = "dashed", color = "red") +
+    geom_point(data = df, aes(x = k - 1, y = mean, group = 1), color = "red") +
+    xlab("Number of GCMs/Clusters") +
+    ylab("Mean Distance") +
     theme_minimal() +
     theme(legend.position = "none") +
-    ggtitle('Monte Carlo Permutations')
+    ggtitle("Monte Carlo Permutations")
 
-  return(list(montecarlo_plot=violin_plot))
+  return(list(montecarlo_plot = violin_plot))
 }
-
-
-

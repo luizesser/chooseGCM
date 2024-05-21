@@ -26,60 +26,63 @@
 #' @importFrom sp CRS
 #'
 #' @export
-transform_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL){
-  assertList(s, types='RasterStack')
-  assertCharacter(var_names, unique=T, any.missing=F)
+transform_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL) {
+  assertList(s, types = "RasterStack")
+  assertCharacter(var_names, unique = T, any.missing = F)
 
-  if('all' %in% var_names){
+  if ("all" %in% var_names) {
     var_names <- names(s[[1]])
   }
 
-  if(var_names %in% names(s[[1]]) %>% all()){
-    s <- sapply(s, function(x){# Subset stacks to keep only var_names
-                             x <- x[[var_names]]
-                             # Reproject to match study_area crs.
-                             if(!is.null(study_area)){
-                               if(any(class(study_area) %in% c("Extent"))){
-                                 # Crop and mask stacks
-                                 x <- crop(x, study_area)
-                               }
-                               if(any(class(study_area) %in% c("RasterLayer", "RasterStack", "RasterBrick"))){
-                                 if(!as.character(crs(x))==as.character(crs(study_area))){
-                                   if(any(class(study_area) %in% c("RasterStack", "RasterBrick"))){
-                                     if(any(class(study_area) %in% c("RasterStack"))){
-                                       study_area <- study_area[[1]]
-                                     } else{
-                                       study_area <- study_area[[1]][[1]]
-                                     }
-                                   }
-                                   x <- stack(projectRaster(x, crs=as.character(crs(study_area))))
-                                   e <- rasterToPolygons(study_area)
-                                   # Crop and mask stacks
-                                   x <- mask(stack(crop(x, e)),e)
-                                 }
-                               }
-                               if(!any(class(study_area) %in% c("Extent", "RasterLayer"))){
+  if (var_names %in% names(s[[1]]) %>% all()) {
+    s <- sapply(s, function(x) { # Subset stacks to keep only var_names
+      x <- x[[var_names]]
+      # Reproject to match study_area crs.
+      if (!is.null(study_area)) {
+        if (any(class(study_area) %in% c("Extent"))) {
+          # Crop and mask stacks
+          x <- crop(x, study_area)
+        }
+        if (any(class(study_area) %in% c("RasterLayer", "RasterStack", "RasterBrick"))) {
+          if (!as.character(crs(x)) == as.character(crs(study_area))) {
+            if (any(class(study_area) %in% c("RasterStack", "RasterBrick"))) {
+              if (any(class(study_area) %in% c("RasterStack"))) {
+                study_area <- study_area[[1]]
+              } else {
+                study_area <- study_area[[1]][[1]]
+              }
+            }
+            x <- stack(projectRaster(x, crs = as.character(crs(study_area))))
+            e <- rasterToPolygons(study_area)
+            # Crop and mask stacks
+            x <- mask(stack(crop(x, e)), e)
+          }
+        }
+        if (!any(class(study_area) %in% c("Extent", "RasterLayer"))) {
+          if (!as.character(crs(x)) == as.character(CRS(crs(study_area))) |
+            is.na(as.character(crs(x)) == as.character(CRS(crs(study_area))))) {
+            if (!crs(study_area) == "") {
+              x <- projectRaster(x, crs = CRS(crs(study_area)))
+            }
+            # Crop and mask stacks
+            x <- mask(crop(x, study_area), study_area)
+          } else {
+            x <- mask(crop(x, study_area), study_area)
+          }
+        }
+      }
 
-                                 if(!as.character(crs(x))==as.character(CRS(crs(study_area))) |
-                                    is.na(as.character(crs(x))==as.character(CRS(crs(study_area))))){
-                                     if(!crs(study_area) == ""){
-                                       x <- projectRaster(x, crs=CRS(crs(study_area)))
-                                     }
-                                     # Crop and mask stacks
-                                     x <- mask(crop(x, study_area),study_area)
-                                 } else {
-                                     x <- mask(crop(x, study_area),study_area)
-                                 }
-                               }
-                              }
-
-                             # Transform in data.frames
-                             x <- x %>% stack() %>% as.data.frame()
-                             return(x)},
-                USE.NAMES = T,
-                simplify = F)
-  return(s)
+      # Transform in data.frames
+      x <- x %>%
+        stack() %>%
+        as.data.frame()
+      return(x)
+    },
+    USE.NAMES = T,
+    simplify = F
+    )
+    return(s)
   } else {
-    stop('Variables names in s object do not match var_names!')
+    stop("Variables names in s object do not match var_names!")
   }
 }

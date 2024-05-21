@@ -29,18 +29,19 @@
 #' @importFrom cluster clusGap
 #'
 #' @export
-optk_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, cluster = 'kmeans', method = 'wss', n = NULL, nstart = 10, K.max = 10, B = 100) {
-
-  assertList(s, types='RasterStack')
-  assertCharacter(var_names, unique=T, any.missing=F)
+optk_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, cluster = "kmeans", method = "wss", n = NULL, nstart = 10, K.max = 10, B = 100) {
+  assertList(s, types = "RasterStack")
+  assertCharacter(var_names, unique = T, any.missing = F)
   assertChoice(cluster, c("kmeans", "hclust"))
   assertChoice(method, c("silhouette", "wss", "gap_stat"))
-  if(!is.null(n)){assertCount(n, positive = T)}
+  if (!is.null(n)) {
+    assertCount(n, positive = T)
+  }
   assertCount(nstart, positive = T)
   assertCount(K.max, positive = T)
   assertCount(B, positive = T)
 
-  if('all' %in% var_names){
+  if ("all" %in% var_names) {
     var_names <- names(s[[1]])
   }
 
@@ -48,14 +49,14 @@ optk_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, cluster
   x <- flatten_gcms(x)
   flatten_subset <- na.omit(x)
 
-  if(!is.null(n)){
-    if(nrow(flatten_subset)>n){
-      flatten_subset <- flatten_subset[sample(nrow(flatten_subset), n),]
+  if (!is.null(n)) {
+    if (nrow(flatten_subset) > n) {
+      flatten_subset <- flatten_subset[sample(nrow(flatten_subset), n), ]
     }
   }
 
-  if(cluster == 'kmeans'){
-    if(method == 'gap_stat'){
+  if (cluster == "kmeans") {
+    if (method == "gap_stat") {
       g <- clusGap(flatten_subset, FUN = kmeans, nstart = nstart, K.max = K.max, B = B)
       y <- fviz_gap_stat(g)
     } else {
@@ -63,8 +64,8 @@ optk_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, cluster
     }
   }
 
-  if(cluster == 'hclust'){
-    if(method == 'gap_stat'){
+  if (cluster == "hclust") {
+    if (method == "gap_stat") {
       y <- fviz_nbclust(flatten_subset, FUN = hclust, method, k.max = K.max, nboot = B)
     } else {
       y <- fviz_nbclust(flatten_subset, FUN = hclust, method)

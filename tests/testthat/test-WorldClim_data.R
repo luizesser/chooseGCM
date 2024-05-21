@@ -65,7 +65,7 @@ test_that("WorldClim_data input error (ssp is a list of correct values)", {
 
 ##
 test_that("WorldClim_data input error (resolution is character)", {
-  expect_error(WorldClim_data(resolution = '10'))
+  expect_error(WorldClim_data(resolution = "10"))
 })
 
 test_that("WorldClim_data input error (resolution is not a correct value)", {

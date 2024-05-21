@@ -16,7 +16,7 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
-#' s <- import_gcms(path='input_data/WorldClim_data_future', extension=".tif", recursive=TRUE, gcm_names=NULL)
+#' s <- import_gcms(path = "input_data/WorldClim_data_future", extension = ".tif", recursive = TRUE, gcm_names = NULL)
 #' study_area <- extent(c(-57, -22, -48, -33))
 #' var_names <- c("bio_1", "bio_12")
 #' t <- transform_gcms(s, var_names, study_area)
@@ -26,27 +26,30 @@
 #' @importFrom here here
 #'
 #' @export
-import_gcms <- function(path="input_data/WorldClim_data_gcms", extension=".tif", recursive=TRUE, gcm_names=NULL, var_names=NULL){
-  assertCharacter(path, len=1)
-  assertCharacter(extension, len=1)
+import_gcms <- function(path = "input_data/WorldClim_data_gcms", extension = ".tif", recursive = TRUE, gcm_names = NULL, var_names = NULL) {
+  assertCharacter(path, len = 1)
+  assertCharacter(extension, len = 1)
   assertLogical(recursive)
   assertCharacter(gcm_names, null.ok = T)
 
-  if(is.null(var_names)){var_names <- paste0('bio',1:19)}
+  if (is.null(var_names)) {
+    var_names <- paste0("bio", 1:19)
+  }
 
   path <- here(path)
 
-  l <- list.files(path, pattern = extension, full.names = T, rec=recursive)
-  if(length(l)==0){
-    stop('Could not find any file matching the parameters!')
+  l <- list.files(path, pattern = extension, full.names = T, rec = recursive)
+  if (length(l) == 0) {
+    stop("Could not find any file matching the parameters!")
   }
-  s <- lapply(l, function(x){s <- raster::stack(x)
-                           names(s) <-  # Rename rasters
-                           return(s)})
-  if(is.null(gcm_names)){
-    gcm_names <- gsub(extension,"",list.files(path, pattern = extension, full.names = F, rec=recursive))
+  s <- lapply(l, function(x) {
+    s <- raster::stack(x)
+    names(s) <- # Rename rasters
+      return(s)
+  })
+  if (is.null(gcm_names)) {
+    gcm_names <- gsub(extension, "", list.files(path, pattern = extension, full.names = F, rec = recursive))
   }
   names(s) <- sort(gcm_names)
   return(s)
 }
-

@@ -20,19 +20,18 @@
 #' study_area <- extent(c(-57, -22, -48, -33))
 #' var_names <- c("bio_1", "bio_12")
 #'
-#' dist_gcms(s, method='euclidean')
+#' dist_gcms(s, method = "euclidean")
 #'
 #' @import checkmate
 #' @importFrom factoextra fviz_dist get_dist
 #'
 #' @export
-dist_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, method = 'euclidean'){
-
-  assertList(s, types='RasterStack')
-  assertCharacter(var_names, unique=T, any.missing=F)
+dist_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, method = "euclidean") {
+  assertList(s, types = "RasterStack")
+  assertCharacter(var_names, unique = T, any.missing = F)
   assertChoice(method, c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "pearson", "spearman", "kendall"))
 
-  if('all' %in% var_names){
+  if ("all" %in% var_names) {
     var_names <- names(s[[1]])
   }
 
@@ -41,19 +40,19 @@ dist_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, method 
   flatten_vars <- flatten_gcms(x)
 
   # Calculate the distance matrix
-  dist_matrix <- get_dist(t(flatten_vars), method=method)
+  dist_matrix <- get_dist(t(flatten_vars), method = method)
 
   hm <- fviz_dist(
     dist_matrix,
     order = TRUE,
     show_labels = TRUE,
     lab_size = NULL,
-    gradient = list(low = "#FDE725FF", mid = "#21908CFF", high = "#440154FF")) +
+    gradient = list(low = "#FDE725FF", mid = "#21908CFF", high = "#440154FF")
+  ) +
     ggtitle("Distance Matrix Heatmap")
 
-  return(list(distances=dist_matrix,
-              heatmap=hm))
+  return(list(
+    distances = dist_matrix,
+    heatmap = hm
+  ))
 }
-
-
-

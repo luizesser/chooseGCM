@@ -25,26 +25,29 @@
 #' @importFrom stringr str_to_title
 #'
 #' @export
-cor_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, method = "pearson"){
-  assertList(s, types='RasterStack')
-  assertCharacter(var_names, unique=T, any.missing=F)
+cor_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, method = "pearson") {
+  assertList(s, types = "RasterStack")
+  assertCharacter(var_names, unique = T, any.missing = F)
   assertChoice(method, c("pearson", "kendall", "spearman"))
 
-  if('all' %in% var_names){
+  if ("all" %in% var_names) {
     var_names <- names(s[[1]])
   }
 
   x <- transform_gcms(s, var_names, study_area)
   x <- flatten_gcms(x)
-  cor_matrix <- cor(as.matrix(x), use='complete.obs', method = method)
+  cor_matrix <- cor(as.matrix(x), use = "complete.obs", method = method)
   cor_plot <- ggcorrplot(cor_matrix,
-                         type='lower',
-                         lab=T,
-                         lab_size = 3,
-                         hc.order=T,
-                         hc.method = 'ward.D2',
-                         show.legend = F,
-                         title=paste0(stringr::str_to_title(method),' Correlation'))
-  return(list(cor_matrix=cor_matrix,
-              cor_plot=cor_plot))
+    type = "lower",
+    lab = T,
+    lab_size = 3,
+    hc.order = T,
+    hc.method = "ward.D2",
+    show.legend = F,
+    title = paste0(stringr::str_to_title(method), " Correlation")
+  )
+  return(list(
+    cor_matrix = cor_matrix,
+    cor_plot = cor_plot
+  ))
 }

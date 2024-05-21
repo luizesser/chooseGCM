@@ -25,30 +25,35 @@
 #' @import raster
 #'
 #' @export
-summary_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL){
-  assertList(s, types='RasterStack')
-  assertCharacter(var_names, unique=T, any.missing=F)
+summary_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL) {
+  assertList(s, types = "RasterStack")
+  assertCharacter(var_names, unique = T, any.missing = F)
 
-  if('all' %in% var_names){
+  if ("all" %in% var_names) {
     var_names <- names(s[[1]])
   }
 
   s2 <- transform_gcms(s, var_names, study_area)
-  m <- sapply(s2, function(y){
-                             df_m <- apply(y, 2, function(x) {
-                               data.frame(min=min(x, na.rm=T),
-                                          quantile_0.25=quantile(x, 0.25, na.rm=T),
-                                          median=median(x, na.rm=T),
-                                          mean=mean(x, na.rm=T),
-                                          quantile_0.75=quantile(x, 0.75, na.rm=T),
-                                          max=max(x, na.rm=T),
-                                          sd=sd(x, na.rm=T),
-                                          NAs=sum(is.na(x)),
-                                          n_cells=length(x))
-                               })
-                             },
-              USE.NAMES = T, simplify = F)
-  #m <- m %>% as.data.frame() %>% t()
-  m <- lapply(m, function(x){do.call(rbind, x)})
+  m <- sapply(s2, function(y) {
+    df_m <- apply(y, 2, function(x) {
+      data.frame(
+        min = min(x, na.rm = T),
+        quantile_0.25 = quantile(x, 0.25, na.rm = T),
+        median = median(x, na.rm = T),
+        mean = mean(x, na.rm = T),
+        quantile_0.75 = quantile(x, 0.75, na.rm = T),
+        max = max(x, na.rm = T),
+        sd = sd(x, na.rm = T),
+        NAs = sum(is.na(x)),
+        n_cells = length(x)
+      )
+    })
+  },
+  USE.NAMES = T, simplify = F
+  )
+  # m <- m %>% as.data.frame() %>% t()
+  m <- lapply(m, function(x) {
+    do.call(rbind, x)
+  })
   return(m)
 }

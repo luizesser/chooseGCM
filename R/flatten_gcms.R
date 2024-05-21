@@ -20,8 +20,10 @@
 #' @import raster
 #'
 #' @export
-flatten_gcms <- function(s){
-  assertList(s, types='data.frame')
-  sapply(s, function(x){x <- scale(x)
-                        x <- as.vector(x)}, USE.NAMES=T)
+flatten_gcms <- function(s) {
+  assertList(s, types = "data.frame")
+  sapply(s, function(x) {
+    x <- scale(x)
+    x <- as.vector(x)
+  }, USE.NAMES = T)
 }

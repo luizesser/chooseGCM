@@ -20,7 +20,7 @@
 #' s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
 #' study_area <- extent(c(-57, -22, -48, -33))
 #' var_names <- c("bio_1", "bio_12")
-#' dend <- hclust_gcms(stack, k=4, n=500)
+#' dend <- hclust_gcms(stack, k = 4, n = 500)
 #' plot(dend)
 #'
 #' @import checkmate
@@ -30,13 +30,15 @@
 #' @importFrom grDevices colors
 #'
 #' @export
-hclust_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3, n=NULL){
-  assertList(s, types='RasterStack')
-  assertCharacter(var_names, unique=T, any.missing=F)
+hclust_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, k = 3, n = NULL) {
+  assertList(s, types = "RasterStack")
+  assertCharacter(var_names, unique = T, any.missing = F)
   assertCount(k, positive = T)
-  if(!is.null(n)){assertCount(n, positive = T)}
+  if (!is.null(n)) {
+    assertCount(n, positive = T)
+  }
 
-  if('all' %in% var_names){
+  if ("all" %in% var_names) {
     var_names <- names(s[[1]])
   }
 
@@ -44,18 +46,19 @@ hclust_gcms <- function(s, var_names=c('bio_1','bio_12'), study_area=NULL, k=3, 
   x <- flatten_gcms(x)
   x <- na.omit(x)
 
-  if(!is.null(n)){
+  if (!is.null(n)) {
     flatten_subset <- x
-    if(nrow(flatten_subset)>n){
-      x <- flatten_subset[sample(nrow(flatten_subset), n),]
+    if (nrow(flatten_subset) > n) {
+      x <- flatten_subset[sample(nrow(flatten_subset), n), ]
     }
   }
 
   res <- hcut(t(x), k = k)
   dend <- fviz_dend(res,
-                    cex = 0.5,
-                    ylim = c(max(res$height)*1.1/5*-1, max(res$height)*1.1),
-                    palette="jco",
-                    main = "Hierarchical Clustering")
+    cex = 0.5,
+    ylim = c(max(res$height) * 1.1 / 5 * -1, max(res$height) * 1.1),
+    palette = "jco",
+    main = "Hierarchical Clustering"
+  )
   return(dend)
 }
