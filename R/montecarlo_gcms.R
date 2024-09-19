@@ -46,6 +46,7 @@ montecarlo_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NU
 
   d <- dist_gcms(s, var_names = var_names, method = method)$distances
   n <- length(s) - 1
+  k <- NULL
   r <- replicate(perm, expr = {
     size <- sample(2:n, 1)
     gcms <- sample(names(s), size = size, replace = F)
