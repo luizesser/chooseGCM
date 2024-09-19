@@ -27,12 +27,13 @@ A list with two items: distances (the distances between GCMs) and heatmap (a plo
 This function compares future climate projections from multiple Global Circulation Models (GCMs) based on their similarity in terms of bioclimatic variables. The function calculates distance metrics and plot it on a heatmap.
 }
 \examples{
-
+\dontrun{
 s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
 study_area <- extent(c(-57, -22, -48, -33))
 var_names <- c("bio_1", "bio_12")
 
-dist_gcms(s, method='euclidean')
+dist_gcms(s, method = "euclidean")
+}
 
 }
 \seealso{

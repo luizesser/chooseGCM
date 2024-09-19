@@ -20,10 +20,12 @@ A list of data frames, with each element of the list corresponding to a GCM in t
 This function transforms a list of stacks of GCMs by subsetting it to only include the variable names specified in \code{var_names}, reprojecting it to match the CRS of \code{study_area}, cropping and masking it to \code{study_area}, and returning a list of data frames.
 }
 \examples{
+\dontrun{
 s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
 study_area <- extent(c(-57, -22, -48, -33))
 var_names <- c("bio_1", "bio_12")
 t <- transform_gcms(s, var_names, study_area)
+}
 
 }
 \seealso{

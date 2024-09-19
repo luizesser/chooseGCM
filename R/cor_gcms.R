@@ -13,22 +13,23 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
+#' \dontrun{
 #' s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
 #' study_area <- extent(c(-57, -22, -48, -33))
 #' var_names <- c("bio_1", "bio_12")
 #' s <- transform_gcms(s, var_names, study_area)
 #' flattened_gcms <- flatten_gcms(s)
 #' cor_gcms(quick_example, method = "spearman")
+#' }
 #'
 #' @import checkmate
-#' @import ggcorrplot
-#' @importFrom stringr str_to_title
+#' @importFrom ggcorrplot ggcorrplot
 #'
 #' @export
 cor_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, method = "pearson") {
-  assertList(s, types = "RasterStack")
-  assertCharacter(var_names, unique = T, any.missing = F)
-  assertChoice(method, c("pearson", "kendall", "spearman"))
+  checkmate::assertList(s, types = "RasterStack")
+  checkmate::assertCharacter(var_names, unique = T, any.missing = F)
+  checkmate::assertChoice(method, c("pearson", "kendall", "spearman"))
 
   if ("all" %in% var_names) {
     var_names <- names(s[[1]])
@@ -36,15 +37,17 @@ cor_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, met
 
   x <- transform_gcms(s, var_names, study_area)
   x <- flatten_gcms(x)
-  cor_matrix <- cor(as.matrix(x), use = "complete.obs", method = method)
-  cor_plot <- ggcorrplot(cor_matrix,
+  cor_matrix <- stats::cor(as.matrix(x), use = "complete.obs", method = method)
+  title <- paste0(method, " Correlation")
+  substr(title, 1, 1) <- toupper(substr(title, 1, 1))
+  cor_plot <- ggcorrplot::ggcorrplot(cor_matrix,
     type = "lower",
     lab = T,
     lab_size = 3,
     hc.order = T,
     hc.method = "ward.D2",
     show.legend = F,
-    title = paste0(stringr::str_to_title(method), " Correlation")
+    title = title
   )
   return(list(
     cor_matrix = cor_matrix,

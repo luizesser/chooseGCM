@@ -2,11 +2,13 @@
 #'
 #' This function allows to download data from WorldClim v.2.1 (https://www.worldclim.org/data/index.html) considering multiple GCMs, time periods and SSPs.
 #'
-#' @usage WorldClim_data(period = 'current', variable = 'bioc', year = '2030', gcm = 'mi', ssp = '126', resolution = 10)
+#' @usage worldclim_data(period = 'current', variable = 'bioc', year = '2030',
+#' gcm = 'mi', ssp = '126', resolution = 10, path=NULL)
 #'
 #' @param period Can be 'current' or 'future'.
 #' @param variable Allows to specify which variables you want to retrieve Possible entries are:
 #' 'tmax','tmin','prec' and/or 'bioc'.
+#' @param path Directory path to save downloads.
 #' @param year Specify the year you want to retrieve data. Possible entries are:
 #' '2030', '2050', '2070' and/or '2090'. You can  use a vector to provide more than one entry.
 #' @param gcm GCMs to be considered in future scenarios. You can use a vector to provide more than one entry.
@@ -43,7 +45,7 @@
 #' @param resolution You can select one resolution from the following alternatives: 10, 5, 2.5 OR 30.
 #' @param path Directory path to save downloads.
 #'
-#' @details This function will create a folder entitled 'WorldClim_data'. All the data downloaded will be stored in this folder. Note that, despite being possible to retrieve a lot of data at once, it is not recommended to do so, since the data is very heavy.
+#' @details This function will create a folder entitled 'worldclim_data'. All the data downloaded will be stored in this folder. Note that, despite being possible to retrieve a lot of data at once, it is not recommended to do so, since the data is very heavy.
 #'
 #' @references https://www.worldclim.org/data/index.html
 #'
@@ -54,17 +56,21 @@
 #' \dontrun{
 #' # download data from multiple periods:
 #' year <- c(2050, 2090)
-#' WorldClim_data("bioc", year, "mi", 126, 10)
+#' worldclim_data("bioc", year, "mi", 126, 10)
 #'
 #' # download data from one specific period
-#' WorldClim_data("bioc", 2070, "mi", 585, 10)
+#' worldclim_data("bioc", 2070, "mi", 585, 10)
 #' }
 #'
 #' @import checkmate
 #' @import httr
+#' @importFrom stats hclust median sd
+#' @importFrom utils  unzip
 #'
 #' @export
-WorldClim_data <- function(period = "current", variable = "bioc", year = "2030", gcm = "mi", ssp = "126", resolution = 10, path = NULL) {
+worldclim_data <- function(period = "current", variable = "bioc", year = "2030",
+                           gcm = "mi", ssp = "126", resolution = 10,
+                           path = NULL) {
   if (!all(period %in% c("current", "future")) | !length(period) == 1) {
     stop("Assertion on 'period' failed: Must be one element of set {'current', 'future'}.")
   }

@@ -10,35 +10,38 @@
 #'
 #' @return A list of stacks, with each element of the list corresponding to a GCM from given path.
 #'
-#' @seealso \code{\link{WorldClim_data}}
+#' @seealso \code{\link{worldclim_data}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
-#' s <- import_gcms(path = "input_data/WorldClim_data_future", extension = ".tif", recursive = TRUE, gcm_names = NULL)
+#' \dontrun{
+#' s <- import_gcms(
+#'   path = "input_data/WorldClim_data_future", extension = ".tif",
+#'   recursive = TRUE, gcm_names = NULL
+#' )
 #' study_area <- extent(c(-57, -22, -48, -33))
 #' var_names <- c("bio_1", "bio_12")
 #' t <- transform_gcms(s, var_names, study_area)
+#' }
 #'
 #' @import checkmate
-#' @import raster
-#' @importFrom here here
+#' @importFrom raster stack
 #'
 #' @export
 import_gcms <- function(path = "input_data/WorldClim_data_gcms", extension = ".tif", recursive = TRUE, gcm_names = NULL, var_names = NULL) {
-  assertCharacter(path, len = 1)
-  assertCharacter(extension, len = 1)
-  assertLogical(recursive)
-  assertCharacter(gcm_names, null.ok = T)
+  checkmate::assertCharacter(path, len = 1)
+  checkmate::assertCharacter(extension, len = 1)
+  checkmate::assertLogical(recursive)
+  checkmate::assertCharacter(gcm_names, null.ok = T)
+  checkmate::assertDirectoryExists(path)
 
   if (is.null(var_names)) {
     var_names <- paste0("bio", 1:19)
   }
 
-  path <- here(path)
-
-  l <- list.files(path, pattern = extension, full.names = T, rec = recursive)
+  l <- list.files(path, pattern = extension, full.names = T, recursive = recursive)
   if (length(l) == 0) {
     stop("Could not find any file matching the parameters!")
   }
@@ -48,7 +51,7 @@ import_gcms <- function(path = "input_data/WorldClim_data_gcms", extension = ".t
       return(s)
   })
   if (is.null(gcm_names)) {
-    gcm_names <- gsub(extension, "", list.files(path, pattern = extension, full.names = F, rec = recursive))
+    gcm_names <- gsub(extension, "", list.files(path, pattern = extension, full.names = F, recursive = recursive))
   }
   names(s) <- sort(gcm_names)
   return(s)

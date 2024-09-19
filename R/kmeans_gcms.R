@@ -17,11 +17,13 @@
 #'
 #' @examples
 #'
+#' \dontrun{
 #' s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
 #' study_area <- extent(c(-57, -22, -48, -33))
 #' var_names <- c("bio_1", "bio_12")
 #'
 #' kmeans_gcms(s, k = 3)
+#' }
 #'
 #' @import checkmate
 #' @importFrom factoextra fviz_cluster
@@ -30,9 +32,9 @@
 #'
 #' @export
 kmeans_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, k = 3, method = NULL) {
-  assertList(s, types = "RasterStack")
-  assertCharacter(var_names, unique = T, any.missing = F)
-  assertCount(k, positive = T)
+  checkmate::assertList(s, types = "RasterStack")
+  checkmate::assertCharacter(var_names, unique = T, any.missing = F)
+  checkmate::assertCount(k, positive = T)
 
   if ("all" %in% var_names) {
     var_names <- names(s[[1]])
@@ -46,7 +48,7 @@ kmeans_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, 
     })
 
     # Run K-means
-    cl <- kmeans(t(flatten_vars), k, nstart = 10000, iter.max = 1000)
+    cl <- stats::kmeans(t(flatten_vars), k, nstart = 10000, iter.max = 1000)
 
     gcms <- vector()
     gcms_mat <- as.matrix(dist(t(cbind(t(cl$centers), flatten_vars))))[-c(1:k), c(1:k)]
@@ -58,35 +60,35 @@ kmeans_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, 
     }
 
     # plot
-    kmeans_plot <- fviz_cluster(cl,
+    kmeans_plot <- factoextra::fviz_cluster(cl,
       data = t(flatten_vars),
       palette = "jco",
-      ggtheme = theme_minimal(),
+      ggtheme = ggplot2::theme_minimal(),
       main = "K-means Clustering Plot",
       legend = "none"
     )
   } else {
-    assertChoice(method, c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"))
+    checkmate::assertChoice(method, c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"))
 
     # Scale and flatten variables into one column.
     x <- transform_gcms(s, var_names, study_area)
     flatten_vars <- flatten_gcms(x)
 
     # Calculate the distance matrix
-    dist_matrix <- dist(t(flatten_vars), method = method)
+    dist_matrix <- stats::dist(t(flatten_vars), method = method)
 
     # Run K-means
-    cl <- kmeans(dist_matrix, k, nstart = 10000, iter.max = 1000)
+    cl <- stats::kmeans(dist_matrix, k, nstart = 10000, iter.max = 1000)
 
     gcms <- apply(cl$centers, 1, function(x) {
-      which.min(x) %>% names()
+      which.min(x) |> names()
     })
 
     # plot
-    kmeans_plot <- fviz_cluster(cl,
+    kmeans_plot <- factoextra::fviz_cluster(cl,
       data = dist_matrix,
       palette = "jco",
-      ggtheme = theme_minimal(),
+      ggtheme = ggplot2::theme_minimal(),
       check_overlap = T,
       main = "K-means Clustering Plot",
       legend = "none",

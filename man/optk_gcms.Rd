@@ -28,6 +28,12 @@ optk_gcms(
 \item{method}{A character string specifying the method to use for determining the optimal number of clusters. Options are 'wss' for within-cluster sum of squares, 'silhouette' for average silhouette width and 'gap_stat' for the gap statistic method. Default is 'wss'.}
 
 \item{n}{An integer specifying the number of randomly selected samples to use in the clustering analysis. If NULL (default) all data is used.}
+
+\item{nstart}{A}
+
+\item{K.max}{A}
+
+\item{B}{A}
 }
 \value{
 A ggplot object representing the optimal number of clusters.
@@ -36,12 +42,13 @@ A ggplot object representing the optimal number of clusters.
 This function performs clustering analysis on a dataset and determines the optimal number of clusters based on a specified method.
 }
 \examples{
-
+\dontrun{
 s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
 study_area <- extent(c(-57, -22, -48, -33))
 var_names <- c("bio_1", "bio_12")
 
 optk_gcms(flattened_gcms)
+}
 
 }
 \seealso{

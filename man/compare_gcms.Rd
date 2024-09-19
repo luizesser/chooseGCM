@@ -22,12 +22,16 @@ A list with two items: suggested_gcms (the names of the GCMs suggested for furth
 This function compares future climate projections from multiple Global Circulation Models (GCMs) based on their similarity in terms of bioclimatic variables. The function clusters the GCMs using k-means clustering and hierarchical clustering, calculates the Euclidean distance matrix, and generates plots for the clusters and the distance matrix.
 }
 \examples{
+\dontrun{
 # compare GCMS
-compare_gcms(folder_future_rasters_gcms = "path/to/folder",
-study_area = raster("path/to/raster"),
-var_names = c('bio_1', 'bio_12'),
-gcm_names = c('gcm1', 'gcm2', 'gcm3'),
-k = 3)
+compare_gcms(
+  folder_future_rasters_gcms = "path/to/folder",
+  study_area = raster("path/to/raster"),
+  var_names = c("bio_1", "bio_12"),
+  gcm_names = c("gcm1", "gcm2", "gcm3"),
+  k = 3
+)
+}
 
 }
 \author{

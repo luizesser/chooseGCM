@@ -20,9 +20,9 @@ test_that("flatten_gcms working (list of one data.frame)", {
 })
 
 test_that("flatten_gcms input error (list of stacks)", {
-  bio_1 <- raster(matrix(runif(1000), ncol = 50))
-  bio_2 <- raster(matrix(runif(1000), ncol = 50))
-  bio_12 <- raster(matrix(runif(1000), ncol = 50))
+  bio_1 <- raster::raster(matrix(runif(1000), ncol = 50))
+  bio_2 <- raster::raster(matrix(runif(1000), ncol = 50))
+  bio_12 <- raster::raster(matrix(runif(1000), ncol = 50))
   ab <- stack(bio_1, bio_2, bio_12)
   names(ab) <- c("bio_1", "bio_2", "bio_12")
   s <- list(ab, ab, ab)
@@ -31,9 +31,9 @@ test_that("flatten_gcms input error (list of stacks)", {
 })
 
 test_that("flatten_gcms input error (list of one stack)", {
-  bio_1 <- raster(matrix(runif(1000), ncol = 50))
-  bio_2 <- raster(matrix(runif(1000), ncol = 50))
-  bio_12 <- raster(matrix(runif(1000), ncol = 50))
+  bio_1 <- raster::raster(matrix(runif(1000), ncol = 50))
+  bio_2 <- raster::raster(matrix(runif(1000), ncol = 50))
+  bio_12 <- raster::raster(matrix(runif(1000), ncol = 50))
   ab <- stack(bio_1, bio_2, bio_12)
   names(ab) <- c("bio_1", "bio_2", "bio_12")
   s <- list(ab)

@@ -6,6 +6,7 @@
 #' @param var_names Character. A vector with names of the bioclimatic variables to compare OR 'all'.
 #' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
 #' @param highlight Character. A vector with names of gcms to be highlighted. In this case, the sum of all but chosen GCMs will appear in grey.
+#' @param resolution Res
 #'
 #' @return a data frame with the summary statistics for each variable
 #'
@@ -15,22 +16,23 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
+#' \dontrun{
 #' s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
 #' study_area <- extent(c(-57, -22, -48, -33))
 #' var_names <- c("bio_1", "bio_12")
 #' env_gcms(s, var_names, study_area, highlight = "sum")
 #' env_gcms(s, var_names, study_area, highlight = c("cr", "ml", "uk"))
+#' }
 #'
 #' @import checkmate
-#' @import dplyr
-#' @import raster
 #' @import ggplot2
+#' @importFrom stats na.omit
 #' @importFrom data.table melt
 #'
 #' @export
 env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, highlight = "sum", resolution = 25) {
-  assertList(s, types = "RasterStack")
-  assertCharacter(var_names, unique = T, any.missing = F)
+  checkmate::assertList(s, types = "RasterStack")
+  checkmate::assertCharacter(var_names, unique = T, any.missing = F)
   if (!is.null(highlight) & !all(highlight %in% c("sum", names(s)))) {
     stop("highlight GCMs not found")
   }
@@ -44,12 +46,12 @@ env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, hig
   }
 
   s2 <- sapply(s, function(x) {
-    r <- stack(mask(crop(x[[c(var_names)]], study_area), study_area))
+    r <- raster::stack(raster::mask(raster::crop(x[[c(var_names)]], study_area), study_area))
   }, simplify = FALSE, USE.NAMES = TRUE)
 
   createGrid <- function(x, y, x_bins, y_bins, resolution, sum = FALSE) {
-    x <- na.omit(x)
-    y <- na.omit(y)
+    x <- stats::na.omit(x)
+    y <- stats::na.omit(y)
     counts <- matrix(0, nrow = resolution, ncol = resolution)
     for (i in 1:length(x)) {
       x_index <- findInterval(x[i], x_bins)
@@ -90,7 +92,7 @@ env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, hig
       grid <- ifelse(grid == 0, NA, 1)
       image(x_bins, y_bins, grid, col = colors[i], add = TRUE)
     }
-    legend("topright", inset = c(-0.15, 0), legend = names(s2), fill = colors, cex = 0.8)
+    graphics::legend("topright", inset = c(-0.15, 0), legend = names(s2), fill = colors, cex = 0.8)
   } else if (all(highlight %in% names(s))) {
     background <- do.call(rbind, lapply(s2, as.data.frame))
     x <- background[[var_names[1]]][]
@@ -116,11 +118,11 @@ env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, hig
       grid_back <- rbind(grid_back, grid)
     }
     grid_back$GCMs <- factor(grid_back$GCMs, levels = c("All", highlight))
-    res_plot <- ggplot(na.omit(grid_back), aes(x, y, fill = GCMs)) +
-      geom_tile() +
-      scale_fill_viridis_d(alpha = 0.5) +
-      labs(x = var_names[1], y = var_names[2], title = paste0("Selected GCMs coverage")) +
-      theme_minimal()
+    res_plot <- ggplot2::ggplot(stats::na.omit(grid_back), ggplot2::aes(x, y, fill = "GCMs")) +
+      ggplot2::geom_tile() +
+      ggplot2::scale_fill_viridis_d(alpha = 0.5) +
+      ggplot2::labs(x = var_names[1], y = var_names[2], title = paste0("Selected GCMs coverage")) +
+      ggplot2::theme_minimal()
   } else if (highlight == "sum") {
     for (i in 1:length(s2)) {
       x <- s2[[i]][[var_names[1]]][]
@@ -138,11 +140,11 @@ env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, hig
     grid_sum <- suppressWarnings(data.table::melt(grid_sum))
     colnames(grid_sum) <- c("x", "y", "GCMs")
 
-    res_plot <- ggplot(na.omit(grid_sum), aes(x, y, fill = GCMs)) +
-      geom_tile() +
-      scale_fill_viridis_c() +
-      labs(x = var_names[1], y = var_names[2], title = paste0("Sum of GCMs in Environmental Space")) +
-      theme_minimal()
+    res_plot <- ggplot2::ggplot(stats::na.omit(grid_sum), ggplot2::aes(x, y, fill = "GCMs")) +
+      ggplot2::geom_tile() +
+      ggplot2::scale_fill_viridis_c() +
+      ggplot2::labs(x = var_names[1], y = var_names[2], title = paste0("Sum of GCMs in Environmental Space")) +
+      ggplot2::theme_minimal()
   }
   return(res_plot)
 }

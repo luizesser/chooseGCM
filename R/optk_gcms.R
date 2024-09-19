@@ -8,6 +8,9 @@
 #' @param cluster A character string specifying the method to build the clusters. Options are 'kmeans' (standard) or 'hclust'.
 #' @param method A character string specifying the method to use for determining the optimal number of clusters. Options are 'wss' for within-cluster sum of squares, 'silhouette' for average silhouette width and 'gap_stat' for the gap statistic method. Default is 'wss'.
 #' @param n An integer specifying the number of randomly selected samples to use in the clustering analysis. If NULL (default) all data is used.
+#' @param nstart A
+#' @param K.max A
+#' @param B A
 #'
 #' @return A ggplot object representing the optimal number of clusters.
 #'
@@ -17,29 +20,29 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
-#'
+#' \dontrun{
 #' s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
 #' study_area <- extent(c(-57, -22, -48, -33))
 #' var_names <- c("bio_1", "bio_12")
 #'
 #' optk_gcms(flattened_gcms)
+#' }
 #'
 #' @import checkmate
+#' @importFrom stats na.omit
 #' @importFrom factoextra fviz_nbclust hcut
 #' @importFrom cluster clusGap
 #'
 #' @export
 optk_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, cluster = "kmeans", method = "wss", n = NULL, nstart = 10, K.max = 10, B = 100) {
-  assertList(s, types = "RasterStack")
-  assertCharacter(var_names, unique = T, any.missing = F)
-  assertChoice(cluster, c("kmeans", "hclust"))
-  assertChoice(method, c("silhouette", "wss", "gap_stat"))
-  if (!is.null(n)) {
-    assertCount(n, positive = T)
-  }
-  assertCount(nstart, positive = T)
-  assertCount(K.max, positive = T)
-  assertCount(B, positive = T)
+  checkmate::assertList(s, types = "RasterStack")
+  checkmate::assertCharacter(var_names, unique = T, any.missing = F)
+  checkmate::assertChoice(cluster, c("kmeans", "hclust"))
+  checkmate::assertChoice(method, c("silhouette", "wss", "gap_stat"))
+  checkmate::assertCount(n, positive = T, null.ok = T)
+  checkmate::assertCount(nstart, positive = T)
+  checkmate::assertCount(K.max, positive = T)
+  checkmate::assertCount(B, positive = T)
 
   if ("all" %in% var_names) {
     var_names <- names(s[[1]])
@@ -47,7 +50,7 @@ optk_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, cl
 
   x <- transform_gcms(s, var_names, study_area)
   x <- flatten_gcms(x)
-  flatten_subset <- na.omit(x)
+  flatten_subset <- stats::na.omit(x)
 
   if (!is.null(n)) {
     if (nrow(flatten_subset) > n) {
@@ -57,18 +60,18 @@ optk_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, cl
 
   if (cluster == "kmeans") {
     if (method == "gap_stat") {
-      g <- clusGap(flatten_subset, FUN = kmeans, nstart = nstart, K.max = K.max, B = B)
-      y <- fviz_gap_stat(g)
+      g <- cluster::clusGap(flatten_subset, FUNcluster = kmeans, nstart = nstart, K.max = K.max, B = B)
+      y <- factoextra::fviz_gap_stat(g)
     } else {
-      y <- fviz_nbclust(flatten_subset, FUN = kmeans, method)
+      y <- factoextra::fviz_nbclust(flatten_subset, FUNcluster = kmeans, method)
     }
   }
 
   if (cluster == "hclust") {
     if (method == "gap_stat") {
-      y <- fviz_nbclust(flatten_subset, FUN = hclust, method, k.max = K.max, nboot = B)
+      y <- factoextra::fviz_nbclust(flatten_subset, FUNcluster = hclust, method, k.max = K.max, nboot = B)
     } else {
-      y <- fviz_nbclust(flatten_subset, FUN = hclust, method)
+      y <- factoextra::fviz_nbclust(flatten_subset, FUNcluster = hclust, method)
     }
   }
 

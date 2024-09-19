@@ -17,11 +17,13 @@
 #'
 #' @examples
 #'
+#' \dontrun{
 #' s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
 #' study_area <- extent(c(-57, -22, -48, -33))
 #' var_names <- c("bio_1", "bio_12")
 #'
 #' montecarlo_gcms(s, study_area = study_area)
+#' }
 #'
 #' @import checkmate
 #' @import ggplot2

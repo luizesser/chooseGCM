@@ -17,26 +17,26 @@
 #'
 #' @examples
 #'
+#' \dontrun{
 #' s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
 #' study_area <- extent(c(-57, -22, -48, -33))
 #' var_names <- c("bio_1", "bio_12")
 #' dend <- hclust_gcms(stack, k = 4, n = 500)
 #' plot(dend)
+#' }
 #'
 #' @import checkmate
 #' @import factoextra
 #' @import ggplot2
-#' @import raster
+#' @importFrom stats na.omit
 #' @importFrom grDevices colors
 #'
 #' @export
 hclust_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, k = 3, n = NULL) {
-  assertList(s, types = "RasterStack")
-  assertCharacter(var_names, unique = T, any.missing = F)
-  assertCount(k, positive = T)
-  if (!is.null(n)) {
-    assertCount(n, positive = T)
-  }
+  checkmate::assertList(s, types = "RasterStack")
+  checkmate::assertCharacter(var_names, unique = T, any.missing = F)
+  checkmate::assertCount(k, positive = T)
+  checkmate::assertCount(n, positive = T, null.ok = T)
 
   if ("all" %in% var_names) {
     var_names <- names(s[[1]])
@@ -44,7 +44,7 @@ hclust_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, 
 
   x <- transform_gcms(s, var_names, study_area)
   x <- flatten_gcms(x)
-  x <- na.omit(x)
+  x <- stats::na.omit(x)
 
   if (!is.null(n)) {
     flatten_subset <- x
@@ -53,8 +53,8 @@ hclust_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, 
     }
   }
 
-  res <- hcut(t(x), k = k)
-  dend <- fviz_dend(res,
+  res <- factoextra::hcut(t(x), k = k)
+  dend <- factoextra::fviz_dend(res,
     cex = 0.5,
     ylim = c(max(res$height) * 1.1 / 5 * -1, max(res$height) * 1.1),
     palette = "jco",

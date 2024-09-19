@@ -10,20 +10,22 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
+#' \dontrun{
 #' s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
 #' study_area <- extent(c(-57, -22, -48, -33))
 #' var_names <- c("bio_1", "bio_12")
 #' s <- transform_gcms(s, var_names, study_area)
 #' flattened_gcms <- flatten_gcms(s)
+#' }
 #'
 #' @import checkmate
-#' @import raster
+#' @importFrom raster scale
 #'
 #' @export
 flatten_gcms <- function(s) {
-  assertList(s, types = "data.frame")
+  checkmate::assertList(s, types = "data.frame")
   sapply(s, function(x) {
-    x <- scale(x)
+    x <- raster::scale(x)
     x <- as.vector(x)
   }, USE.NAMES = T)
 }

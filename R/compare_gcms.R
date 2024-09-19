@@ -13,6 +13,7 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
+#' \dontrun{
 #' # compare GCMS
 #' compare_gcms(
 #'   folder_future_rasters_gcms = "path/to/folder",
@@ -21,22 +22,20 @@
 #'   gcm_names = c("gcm1", "gcm2", "gcm3"),
 #'   k = 3
 #' )
+#' }
 #'
 #' @import checkmate
 #' @import ggplot2
-#' @import ggpubr
-#' @import stats
-#' @import utils
+#' @importFrom stats dist kmeans na.omit
 #' @importFrom factoextra fviz_cluster fviz_nbclust fviz_dend
-#' @importFrom ggcorrplot ggcorrplot
 #' @importFrom raster stack projectRaster mask crop
 #' @importFrom cowplot plot_grid
 #'
 #' @export
 compare_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, k = 3) {
-  assertList(s, types = "RasterStack")
-  assertCharacter(var_names, unique = T, any.missing = F)
-  assertCount(k, positive = T)
+  checkmate::assertList(s, types = "RasterStack")
+  checkmate::assertCharacter(var_names, unique = T, any.missing = F)
+  checkmate::assertCount(k, positive = T)
 
   if ("all" %in% var_names) {
     var_names <- names(s[[1]])
@@ -47,7 +46,7 @@ compare_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL,
   flatten_vars <- flatten_gcms(x)
 
   # Calculate the distance matrix
-  dist_matrix <- dist(t(flatten_vars))
+  dist_matrix <- stats::dist(t(flatten_vars))
   # hm <- fviz_dist(
   #  dist_matrix,
   #  order = TRUE,
@@ -60,20 +59,20 @@ compare_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL,
   mc <- montecarlo_gcms(s, var_names, study_area, perm = 10000, method = "euclidean")
 
   # Run K-means
-  cl <- kmeans(dist_matrix, k, nstart = 10000, iter.max = 1000)
+  cl <- stats::kmeans(dist_matrix, k, nstart = 10000, iter.max = 1000)
 
   # plot
-  kmeans_plot <- fviz_cluster(cl,
+  kmeans_plot <- factoextra::fviz_cluster(cl,
     data = dist_matrix,
     palette = "jco",
-    ggtheme = theme_minimal(),
+    ggtheme = ggplot2::theme_minimal(),
     check_overlap = T,
     main = "K-means Clustering Plot",
     legend = "none", repel = TRUE
   )
 
   # Include elbow, silhouette and gap methods
-  flatten_subset <- na.omit(flatten_vars)
+  flatten_subset <- stats::na.omit(flatten_vars)
   #
   # if(nrow(flatten_subset)>1000){
   #  n <- 1000
@@ -91,8 +90,8 @@ compare_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL,
   env <- env_gcms(s, var_names, study_area, highlight = gcms)
 
   # Compute hierarchical clustering and cut into k clusters
-  res <- hcut(t(flatten_subset), k = k)
-  dend <- fviz_dend(res,
+  res <- factoextra::hcut(t(flatten_subset), k = k)
+  dend <- factoextra::fviz_dend(res,
     cex = 0.5,
     ylim = c(max(res$height) * 1.1 / 5 * -1, max(res$height) * 1.1),
     palette = "jco",

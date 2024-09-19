@@ -27,7 +27,7 @@ test_that("transform_gcms input error (raster)", {
   expect_error(transform_gcms(s))
 })
 
-test_that("transform_gcms input error (stack)", {
+test_that("transform_gcms input error (stack()", {
   bio_1 <- raster(matrix(runif(1000), ncol = 50))
   bio_2 <- raster(matrix(runif(1000), ncol = 50))
   bio_12 <- raster(matrix(runif(1000), ncol = 50))
@@ -35,7 +35,7 @@ test_that("transform_gcms input error (stack)", {
   expect_error(transform_gcms(s))
 })
 
-test_that("transform_gcms one stack list", {
+test_that("transform_gcms one stack( list", {
   bio_1 <- raster(matrix(runif(1000), ncol = 50))
   bio_2 <- raster(matrix(runif(1000), ncol = 50))
   bio_12 <- raster(matrix(runif(1000), ncol = 50))
@@ -124,7 +124,7 @@ test_that("study_area as projected sf", {
   names(ab) <- var_names
   s <- list(ab, ab, ab)
   names(s) <- c("ab", "cd", "ef")
-  study_area <- st_sf(st_sfc(st_buffer(st_point(c(0.5, 0.5)), 0.2), crs = st_crs(s[[1]])))
+  study_area <- sf::st_sf(sf::st_sfc(sf::st_buffer(sf::st_point(c(0.5, 0.5)), 0.2), crs = sf::st_crs(s[[1]])))
   expect_no_error(transform_gcms(s, var_names = var_names, study_area))
 })
 
@@ -138,7 +138,7 @@ test_that("study_area as projected sf (different projection)", {
   names(ab) <- var_names
   s <- list(ab, ab, ab)
   names(s) <- c("ab", "cd", "ef")
-  study_area <- st_sf(st_sfc(st_buffer(st_point(c(0.5, 0.5)), 0.2), crs = 4689))
+  study_area <- sf::st_sf(sf::st_sfc(sf::st_buffer(sf::st_point(c(0.5, 0.5)), 0.2), crs = 4689))
   expect_no_error(transform_gcms(s, var_names = var_names, study_area))
 })
 
@@ -188,7 +188,7 @@ test_that("study_area is a raster not projected", {
   expect_error(transform_gcms(s, var_names = var_names, study_area))
 })
 
-test_that("study_area is a stack not projected", {
+test_that("study_area is a stack( not projected", {
   bio_1 <- raster(matrix(runif(1000), ncol = 50))
   bio_2 <- raster(matrix(runif(1000), ncol = 50))
   bio_12 <- raster(matrix(runif(1000), ncol = 50))
@@ -205,7 +205,7 @@ test_that("study_area is a stack not projected", {
   expect_error(transform_gcms(s, var_names = var_names, study_area))
 })
 
-test_that("study_area is a stack projected", {
+test_that("study_area is a stack( projected", {
   bio_1 <- raster(matrix(runif(1000), ncol = 50))
   bio_2 <- raster(matrix(runif(1000), ncol = 50))
   bio_12 <- raster(matrix(runif(1000), ncol = 50))

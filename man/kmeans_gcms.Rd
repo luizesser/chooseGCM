@@ -31,11 +31,13 @@ This function performs k-means clustering on a distance matrix and produces a sc
 }
 \examples{
 
+\dontrun{
 s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
 study_area <- extent(c(-57, -22, -48, -33))
 var_names <- c("bio_1", "bio_12")
 
-kmeans_gcms(s, k=3)
+kmeans_gcms(s, k = 3)
+}
 
 }
 \seealso{

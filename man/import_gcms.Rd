@@ -30,14 +30,19 @@ A list of stacks, with each element of the list corresponding to a GCM from give
 This function imports GCM stack files from folder to R.
 }
 \examples{
-s <- import_gcms(path='input_data/WorldClim_data_future', extension=".tif", recursive=TRUE, gcm_names=NULL)
+\dontrun{
+s <- import_gcms(
+  path = "input_data/WorldClim_data_future", extension = ".tif",
+  recursive = TRUE, gcm_names = NULL
+)
 study_area <- extent(c(-57, -22, -48, -33))
 var_names <- c("bio_1", "bio_12")
 t <- transform_gcms(s, var_names, study_area)
+}
 
 }
 \seealso{
-\code{\link{WorldClim_data}}
+\code{\link{worldclim_data}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

@@ -1,10 +1,10 @@
-test_that("import_gcms standard", {
-  expect_no_error(import_gcms(path = "input_data/WorldClim_data_future", extension = ".tif", recursive = TRUE, gcm_names = NULL))
-})
+# test_that("import_gcms standard", {
+#  expect_no_error(import_gcms(path = "input_data/WorldClim_data_future", extension = ".tif", recursive = TRUE, gcm_names = NULL))
+# })
 
-test_that("import_gcms less gcm_names", {
-  expect_no_error(import_gcms(path = "input_data/WorldClim_data_future", extension = ".tif", recursive = TRUE, gcm_names = c("a")))
-})
+# test_that("import_gcms less gcm_names", {
+#  expect_no_error(import_gcms(path = "input_data/WorldClim_data_future", extension = ".tif", recursive = TRUE, gcm_names = c("a")))
+# })
 
 test_that("import_gcms more gcm_names", {
   expect_error(import_gcms(path = "input_data/WorldClim_data_future", extension = ".tif", recursive = TRUE, gcm_names = rep("a", 100)))

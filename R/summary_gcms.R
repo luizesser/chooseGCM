@@ -14,20 +14,20 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
+#' \dontrun{
 #' s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
 #' study_area <- extent(c(-57, -22, -48, -33))
 #' var_names <- c("bio_1", "bio_12")
 #' s <- transform_gcms(s, var_names, study_area)
 #' summary_gcms(s)
+#' }
 #'
 #' @import checkmate
-#' @import dplyr
-#' @import raster
 #'
 #' @export
 summary_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL) {
-  assertList(s, types = "RasterStack")
-  assertCharacter(var_names, unique = T, any.missing = F)
+  checkmate::assertList(s, types = "RasterStack")
+  checkmate::assertCharacter(var_names, unique = T, any.missing = F)
 
   if ("all" %in% var_names) {
     var_names <- names(s[[1]])

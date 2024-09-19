@@ -20,6 +20,8 @@ env_gcms(
 \item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
 
 \item{highlight}{Character. A vector with names of gcms to be highlighted. In this case, the sum of all but chosen GCMs will appear in grey.}
+
+\item{resolution}{Res}
 }
 \value{
 a data frame with the summary statistics for each variable
@@ -28,11 +30,13 @@ a data frame with the summary statistics for each variable
 This function plots GCMs data in environmental space, possibly highlighting clusters or specific GCMs.
 }
 \examples{
+\dontrun{
 s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
 study_area <- extent(c(-57, -22, -48, -33))
 var_names <- c("bio_1", "bio_12")
-env_gcms(s, var_names, study_area, highlight='sum')
-env_gcms(s, var_names, study_area, highlight=c("cr", "ml", "uk"))
+env_gcms(s, var_names, study_area, highlight = "sum")
+env_gcms(s, var_names, study_area, highlight = c("cr", "ml", "uk"))
+}
 
 }
 \seealso{
