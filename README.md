@@ -27,6 +27,7 @@ chooseGCM. After installing the package, we need to open it:
 
 ``` r
 library(chooseGCM)
+tictoc::tic()
 set.seed(1)
 ```
 
@@ -872,3 +873,8 @@ clusters is enough to inform regarding the environmental variation from
 given GCMs. In this way, if we use GCMs CNRM-ESM2-1 (cr), MPI-ESM1-2-LR
 (ml) and UKESM1-0-LL (uk) to project our models into future scenarios we
 would be able to inform a decent variation in our projections.
+
+``` r
+tictoc::toc()
+#> 51.309 sec elapsed
+```
