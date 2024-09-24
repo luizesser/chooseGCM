@@ -28,7 +28,7 @@
 #'
 #' @export
 dist_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, method = "euclidean") {
-  checkmate::assertList(s, types = "RasterStack")
+  checkmate::assertList(s, types = "SpatRaster")
   checkmate::assertCharacter(var_names, unique = T, any.missing = F)
   checkmate::assertChoice(method, c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "pearson", "spearman", "kendall"))
 

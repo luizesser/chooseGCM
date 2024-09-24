@@ -19,13 +19,12 @@
 #' }
 #'
 #' @import checkmate
-#' @importFrom raster scale
 #'
 #' @export
 flatten_gcms <- function(s) {
   checkmate::assertList(s, types = "data.frame")
   sapply(s, function(x) {
-    x <- raster::scale(x)
+    x <- scale(x)
     x <- as.vector(x)
   }, USE.NAMES = T)
 }

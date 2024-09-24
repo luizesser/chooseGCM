@@ -26,13 +26,45 @@
 #'
 #' @import checkmate
 #' @import ggplot2
-#' @importFrom stats na.omit
-#' @importFrom data.table melt
+#' @importFrom reshape2 melt
+#' @importFrom terra rast ext crs project mask crop
 #'
 #' @export
 env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, highlight = "sum", resolution = 25) {
-  checkmate::assertList(s, types = "RasterStack")
+  if(is.list(s)){
+    if(is(s[[1]], "stars")){
+      s <- sapply(s,
+                  function(x){
+                    x <- as(x, "SpatRaster")
+                    return(x)
+                  },
+                  USE.NAMES = TRUE,
+                  simplify = FALSE)
+    }
+    if(is(s[[1]], "RasterStack")){
+      s <- sapply(s,
+                  function(x){
+                    x <- terra::rast(x)
+                    return(x)
+                  },
+                  USE.NAMES = TRUE,
+                  simplify = FALSE)
+    }
+  }
+
+  if(!is.null(study_area)){
+    if(!is(study_area, "SpatVector") & !is(study_area, "Extent")){
+      study_area <- as(study_area, "SpatVector")
+    }
+    if(is(study_area, "Extent")){
+      study_area <- terra::ext(study_area)
+    }
+  }
+
+  checkmate::assertList(s, types = "SpatRaster")
   checkmate::assertCharacter(var_names, unique = T, any.missing = F)
+  checkmate::assertSubset(var_names, c(names(s[[1]]), "all"))
+
   if (!is.null(highlight) & !all(highlight %in% c("sum", names(s)))) {
     stop("highlight GCMs not found")
   }
@@ -45,9 +77,19 @@ env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, hig
     var_names <- names(s[[1]])
   }
 
-  s2 <- sapply(s, function(x) {
-    r <- raster::stack(raster::mask(raster::crop(x[[c(var_names)]], study_area), study_area))
-  }, simplify = FALSE, USE.NAMES = TRUE)
+  if(!is.null(study_area)){
+    if(!terra::crs(s[[1]]) == terra::crs(study_area)) {
+      study_area <- terra::project(study_area, terra::crs(s[[1]]))
+    }
+  }
+
+  s2 <- sapply(s, function(x){
+    x <- x[[var_names]]
+    if(!is.null(study_area)){
+      x <- terra::mask(terra::crop(x, study_area), study_area)
+    }
+    return(x)
+  }, USE.NAMES = T, simplify = F)
 
   createGrid <- function(x, y, x_bins, y_bins, resolution, sum = FALSE) {
     x <- stats::na.omit(x)
@@ -101,7 +143,7 @@ env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, hig
     grid_back <- ifelse(grid_back == 0, NA, 1)
     colnames(grid_back) <- y_bins
     rownames(grid_back) <- x_bins
-    grid_back <- suppressWarnings(data.table::melt(grid_back))
+    grid_back <- suppressWarnings(reshape2::melt(grid_back))
     colnames(grid_back) <- c("x", "y", "GCMs")
     grid_back$GCMs <- ifelse(grid_back$GCMs == 1, "All", NA)
     s3 <- s2[highlight]
@@ -112,13 +154,13 @@ env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, hig
       grid <- ifelse(grid == 0, NA, 1)
       colnames(grid) <- y_bins
       rownames(grid) <- x_bins
-      suppressWarnings(grid <- data.table::melt(grid))
+      suppressWarnings(grid <- reshape2::melt(grid))
       colnames(grid) <- c("x", "y", "GCMs")
       grid$GCMs <- ifelse(grid$GCMs == 1, names(s3)[i], NA)
       grid_back <- rbind(grid_back, grid)
     }
     grid_back$GCMs <- factor(grid_back$GCMs, levels = c("All", highlight))
-    res_plot <- ggplot2::ggplot(stats::na.omit(grid_back), ggplot2::aes(x, y, fill = "GCMs")) +
+    res_plot <- ggplot2::ggplot(stats::na.omit(grid_back), ggplot2::aes(x, y, fill = GCMs)) +
       ggplot2::geom_tile() +
       ggplot2::scale_fill_viridis_d(alpha = 0.5) +
       ggplot2::labs(x = var_names[1], y = var_names[2], title = paste0("Selected GCMs coverage")) +
@@ -137,10 +179,10 @@ env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, hig
     grid_sum <- ifelse(grid_sum == 0, NA, grid_sum[])
     colnames(grid_sum) <- y_bins
     rownames(grid_sum) <- x_bins
-    grid_sum <- suppressWarnings(data.table::melt(grid_sum))
+    grid_sum <- suppressWarnings(reshape2::melt(grid_sum))
     colnames(grid_sum) <- c("x", "y", "GCMs")
 
-    res_plot <- ggplot2::ggplot(stats::na.omit(grid_sum), ggplot2::aes(x, y, fill = "GCMs")) +
+    res_plot <- ggplot2::ggplot(stats::na.omit(grid_sum), ggplot2::aes(x, y, fill = GCMs)) +
       ggplot2::geom_tile() +
       ggplot2::scale_fill_viridis_c() +
       ggplot2::labs(x = var_names[1], y = var_names[2], title = paste0("Sum of GCMs in Environmental Space")) +

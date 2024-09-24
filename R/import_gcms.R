@@ -27,7 +27,7 @@
 #' }
 #'
 #' @import checkmate
-#' @importFrom raster stack
+#' @importFrom terra rast
 #'
 #' @export
 import_gcms <- function(path = "input_data/WorldClim_data_gcms", extension = ".tif", recursive = TRUE, gcm_names = NULL, var_names = NULL) {
@@ -46,8 +46,8 @@ import_gcms <- function(path = "input_data/WorldClim_data_gcms", extension = ".t
     stop("Could not find any file matching the parameters!")
   }
   s <- lapply(l, function(x) {
-    s <- raster::stack(x)
-    names(s) <- # Rename rasters
+    s <- terra::rast(x)
+    names(s) <- var_names
       return(s)
   })
   if (is.null(gcm_names)) {

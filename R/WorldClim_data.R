@@ -64,8 +64,6 @@
 #'
 #' @import checkmate
 #' @import httr
-#' @importFrom stats hclust median sd
-#' @importFrom utils  unzip
 #'
 #' @export
 worldclim_data <- function(period = "current", variable = "bioc", year = "2030",
@@ -121,7 +119,7 @@ worldclim_data <- function(period = "current", variable = "bioc", year = "2030",
         ),
         write_disk(paste0("current_", resolution, "_", res, ".zip"))
       )
-      unzip(
+      utils::unzip(
         zipfile = paste0("current_", resolution, "_", res, ".zip"),
         exdir = paste0(path)
       )

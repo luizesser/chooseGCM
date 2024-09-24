@@ -26,14 +26,11 @@
 #' }
 #'
 #' @import checkmate
-#' @import factoextra
-#' @import ggplot2
-#' @importFrom stats na.omit
-#' @importFrom grDevices colors
+#' @importFrom factoextra hcut fviz_dend
 #'
 #' @export
 hclust_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, k = 3, n = NULL) {
-  checkmate::assertList(s, types = "RasterStack")
+  checkmate::assertList(s, types = "SpatRaster")
   checkmate::assertCharacter(var_names, unique = T, any.missing = F)
   checkmate::assertCount(k, positive = T)
   checkmate::assertCount(n, positive = T, null.ok = T)

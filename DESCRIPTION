@@ -12,23 +12,27 @@ Description: This package is intended to help modelers to
     another, avoiding highly correlated GCMs.
 License: MIT + file LICENSE
 Imports:
-    checkmate,
-    cluster,
-    cowplot,
-    data.table, 
-    factoextra,
-    ggcorrplot,
-    ggplot2,
-    httr,
-    sp,
-    raster,
-    stats,
-    usedist
+    checkmate, 
+    cluster, 
+    cowplot, 
+    factoextra, 
+    ggcorrplot, 
+    ggplot2, 
+    httr, 
+    methods,
+    reshape2, 
+    terra, 
+    usedist 
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.1
 Suggests: 
-    testthat (>= 3.0.0),
-    sf
+    testthat,
+    sf,
+    knitr,
+    raster,
+    rmarkdown,
+    stars
 Config/testthat/edition: 3
 URL: https://luizesser.github.io/chooseGCM/
+VignetteBuilder: knitr

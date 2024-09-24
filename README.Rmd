@@ -36,6 +36,7 @@ This is a basic tutorial which shows you how to use the functions in chooseGCM. 
 
 ```{r}
 library(chooseGCM)
+set.seed(1)
 ```
 
 ### Downloading WorldClim 2.1 Data
@@ -43,7 +44,7 @@ library(chooseGCM)
 First, we need to use only one time period. Here we use 2090 so the difference between models is more conspicuous. In the same way we are considering the SSP585, which is the more dramatic pathway. The resolution is the lowest to be quicker. The aim here is to maintain all parameters equal, but General Circulation Models (GCMs). In this way we know that the only source of variation comes from them. Note that if you receive a timeout error you can increase timeout value by running , where 600 is the value in seconds that will be enough to download the data.
 
 ```{r, eval=F}
-WorldClim_data(period = "future", variable = "bioc", year = "2090", gcm = "all", ssp = "585", resolution = 10)
+worldclim_data(period = "future", variable = "bioc", year = "2090", gcm = "all", ssp = "585", resolution = 10)
 ```
 
 ### Importing and Transforming Data
@@ -51,7 +52,7 @@ WorldClim_data(period = "future", variable = "bioc", year = "2090", gcm = "all",
 Now let's import GCMs to R in a list of stacks and name the list with the names of the GCMs.
 
 ```{r, include=FALSE}
-s <- import_gcms("/Users/luizesser/Documents/GitHub/input_data/WorldClim_data_future_all")
+s <- import_gcms("/Users/luizesser/Documents/GitHub/input_data/WorldClim_data_gcms_all")
 names(s) <- gsub("_ssp585_10_2090", "", names(s))
 ```
 
@@ -63,13 +64,13 @@ names(s) <- gsub("_ssp585_10_2090", "", names(s))
 In each function, data will be transformed. To do that you will always need to provide at least: (1) the list of stacks, (2) the variables you want to use in analysis and (3) the shapefile of your study area. You don't need to previously mask and subset your data, once the functions will perform this task internally for you. Note that the results from these functions are highly sensitive to variables and to study area. In this sense, the decision on what variables should be considered and what is the study area must be carefully made considering biological aspects of the studied group.
 
 ```{r, include=FALSE}
-var_names <- c("bio05", "bio13", "bio15")
-study_area_parana <- sf::st_read("/Users/luizesser/Documents/GitHub/input_data/PR_UF_2022.shp")
+var_names <- c("bio5", "bio13", "bio15")
+study_area_parana <- terra::vect("/Users/luizesser/Documents/GitHub/input_data/PR_UF_2022.shp")
 ```
 
 ```{r, eval=FALSE}
-var_names <- c("bio05", "bio13", "bio15")
-study_area_parana <- sf::st_read("input_data/PR_UF_2022.shp")
+var_names <- c("bio5", "bio13", "bio15")
+study_area_parana <- terra::vect("input_data/PR_UF_2022.shp")
 ```
 
 ### Straigthforward Approach
@@ -172,7 +173,7 @@ montecarlo_gcms(s, var_names, study_area_parana, perm = 10000, method = "euclide
 We also included in this package a function called `env_gcms`, which is able to project GCMs in the environmental space. With that, researchers are able to see the coverage of GCMs when comparing to all GCMs. It is also possible to see the density of GCMs using the `highlight=sum` as argument.
 
 ```{r}
-env_gcms(s, var_names, study_area_parana, highlight = res$suggested_gcms)
+env_gcms(s, var_names, study_area_parana, highlight = res$suggested_gcms$`k=3`)
 ```
 
 ```{r}
@@ -181,4 +182,4 @@ env_gcms(s, var_names, study_area_parana, highlight = "sum")
 
 #### Wrapping Up
 
-From our analysis, we can infer that something between two and three clusters is enough to inform regarding the environmental variation from given GCMs. In this way, if we use GCMs CNRM-CM6-1 (cn), FIO-ESM-2-0 (fi) and MPI-ESM1-2-HR (mp) to project our models into future scenarios we would be able to inform a decent variation in our projections.
+From our analysis, we can infer that something between two and three clusters is enough to inform regarding the environmental variation from given GCMs. In this way, if we use GCMs CNRM-ESM2-1 (cr), MPI-ESM1-2-LR (ml) and UKESM1-0-LL (uk) to project our models into future scenarios we would be able to inform a decent variation in our projections.

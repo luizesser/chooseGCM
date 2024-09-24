@@ -1,0 +1,28 @@
+---
+title: "Resolution"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Resolution}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Introduction
+
+This vignette aims to test whether the results of the function `montecarlo_gcms` change with the resolution or if they remain the same. As the increase in resolution is just an imputation process, it is expected that resolution would have little or no effect on the results.
+
+```{r setup}
+library(chooseGCM)
+library(tictoc)
+```
+
+```{r}
+
+```

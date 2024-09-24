@@ -27,12 +27,11 @@
 #'
 #' @import checkmate
 #' @importFrom factoextra fviz_cluster
-#' @importFrom stats kmeans
 #' @importFrom ggplot2 theme_minimal
 #'
 #' @export
 kmeans_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, k = 3, method = NULL) {
-  checkmate::assertList(s, types = "RasterStack")
+  checkmate::assertList(s, types = "SpatRaster")
   checkmate::assertCharacter(var_names, unique = T, any.missing = F)
   checkmate::assertCount(k, positive = T)
 

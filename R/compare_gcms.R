@@ -26,14 +26,12 @@
 #'
 #' @import checkmate
 #' @import ggplot2
-#' @importFrom stats dist kmeans na.omit
 #' @importFrom factoextra fviz_cluster fviz_nbclust fviz_dend
-#' @importFrom raster stack projectRaster mask crop
 #' @importFrom cowplot plot_grid
 #'
 #' @export
 compare_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, k = 3) {
-  checkmate::assertList(s, types = "RasterStack")
+  checkmate::assertList(s, types = "SpatRaster")
   checkmate::assertCharacter(var_names, unique = T, any.missing = F)
   checkmate::assertCount(k, positive = T)
 
@@ -98,7 +96,7 @@ compare_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL,
     main = "Hierarchical Clustering"
   )
 
-  statistics_gcms <- plot_grid(kmeans_plot,
+  statistics_gcms <- cowplot::plot_grid(kmeans_plot,
     # hm,
     mc$montecarlo_plot,
     dend,
@@ -110,7 +108,7 @@ compare_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL,
   )
 
   return(list(
-    suggested_gcms = gcms,
+    suggested_gcms = mc$all_kmeans,
     statistics_gcms = statistics_gcms
   ))
 }

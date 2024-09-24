@@ -26,7 +26,7 @@
 #'
 #' @export
 summary_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL) {
-  checkmate::assertList(s, types = "RasterStack")
+  checkmate::assertList(s, types = "SpatRaster")
   checkmate::assertCharacter(var_names, unique = T, any.missing = F)
 
   if ("all" %in% var_names) {
