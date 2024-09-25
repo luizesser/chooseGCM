@@ -25,7 +25,7 @@
 #' }
 #'
 #' @import checkmate
-#' @importFrom terra crs project crop mask ext rast
+#' @importFrom terra crs project crop mask ext rast res
 #'
 #' @export
 transform_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL) {
@@ -70,14 +70,55 @@ transform_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NUL
     var_names <- names(s[[1]])
   }
 
+  s <- sapply(s, function(x){
+    x <- x[[var_names]]
+    return(x)
+  })
+
+  # check s data:
+  crs_reference <- terra::crs(s[[1]])
+  s <- lapply(s, function(r) {
+    if (terra::crs(r) != crs_reference) {
+      terra::project(r, crs_reference)
+    } else {
+      r
+    }
+  })
+
+  resolution_reference <- terra::res(s[[1]])
+  s <- lapply(s, function(r) {
+    if (!all(terra::res(r) == resolution_reference)) {
+      terra::resample(r, s[[1]], method = "bilinear")
+    } else {
+      r
+    }
+  })
+
+  # check study_area
   if(!is.null(study_area)){
     if(!terra::crs(s[[1]]) == terra::crs(study_area)) {
       study_area <- terra::project(study_area, terra::crs(s[[1]]))
     }
   }
 
-  s2 <- sapply(s, function(x){
-    x <- x[[var_names]]
+  #####
+  common_extent <- Reduce(terra::intersect, lapply(s, terra::ext))
+  rasters_cropped <- lapply(s, function(r) {
+    terra::crop(r, common_extent)
+  })
+  valid_cells_raster <- rasters_cropped[[1]] # [[which.max(lapply(rasters_cropped, function(r){sum(is.na(terra::values(r)))}))]]
+  terra::values(valid_cells_raster) <- TRUE
+  for (r in rasters_cropped) {
+    x <- r
+    terra::values(x) <- ifelse(is.na(terra::values(x)), NA, TRUE)
+    valid_cells_raster <- valid_cells_raster & x
+  }
+  rasters_masked <- lapply(rasters_cropped, function(r) {
+    terra::mask(r, valid_cells_raster)
+  })
+  #####
+
+  s2 <- sapply(rasters_masked, function(x){
     if(!is.null(study_area)){
       x <- terra::mask(terra::crop(x, study_area), study_area)
     }
