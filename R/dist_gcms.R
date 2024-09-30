@@ -28,7 +28,11 @@
 #'
 #' @export
 dist_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, method = "euclidean") {
-  checkmate::assertList(s, types = "SpatRaster")
+  if(is.list(s)){
+    if(!is.data.frame(s[[1]])){
+      checkmate::assertList(s, types = "SpatRaster")
+    }
+  }
   checkmate::assertCharacter(var_names, unique = T, any.missing = F)
   checkmate::assertChoice(method, c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "pearson", "spearman", "kendall"))
 
@@ -37,8 +41,10 @@ dist_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, me
   }
 
   # Scale and flatten variables into one column.
-  x <- transform_gcms(s, var_names, study_area)
-  flatten_vars <- flatten_gcms(x)
+  if(!is.data.frame(s[[1]])){
+    s <- transform_gcms(s, var_names, study_area)
+  }
+  flatten_vars <- flatten_gcms(s)
 
   # Calculate the distance matrix
   dist_matrix <- factoextra::get_dist(t(flatten_vars), method = method)

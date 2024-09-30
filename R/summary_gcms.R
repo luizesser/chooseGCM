@@ -26,14 +26,19 @@
 #'
 #' @export
 summary_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL) {
-  checkmate::assertList(s, types = "SpatRaster")
+  if(is.list(s)){
+    if(!is.data.frame(s[[1]])){
+      checkmate::assertList(s, types = "SpatRaster")
+    }
+  }
   checkmate::assertCharacter(var_names, unique = T, any.missing = F)
 
   if ("all" %in% var_names) {
     var_names <- names(s[[1]])
   }
-
-  s2 <- transform_gcms(s, var_names, study_area)
+  if(!is.data.frame(s[[1]])){
+    s2 <- transform_gcms(s, var_names, study_area)
+  }
   m <- sapply(s2, function(y) {
     df_m <- apply(y, 2, function(x) {
       data.frame(

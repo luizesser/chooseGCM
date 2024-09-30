@@ -34,7 +34,11 @@
 #'
 #' @export
 optk_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, cluster = "kmeans", method = "wss", n = NULL, nstart = 10, K.max = 10, B = 100) {
-  checkmate::assertList(s, types = "SpatRaster")
+  if(is.list(s)){
+    if(!is.data.frame(s[[1]])){
+      checkmate::assertList(s, types = "SpatRaster")
+    }
+  }
   checkmate::assertCharacter(var_names, unique = T, any.missing = F)
   checkmate::assertChoice(cluster, c("kmeans", "hclust"))
   checkmate::assertChoice(method, c("silhouette", "wss", "gap_stat"))
@@ -47,7 +51,10 @@ optk_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, cl
     var_names <- names(s[[1]])
   }
 
-  x <- transform_gcms(s, var_names, study_area)
+  if(!is.data.frame(s[[1]])){
+    x <- transform_gcms(s, var_names, study_area)
+  }
+
   x <- flatten_gcms(x)
   flatten_subset <- stats::na.omit(x)
 

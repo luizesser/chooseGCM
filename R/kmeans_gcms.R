@@ -31,7 +31,11 @@
 #'
 #' @export
 kmeans_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, k = 3, method = NULL) {
-  checkmate::assertList(s, types = "SpatRaster")
+  if(is.list(s)){
+    if(!is.data.frame(s[[1]])){
+      checkmate::assertList(s, types = "SpatRaster")
+    }
+  }
   checkmate::assertCharacter(var_names, unique = T, any.missing = F)
   checkmate::assertCount(k, positive = T)
 
@@ -41,8 +45,10 @@ kmeans_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, 
 
   if (is.null(method)) {
     # Scale and calculate the means from variables.
-    x <- transform_gcms(s, var_names, study_area)
-    flatten_vars <- sapply(x, function(y) {
+    if(!is.data.frame(s[[1]])){
+      s <- transform_gcms(s, var_names, study_area)
+    }
+    flatten_vars <- sapply(s, function(y) {
       y <- colMeans(y, na.rm = T)
     })
 
@@ -70,8 +76,10 @@ kmeans_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, 
     checkmate::assertChoice(method, c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"))
 
     # Scale and flatten variables into one column.
-    x <- transform_gcms(s, var_names, study_area)
-    flatten_vars <- flatten_gcms(x)
+    if(!is.data.frame(s[[1]])){
+      s <- transform_gcms(s, var_names, study_area)
+    }
+    flatten_vars <- flatten_gcms(s)
 
     # Calculate the distance matrix
     dist_matrix <- stats::dist(t(flatten_vars), method = method)

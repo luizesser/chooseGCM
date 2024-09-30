@@ -27,7 +27,11 @@
 #'
 #' @export
 cor_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, method = "pearson") {
-  checkmate::assertList(s, types = "SpatRaster")
+  if(is.list(s)){
+    if(!is.data.frame(s[[1]])){
+      checkmate::assertList(s, types = "SpatRaster")
+    }
+  }
   checkmate::assertCharacter(var_names, unique = T, any.missing = F)
   checkmate::assertChoice(method, c("pearson", "kendall", "spearman"))
 
@@ -35,7 +39,9 @@ cor_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, met
     var_names <- names(s[[1]])
   }
 
-  x <- transform_gcms(s, var_names, study_area)
+  if(!is.data.frame(s[[1]])){
+    x <- transform_gcms(s, var_names, study_area)
+  }
   x <- flatten_gcms(x)
   cor_matrix <- stats::cor(as.matrix(x), use = "complete.obs", method = method)
   title <- paste0(method, " Correlation")

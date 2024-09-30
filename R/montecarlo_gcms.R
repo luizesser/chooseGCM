@@ -10,7 +10,7 @@
 #'
 #' @return A violin plot of the result. Dashed red line and red dots represent the mean distance between selected GCMs using the kmeans approach. The blue line is the mean distance between all GCMs (i.e. using all available GCMs). Violin plot is built with Monte Carlo permutations, selecting random subsets of GCMs from the given set.
 #'
-#' @seealso \code{\link{transform_gcms}} \code{\link{flatten_gcms}} \code{\link{kmeans_gcms}}
+#' @seealso \code{\link{hclust_gcms}} \code{\link{env_gcms}} \code{\link{kmeans_gcms}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
@@ -86,6 +86,10 @@ montecarlo_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NU
     s <- sapply(s, function(x) {
       x <- terra::mask(terra::crop(x, study_area), study_area)
     }, simplify = FALSE, USE.NAMES = TRUE)
+  }
+
+  if(!is.data.frame(s[[1]])){
+    s <- transform_gcms(s, var_names, study_area)
   }
 
   d <- dist_gcms(s, var_names = var_names, method = method)$distances

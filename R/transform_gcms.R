@@ -48,6 +48,9 @@ transform_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NUL
                   USE.NAMES = TRUE,
                   simplify = FALSE)
     }
+    if(is(s[[1]], "data.frame")){
+      return(s)
+    }
   }
 
   if(!is.null(study_area)){

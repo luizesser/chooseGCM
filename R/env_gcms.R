@@ -10,7 +10,7 @@
 #'
 #' @return a data frame with the summary statistics for each variable
 #'
-#' @seealso \code{\link{transform_gcms}}
+#' @seealso \code{\link{summary_gcms}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
@@ -61,7 +61,11 @@ env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, hig
     }
   }
 
-  checkmate::assertList(s, types = "SpatRaster")
+  if(is.list(s)){
+    if(!is.data.frame(s[[1]])){
+      checkmate::assertList(s, types = "SpatRaster")
+    }
+  }
   checkmate::assertCharacter(var_names, unique = T, any.missing = F)
   checkmate::assertSubset(var_names, c(names(s[[1]]), "all"))
 

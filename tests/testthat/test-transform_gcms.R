@@ -19,7 +19,7 @@ test_that("transform_gcms input error (list of data.frames)", {
   names(ab) <- c("bio_1", "bio_2", "bio_12")
   s <- list(ab, ab, ab)
   names(s) <- c("ab", "cd", "ef")
-  expect_error(transform_gcms(s))
+  expect_no_error(transform_gcms(s))
 })
 
 test_that("transform_gcms input error (raster)", {
