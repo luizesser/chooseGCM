@@ -79,6 +79,7 @@ transform_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NUL
   crs_reference <- terra::crs(s[[1]])
   s <- lapply(s, function(r) {
     if (terra::crs(r) != crs_reference) {
+      message("CRS are not identical. Reprojecting s.")
       terra::project(r, crs_reference)
     } else {
       r
@@ -88,6 +89,7 @@ transform_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NUL
   resolution_reference <- terra::res(s[[1]])
   s <- lapply(s, function(r) {
     if (!all(terra::res(r) == resolution_reference)) {
+      message("Resolutions are not identical. Resampling s.")
       terra::resample(r, s[[1]], method = "bilinear")
     } else {
       r
@@ -97,26 +99,10 @@ transform_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NUL
   # check study_area
   if(!is.null(study_area)){
     if(!terra::crs(s[[1]]) == terra::crs(study_area)) {
+      message("CRS from s and study_area are not identical. Reprojecting study area.")
       study_area <- terra::project(study_area, terra::crs(s[[1]]))
     }
   }
-
-  #####
-  common_extent <- Reduce(terra::intersect, lapply(s, terra::ext))
-  rasters_cropped <- lapply(s, function(r) {
-    terra::crop(r, common_extent)
-  })
-  valid_cells_raster <- rasters_cropped[[1]] # [[which.max(lapply(rasters_cropped, function(r){sum(is.na(terra::values(r)))}))]]
-  terra::values(valid_cells_raster) <- TRUE
-  for (r in rasters_cropped) {
-    x <- r
-    terra::values(x) <- ifelse(is.na(terra::values(x)), NA, TRUE)
-    valid_cells_raster <- valid_cells_raster & x
-  }
-  rasters_masked <- lapply(rasters_cropped, function(r) {
-    terra::mask(r, valid_cells_raster)
-  })
-  #####
 
   s2 <- sapply(rasters_masked, function(x){
     if(!is.null(study_area)){
@@ -125,6 +111,35 @@ transform_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NUL
     x <- as.data.frame(x)
     return(x)
   }, USE.NAMES = T, simplify = F)
+
+  test <- lapply(s2, nrow) |> unlist() |> unique() |> length() != 1
+
+  if (test) {
+    message("Objects from s don't have the same number of cells. Filtering all available cells.")
+    common_extent <- Reduce(terra::intersect, lapply(s, terra::ext))
+    rasters_cropped <- lapply(s, function(r) {
+      terra::crop(r, common_extent)
+    })
+    valid_cells_raster <- rasters_cropped[[1]] # [[which.max(lapply(rasters_cropped, function(r){sum(is.na(terra::values(r)))}))]]
+    terra::values(valid_cells_raster) <- TRUE
+    for (r in rasters_cropped) {
+      x <- r
+      terra::values(x) <- ifelse(is.na(terra::values(x)), NA, TRUE)
+      valid_cells_raster <- valid_cells_raster & x
+    }
+    rasters_masked <- lapply(rasters_cropped, function(r) {
+      terra::mask(r, valid_cells_raster)
+    })
+
+    s2 <- sapply(rasters_masked, function(x){
+      if(!is.null(study_area)){
+        x <- terra::mask(terra::crop(x, study_area), study_area)
+      }
+      x <- as.data.frame(x)
+      return(x)
+    }, USE.NAMES = T, simplify = F)
+
+  }
 
   return(s2)
 

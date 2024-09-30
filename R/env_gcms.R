@@ -70,7 +70,6 @@ env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, hig
   }
   if (length(highlight) > 1 & "sum" %in% highlight) {
     highlight <- "sum"
-    print('"sum" detected in highlights. Ploting the sum of GCMs.')
   }
 
   if ("all" %in% var_names) {
