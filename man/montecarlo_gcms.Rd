@@ -41,7 +41,7 @@ montecarlo_gcms(s, study_area = study_area)
 
 }
 \seealso{
-\code{\link{transform_gcms}} \code{\link{flatten_gcms}} \code{\link{kmeans_gcms}}
+\code{\link{hclust_gcms}} \code{\link{env_gcms}} \code{\link{kmeans_gcms}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

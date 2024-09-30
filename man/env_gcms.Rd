@@ -40,7 +40,7 @@ env_gcms(s, var_names, study_area, highlight = c("cr", "ml", "uk"))
 
 }
 \seealso{
-\code{\link{transform_gcms}}
+\code{\link{summary_gcms}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)
