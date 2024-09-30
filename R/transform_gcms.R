@@ -104,7 +104,7 @@ transform_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NUL
     }
   }
 
-  s2 <- sapply(rasters_masked, function(x){
+  s2 <- sapply(s, function(x){
     if(!is.null(study_area)){
       x <- terra::mask(terra::crop(x, study_area), study_area)
     }
