@@ -16,8 +16,8 @@
 #' \dontrun{
 #' # compare GCMS
 #' compare_gcms(
-#'   folder_future_rasters_gcms = "path/to/folder",
-#'   study_area = raster("path/to/raster"),
+#'   s = import_gcms("path/to/folder"),
+#'   study_area = terra::vect("path/to/gpkg"),
 #'   var_names = c("bio_1", "bio_12"),
 #'   gcm_names = c("gcm1", "gcm2", "gcm3"),
 #'   k = 3

@@ -98,7 +98,7 @@ worldclim_data <- function(period = "current", variable = "bioc", year = "2030",
   assertCharacter(gcm)
   assertCharacter(ssp)
   assertNumeric(resolution)
-  assertCharacter(path, null.ok = TRUE, len = 1)
+  assertCharacter(path, null.ok = FALSE, len = 1)
 
   res <- ifelse(resolution == 30, "s", "m")
 
@@ -110,7 +110,7 @@ worldclim_data <- function(period = "current", variable = "bioc", year = "2030",
       dir.create(path, recursive = TRUE)
     }
     if (length(list.files(path, pattern = ".tif$", full.names = T)) == 0) {
-      print(paste0("current_", resolution, res))
+      message(paste0("current_", resolution, res))
       GET(
         url = paste0(
           "https://geodata.ucdavis.edu/climate/worldclim/2_1/base/wc2.1_",
@@ -124,7 +124,7 @@ worldclim_data <- function(period = "current", variable = "bioc", year = "2030",
         exdir = paste0(path)
       )
     } else {
-      print(paste0("The file for current scenario is already downloaded."))
+      message(paste0("The file for current scenario is already downloaded."))
     }
   }
 
@@ -161,7 +161,7 @@ worldclim_data <- function(period = "current", variable = "bioc", year = "2030",
       for (s in 1:length(ssp)) {
         for (y in 1:length(year)) {
           if (!file.exists(paste0(path, "/", gcm[g], "_ssp", ssp[s], "_", resolution, "_", year[y], ".tif"))) {
-            print(paste0(gcm[g], "_ssp", ssp[s], "_", resolution, "_", year[y]))
+            message(paste0(gcm[g], "_ssp", ssp[s], "_", resolution, "_", year[y]))
             if (!http_error(paste0(
               "https://geodata.ucdavis.edu/cmip6/", resolution,
               res, "/", gcm3[g], "/ssp", ssp[s], "/wc2.1_", resolution,
@@ -182,7 +182,7 @@ worldclim_data <- function(period = "current", variable = "bioc", year = "2030",
               ))
             }
           } else {
-            print(paste0(
+            message(paste0(
               "The file for future scenario (",
               paste0(path, "/", gcm[g], "_ssp", ssp[s], "_", resolution, res, "_", year[y], ".tif"),
               ") is already downloaded."

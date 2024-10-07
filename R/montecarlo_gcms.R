@@ -35,7 +35,7 @@ montecarlo_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NU
   checkmate::assertCharacter(var_names, unique = T, any.missing = F)
   checkmate::assertSubset(var_names, c(names(s[[1]]), "all"))
   checkmate::assertCount(perm, positive = T)
-  checkmate::assertChoice(method, c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"))
+  checkmate::assertChoice(method, c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"), null.ok = TRUE)
 
   if(is.list(s)){
     if(is(s[[1]], "stars")){

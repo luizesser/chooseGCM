@@ -5,7 +5,7 @@
 #' @param s A list of stacks of General Circulation Models.
 #' @param var_names Character. A vector with names of the bioclimatic variables to compare OR 'all'.
 #' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
-#' @param method The correlation method to use. Default is "pearson". Possible values are "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "pearson", "spearman" or "kendall".
+#' @param method The correlation method to use. Default is "euclidean". Possible values are "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "pearson", "spearman" or "kendall".
 #'
 #' @return A list with two items: distances (the distances between GCMs) and heatmap (a plot).
 #'
