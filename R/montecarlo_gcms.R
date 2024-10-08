@@ -38,7 +38,7 @@ montecarlo_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NU
   checkmate::assertSubset(var_names, c(names(s[[1]]), "all"))
   checkmate::assertCount(perm, positive = T)
   checkmate::assertChoice(dist_method, c("euclidean", "maximum", "manhattan", "canberra", "minkowski"))
-  checkmate::assertChoice(clust_method, c("kmeans", "hclust"))
+  checkmate::assertChoice(clustering_method, c("kmeans", "hclust"))
 
   if(is.list(s)){
     if(is(s[[1]], "stars")){
