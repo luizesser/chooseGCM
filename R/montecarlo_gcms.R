@@ -5,8 +5,10 @@
 #' @param s A list of stacks of General Circulation Models.
 #' @param var_names Character. A vector with names of the bioclimatic variables to compare OR 'all'.
 #' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
+#' @param scale Boolean. Apply center and scale in data? Default is TRUE.
 #' @param perm Number of permutations.
-#' @param method The method for distance matrix computation. Standard value is "euclidean". Possible values are: "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski". If NULL, will perform the clustering on raw variables data.
+#' @param dist_method The method for distance matrix computation. Standard value is "euclidean". Possible values are: "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski". If NULL, will perform the clustering on raw variables data.
+#' @param clustering_method The method for clustering. Standard value is "kmeans". Possible values are: "kmeans" or "hclust".
 #'
 #' @return A violin plot of the result. Dashed red line and red dots represent the mean distance between selected GCMs using the kmeans approach. The blue line is the mean distance between all GCMs (i.e. using all available GCMs). Violin plot is built with Monte Carlo permutations, selecting random subsets of GCMs from the given set.
 #'
@@ -31,11 +33,12 @@
 #' @importFrom terra crs project crop mask ext
 #'
 #' @export
-montecarlo_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, perm = 10000, dist_method = "euclidean", clustering_method = "kmeans") {
+montecarlo_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, scale = TRUE, perm = 10000, dist_method = "euclidean", clustering_method = "kmeans") {
   checkmate::assertCharacter(var_names, unique = T, any.missing = F)
   checkmate::assertSubset(var_names, c(names(s[[1]]), "all"))
   checkmate::assertCount(perm, positive = T)
   checkmate::assertChoice(dist_method, c("euclidean", "maximum", "manhattan", "canberra", "minkowski"))
+  checkmate::assertChoice(clust_method, c("kmeans", "hclust"))
 
   if(is.list(s)){
     if(is(s[[1]], "stars")){
@@ -90,6 +93,9 @@ montecarlo_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NU
 
   if(!is.data.frame(s[[1]])){
     s <- transform_gcms(s, var_names, study_area)
+    if (scale) {
+      s <- lapply(s, function(x) {x <- as.data.frame(scale(x))})
+    }
   }
 
   d <- dist_gcms(s, var_names = var_names, method = dist_method)$distances
