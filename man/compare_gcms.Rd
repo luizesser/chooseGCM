@@ -4,7 +4,13 @@
 \alias{compare_gcms}
 \title{Compare GCMS}
 \usage{
-compare_gcms(s, var_names = c("bio_1", "bio_12"), study_area = NULL, k = 3)
+compare_gcms(
+  s,
+  var_names = c("bio_1", "bio_12"),
+  study_area = NULL,
+  k = 3,
+  scale = TRUE
+)
 }
 \arguments{
 \item{s}{A list of stacks of General Circulation Models.}
@@ -14,6 +20,8 @@ compare_gcms(s, var_names = c("bio_1", "bio_12"), study_area = NULL, k = 3)
 \item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
 
 \item{k}{Numeric. The number of clusters to use for k-means clustering.}
+
+\item{scale}{Boolean. Apply center and scale in data? Default is TRUE.}
 }
 \value{
 A list with two items: suggested_gcms (the names of the GCMs suggested for further analysis) and statistics_gcms (a grid of plots).
@@ -25,8 +33,8 @@ This function compares future climate projections from multiple Global Circulati
 \dontrun{
 # compare GCMS
 compare_gcms(
-  folder_future_rasters_gcms = "path/to/folder",
-  study_area = raster("path/to/raster"),
+  s = import_gcms("path/to/folder"),
+  study_area = terra::vect("path/to/gpkg"),
   var_names = c("bio_1", "bio_12"),
   gcm_names = c("gcm1", "gcm2", "gcm3"),
   k = 3

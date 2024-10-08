@@ -34,7 +34,7 @@ dist_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, me
     }
   }
   checkmate::assertCharacter(var_names, unique = T, any.missing = F)
-  checkmate::assertChoice(method, c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "pearson", "spearman", "kendall"))
+  checkmate::assertChoice(method, c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "pearson", "spearman", "kendall"), null.ok = TRUE)
 
   if ("all" %in% var_names) {
     var_names <- names(s[[1]])

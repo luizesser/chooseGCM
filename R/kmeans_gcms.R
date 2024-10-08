@@ -5,10 +5,11 @@
 #' @param s A list of stacks of General Circulation Models.
 #' @param var_names Character. A vector with names of the bioclimatic variables to compare OR 'all'.
 #' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
+#' @param scale Boolean. Apply center and scale in data? Default is TRUE.
 #' @param k Number of clusters.
 #' @param method The method for distance matrix computation. Standard value is "euclidean". Possible values are: "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski". If NULL, will perform the clustering on raw variables data.
 #'
-#' @return A scatter plot of the resulting clusters.
+#' @return A scatter plot of the resulting clusters and the suggested GCMs.
 #'
 #' @seealso \code{\link{transform_gcms}} \code{\link{flatten_gcms}}
 #'
@@ -30,7 +31,7 @@
 #' @importFrom ggplot2 theme_minimal
 #'
 #' @export
-kmeans_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, k = 3, method = NULL) {
+kmeans_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, scale = TRUE, k = 3, method = NULL) {
   if(is.list(s)){
     if(!is.data.frame(s[[1]])){
       checkmate::assertList(s, types = "SpatRaster")
@@ -47,6 +48,9 @@ kmeans_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, 
     # Scale and calculate the means from variables.
     if(!is.data.frame(s[[1]])){
       s <- transform_gcms(s, var_names, study_area)
+      if (scale) {
+        s <- lapply(s, function(x) {x <- as.data.frame(scale(x))})
+      }
     }
     flatten_vars <- sapply(s, function(y) {
       y <- colMeans(y, na.rm = T)
@@ -78,6 +82,9 @@ kmeans_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, 
     # Scale and flatten variables into one column.
     if(!is.data.frame(s[[1]])){
       s <- transform_gcms(s, var_names, study_area)
+      if (scale) {
+        s <- lapply(s, function(x) {x <- as.data.frame(scale(x))})
+      }
     }
     flatten_vars <- flatten_gcms(s)
 

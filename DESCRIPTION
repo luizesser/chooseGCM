@@ -16,6 +16,7 @@ Imports:
     cluster, 
     cowplot, 
     factoextra, 
+    fpc,
     ggcorrplot, 
     ggplot2, 
     httr, 

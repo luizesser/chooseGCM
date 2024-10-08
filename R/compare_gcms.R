@@ -5,6 +5,7 @@
 #' @param s A list of stacks of General Circulation Models.
 #' @param var_names Character. A vector with names of the bioclimatic variables to compare OR 'all'.
 #' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
+#' @param scale Boolean. Apply center and scale in data? Default is TRUE.
 #' @param k Numeric. The number of clusters to use for k-means clustering.
 #'
 #' @return A list with two items: suggested_gcms (the names of the GCMs suggested for further analysis) and statistics_gcms (a grid of plots).
@@ -30,7 +31,7 @@
 #' @importFrom cowplot plot_grid
 #'
 #' @export
-compare_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, k = 3) {
+compare_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, k = 3, scale=TRUE) {
   checkmate::assertList(s, types = "SpatRaster")
   checkmate::assertCharacter(var_names, unique = T, any.missing = F)
   checkmate::assertCount(k, positive = T)
@@ -41,6 +42,9 @@ compare_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL,
 
   # Transform stacks
   x <- transform_gcms(s, var_names, study_area = study_area)
+  if (scale) {
+    x <- lapply(x, function(y) {y <- as.data.frame(scale(y))})
+  }
   flatten_vars <- flatten_gcms(x)
 
   # Calculate the distance matrix

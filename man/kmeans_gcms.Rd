@@ -8,6 +8,7 @@ kmeans_gcms(
   s,
   var_names = c("bio_1", "bio_12"),
   study_area = NULL,
+  scale = TRUE,
   k = 3,
   method = NULL
 )
@@ -19,12 +20,14 @@ kmeans_gcms(
 
 \item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
 
+\item{scale}{Boolean. Apply center and scale in data? Default is TRUE.}
+
 \item{k}{Number of clusters.}
 
 \item{method}{The method for distance matrix computation. Standard value is "euclidean". Possible values are: "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski". If NULL, will perform the clustering on raw variables data.}
 }
 \value{
-A scatter plot of the resulting clusters.
+A scatter plot of the resulting clusters and the suggested GCMs.
 }
 \description{
 This function performs k-means clustering on a distance matrix and produces a scatter plot of the resulting clusters.

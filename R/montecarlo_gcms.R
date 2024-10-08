@@ -31,11 +31,11 @@
 #' @importFrom terra crs project crop mask ext
 #'
 #' @export
-montecarlo_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, perm = 10000, method = "euclidean") {
+montecarlo_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, perm = 10000, dist_method = "euclidean", clustering_method = "kmeans") {
   checkmate::assertCharacter(var_names, unique = T, any.missing = F)
   checkmate::assertSubset(var_names, c(names(s[[1]]), "all"))
   checkmate::assertCount(perm, positive = T)
-  checkmate::assertChoice(method, c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"), null.ok = TRUE)
+  checkmate::assertChoice(dist_method, c("euclidean", "maximum", "manhattan", "canberra", "minkowski"))
 
   if(is.list(s)){
     if(is(s[[1]], "stars")){
@@ -92,7 +92,7 @@ montecarlo_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NU
     s <- transform_gcms(s, var_names, study_area)
   }
 
-  d <- dist_gcms(s, var_names = var_names, method = method)$distances
+  d <- dist_gcms(s, var_names = var_names, method = dist_method)$distances
   n <- length(s) - 1
   k <- NULL
   r <- replicate(perm, expr = {
@@ -109,7 +109,12 @@ montecarlo_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NU
   df <- data.frame(k = NA, mean = NA)
   df2 <- list()
   for (i in 2:n) {
-    m <- kmeans_gcms(s, var_names = var_names, k = i, method = method)$suggested_gcms
+    if(clustering_method == "kmeans") {
+      m <- kmeans_gcms(s, var_names = var_names, k = i, method = dist_method)$suggested_gcms
+    }
+    if(clustering_method == "hclust") {
+      m <- hclust_gcms(s, var_names = var_names, k = i)$suggested_gcms
+    }
     df2[[i-1]] <- m
     m <- mean(usedist::dist_subset(d, m))
     df[i, ] <- c(i, m)

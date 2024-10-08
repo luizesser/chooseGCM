@@ -9,7 +9,8 @@ montecarlo_gcms(
   var_names = c("bio_1", "bio_12"),
   study_area = NULL,
   perm = 10000,
-  method = "euclidean"
+  dist_method = "euclidean",
+  clustering_method = "kmeans"
 )
 }
 \arguments{

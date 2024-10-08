@@ -18,7 +18,7 @@ dist_gcms(
 
 \item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
 
-\item{method}{The correlation method to use. Default is "pearson". Possible values are "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "pearson", "spearman" or "kendall".}
+\item{method}{The correlation method to use. Default is "euclidean". Possible values are "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "pearson", "spearman" or "kendall".}
 }
 \value{
 A list with two items: distances (the distances between GCMs) and heatmap (a plot).
