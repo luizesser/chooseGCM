@@ -31,10 +31,11 @@
 #' @importFrom cowplot plot_grid
 #'
 #' @export
-compare_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, k = 3, scale=TRUE) {
+compare_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, k = 3, scale=TRUE, clustering_method = "closestdist") {
   checkmate::assertList(s, types = "SpatRaster")
   checkmate::assertCharacter(var_names, unique = T, any.missing = F)
   checkmate::assertCount(k, positive = T)
+  checkmate::assertChoice(clustering_method, c("kmeans", "hclust", "closestdist"))
 
   if ("all" %in% var_names) {
     var_names <- names(s[[1]])
@@ -58,7 +59,7 @@ compare_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL,
   #  ggtitle("Distance Matrix Heatmap")
 
   # Calculate the Monte Carlo permutations
-  mc <- montecarlo_gcms(s, var_names, study_area, perm = 10000, method = "euclidean")
+  mc <- montecarlo_gcms(s, var_names, study_area, perm = 10000, dist_method = "euclidean", clustering_method = "closestdist")
 
   # Run K-means
   cl <- stats::kmeans(dist_matrix, k, nstart = 10000, iter.max = 1000)

@@ -8,9 +8,10 @@
 #' @param scale Boolean. Apply center and scale in data? Default is TRUE.
 #' @param perm Number of permutations.
 #' @param dist_method The method for distance matrix computation. Standard value is "euclidean". Possible values are: "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski". If NULL, will perform the clustering on raw variables data.
-#' @param clustering_method The method for clustering. Standard value is "kmeans". Possible values are: "kmeans" or "hclust".
+#' @param clustering_method The method for clustering. Standard value is "closestdist". Possible values are: "kmeans", "hclust" or "closestdist".
+#' @param ... Arguments to pass to the clustering function.
 #'
-#' @return A violin plot of the result. Dashed red line and red dots represent the mean distance between selected GCMs using the kmeans approach. The blue line is the mean distance between all GCMs (i.e. using all available GCMs). Violin plot is built with Monte Carlo permutations, selecting random subsets of GCMs from the given set.
+#' @return A violin plot of the result. Dashed red line and red dots represent the mean absolute distance between subset of GCMs using the clustering approach. Violin plot is built with Monte Carlo permutations, selecting random subsets of GCMs from the given set.
 #'
 #' @seealso \code{\link{hclust_gcms}} \code{\link{env_gcms}} \code{\link{kmeans_gcms}}
 #'
@@ -33,12 +34,14 @@
 #' @importFrom terra crs project crop mask ext
 #'
 #' @export
-montecarlo_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, scale = TRUE, perm = 10000, dist_method = "euclidean", clustering_method = "kmeans") {
+montecarlo_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, scale = TRUE,
+                            perm = 10000, dist_method = "euclidean", clustering_method = "closestdist",
+                            ...) {
   checkmate::assertCharacter(var_names, unique = T, any.missing = F)
   checkmate::assertSubset(var_names, c(names(s[[1]]), "all"))
   checkmate::assertCount(perm, positive = T)
   checkmate::assertChoice(dist_method, c("euclidean", "maximum", "manhattan", "canberra", "minkowski"))
-  checkmate::assertChoice(clustering_method, c("kmeans", "hclust"))
+  checkmate::assertChoice(clustering_method, c("kmeans", "hclust", "closestdist"))
 
   if(is.list(s)){
     if(is(s[[1]], "stars")){
@@ -99,6 +102,8 @@ montecarlo_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NU
   }
 
   d <- dist_gcms(s, var_names = var_names, method = dist_method)$distances
+  mgcms_all <- mean(d)
+
   n <- length(s) - 1
   k <- NULL
   r <- replicate(perm, expr = {
@@ -110,35 +115,60 @@ montecarlo_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NU
   r <- as.data.frame(t(r))
   r$k <- as.numeric(r$k)
   r$mean <- as.numeric(r$mean)
-  mgcms_all <- mean(d)
 
   df <- data.frame(k = NA, mean = NA)
   df2 <- list()
+  if(clustering_method == "closestdist") {
+    mean_diff <- list()
+  }
   for (i in 2:n) {
     if(clustering_method == "kmeans") {
-      m <- kmeans_gcms(s, var_names = var_names, k = i, method = dist_method)$suggested_gcms
+      m <- kmeans_gcms(s, var_names = var_names, k = i, method = dist_method, ...)$suggested_gcms
     }
     if(clustering_method == "hclust") {
-      m <- hclust_gcms(s, var_names = var_names, k = i)$suggested_gcms
+      m <- hclust_gcms(s, var_names = var_names, k = i, ...)$suggested_gcms
+    }
+    if(clustering_method == "closestdist") {
+      m2 <- closestdist_gcms(s, var_names = var_names, k = i, ...)
+      mean_diff[[i]] <- m2$best_mean_diff
+      m <- m2$suggested_gcms
     }
     df2[[i-1]] <- m
     m <- mean(usedist::dist_subset(d, m))
     df[i, ] <- c(i, m)
   }
-  names(df2) <- paste0("k=",2:n)
+  names(df2) <- paste0("k",2:n)
   df <- df[-1, ]
 
-  violin_plot <- ggplot2::ggplot(r, ggplot2::aes(x = factor(k), y = mean, fill = factor(k))) +
+  r_plot <- r
+  r_plot$mean <- abs(r_plot$mean-mgcms_all)
+
+  df_plot <- df
+  df_plot$mean <- abs(df_plot$mean-mgcms_all)
+
+  if(clustering_method == "closestdist") {
+    for (i in 3:length(mean_diff)) {
+      if (mean_diff[[i]] >= mean_diff[[i - 1]]) {
+        selected_k <- i-1
+        break()
+      }
+    }
+    if(!exists("selected_k")){
+      i <- length(mean_diff)
+    }
+  }
+
+  violin_plot <- ggplot2::ggplot(r_plot, ggplot2::aes(x = factor(k), y = mean, fill = factor(k))) +
     ggplot2::geom_violin() +
     ggplot2::geom_boxplot(width = 0.1, fill = "white") +
-    ggplot2::geom_hline(yintercept = mgcms_all, color = "blue") +
-    ggplot2::geom_line(data = df, ggplot2::aes(x = k - 1, y = mean, group = 1), linetype = "dashed", color = "red") +
-    ggplot2::geom_point(data = df, ggplot2::aes(x = k - 1, y = mean, group = 1), color = "red") +
+    ggplot2::geom_hline(yintercept = 0, color = "blue") +
+    ggplot2::geom_line(data = df_plot, ggplot2::aes(x = k - 1, y = mean, group = 1), linetype = "dashed", color = "red") +
+    ggplot2::geom_point(data = df_plot, ggplot2::aes(x = k - 1, y = mean, group = 1), color = "red") +
     ggplot2::xlab("Number of GCMs/Clusters") +
-    ggplot2::ylab("Mean Distance") +
+    ggplot2::ylab("Mean Absolute Distance from Global") +
     ggplot2::theme_minimal() +
     ggplot2::theme(legend.position = "none") +
-    ggplot2::ggtitle("Monte Carlo Permutations")
+    ggplot2::ggtitle(paste0("Monte Carlo Permutations - ", clustering_method))
 
-  return(list(montecarlo_plot = violin_plot, all_kmeans=df2))
+  return(list(montecarlo_plot = violin_plot, suggested_gcms=df2))
 }
