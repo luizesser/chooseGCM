@@ -8,6 +8,7 @@ cor_gcms(
   s,
   var_names = c("bio_1", "bio_12"),
   study_area = NULL,
+  scale = TRUE,
   method = "pearson"
 )
 }
@@ -17,6 +18,8 @@ cor_gcms(
 \item{var_names}{Character. A vector with names of the bioclimatic variables to compare OR 'all'.}
 
 \item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
+
+\item{scale}{Boolean. Apply center and scale in data? Default is TRUE.}
 
 \item{method}{The correlation method to use. Default is "pearson". Possible values are "pearson", "kendall" or "spearman".}
 }

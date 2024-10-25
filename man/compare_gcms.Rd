@@ -9,7 +9,8 @@ compare_gcms(
   var_names = c("bio_1", "bio_12"),
   study_area = NULL,
   k = 3,
-  scale = TRUE
+  scale = TRUE,
+  clustering_method = "closestdist"
 )
 }
 \arguments{

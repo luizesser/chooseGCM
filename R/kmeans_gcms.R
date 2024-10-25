@@ -27,8 +27,8 @@
 #' }
 #'
 #' @import checkmate
+#' @import ggplot2
 #' @importFrom factoextra fviz_cluster
-#' @importFrom ggplot2 theme_minimal
 #'
 #' @export
 kmeans_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, scale = TRUE, k = 3, method = NULL) {
@@ -106,8 +106,17 @@ kmeans_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, 
       check_overlap = T,
       main = "K-means Clustering Plot",
       legend = "none",
-      repel = TRUE
-    )
+      repel = TRUE,
+      label.select = NA) +
+      ggplot2::geom_text(ggplot2::aes(label = ifelse(colnames(cl$centers) %in% gcms, colnames(cl$centers), "")),
+                color = "red",
+                vjust = -1.5,
+                size = 6) +
+      ggplot2::geom_text(ggplot2::aes(label = ifelse(!colnames(cl$centers) %in% gcms, colnames(cl$centers), "")),
+                         color = "black",
+                         vjust = -1.5,
+                         size = 4)
+
   }
 
   return(list(

@@ -63,16 +63,29 @@ compare_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL,
 
   # Run K-means
   cl <- stats::kmeans(dist_matrix, k, nstart = 10000, iter.max = 1000)
+  gcms <- apply(cl$centers, 1, function(x) {
+    which.min(x) |> names()
+  })
 
   # plot
   kmeans_plot <- factoextra::fviz_cluster(cl,
-    data = dist_matrix,
-    palette = "jco",
-    ggtheme = ggplot2::theme_minimal(),
-    check_overlap = T,
-    main = "K-means Clustering Plot",
-    legend = "none", repel = TRUE
-  )
+                           data = dist_matrix,
+                           palette = "jco",
+                           ggtheme = ggplot2::theme_minimal(),
+                           check_overlap = T,
+                           main = "K-means Clustering Plot",
+                           legend = "none",
+                           repel = TRUE,
+                           label.select = NA) +
+    ggplot2::geom_text(ggplot2::aes(label = ifelse(colnames(cl$centers) %in% gcms, colnames(cl$centers), "")),
+                       color = "red",
+                       vjust = -1,
+                       size = 4) +
+    ggplot2::geom_text(ggplot2::aes(label = ifelse(!colnames(cl$centers) %in% gcms, colnames(cl$centers), "")),
+                       color = "black",
+                       vjust = -1,
+                       size = 4) +
+    ggplot2::theme(plot.margin = ggplot2::unit(c(0.2, 0, 0, 1), "cm"))
 
   # Include elbow, silhouette and gap methods
   flatten_subset <- stats::na.omit(flatten_vars)
@@ -86,34 +99,44 @@ compare_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL,
   # flatten_subset <- flatten_subset[sample(nrow(flatten_subset), n),]
   # sil <- fviz_nbclust(flatten_subset, FUN = kmeans, method = "silhouette")
 
-  # Plot Environment
-  gcms <- apply(cl$centers, 1, function(x) {
-    which.min(x) |> names()
-  })
-  env <- env_gcms(s, var_names, study_area, highlight = gcms)
+  # Plot Environment closest dist
+  env <- env_gcms(s, var_names, study_area, highlight = mc$suggested_gcms[[k-1]], title = "Closest subset to the Global Mean")
 
   # Compute hierarchical clustering and cut into k clusters
   res <- factoextra::hcut(t(flatten_subset), k = k)
+  mean_all <- sapply(x, function(y) {
+    y <- colMeans(y, na.rm = T)
+  })
+  mean_all <- rowMeans(mean_all)
+  res2 <- vector()
+  for (i in 1:k) {
+    mean_cluster <- sapply(x[res$cluster==i], function(y) {
+      y <- colMeans(y, na.rm = T)
+    })
+    vals <- as.matrix(dist(t(cbind(mean_cluster, mean_all))))[,"mean_all"]
+    res2[i] <- names(which.min(vals[vals > 0]))
+  }
   dend <- factoextra::fviz_dend(res,
-    cex = 0.5,
-    ylim = c(max(res$height) * 1.1 / 5 * -1, max(res$height) * 1.1),
-    palette = "jco",
-    main = "Hierarchical Clustering"
+                                horiz=T,
+                                cex = 0.8,
+                                palette = "jco",
+                                main = "Hierarchical Clustering",
+                                label_cols = ifelse(res$labels[res$order] %in% res2, "red", "black")
+  ) + ggplot2::theme(
+    plot.margin = ggplot2::unit(c(0.2, 0, 0, 1), "cm")  # Adjust the left margin (last number) to add more space
   )
 
   statistics_gcms <- cowplot::plot_grid(kmeans_plot,
-    # hm,
-    mc$montecarlo_plot,
-    dend,
-    # sil,
-    env,
-    labels = c("A", "B", "C", "D"),
-    ncol = 2,
-    rel_widths = 4
+                                        dend,
+                                        mc$montecarlo_plot,
+                                        env,
+                                        labels = c("A", "B", "C", "D"),
+                                        ncol = 2,
+                                        rel_widths = 4
   )
 
   return(list(
-    suggested_gcms = mc$all_kmeans,
+    suggested_gcms = mc$suggested_gcms,
     statistics_gcms = statistics_gcms
   ))
 }

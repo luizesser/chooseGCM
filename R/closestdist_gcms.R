@@ -6,9 +6,19 @@
 #' @param var_names Character. A vector with names of the bioclimatic variables to compare OR 'all'.
 #' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
 #' @param method The distance method to use. Default is "euclidean". Possible values are "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "pearson", "spearman" or "kendall". See ?dist_gcms.
-#' @param k Number of GCMs. If NULL, stopping criteria are applied.
-#' @param perm Number of permutations.
-#' @return Set of two GCMs that have mean distance closer to the mean of all GCMs provided in s.
+#' @param k Number of GCMs. If NULL (standard), stopping criteria are applied.
+#' @param minimize_difference Boolean. If k = NULL, function will search for best value of k. Standard is TRUE.
+#' @param max_difference Numeric. Distance threshold to stop searching. Standard is NULL.
+#'
+#' @details
+#' \code{minimize_difference} will search for the optimum value of k by incorporating new GCMs
+#' to the subset until the mean distance of the subset starts to move away from the mean distance from
+#' all GCMs (global distance).
+#' By setting a \code{max_difference} value, the function will test if the mean distance between GCMs
+#' in the subset is lower than max_difference. If TRUE, the function returns the given subset, otherwise
+#' it will keep searching for better results.
+#'
+#' @return Set of GCMs that have mean distance closer to the mean of all GCMs provided in s.
 #'
 #' @seealso \code{\link{cor_gcms}} \code{\link{dist_gcms}}
 #'
@@ -29,8 +39,8 @@
 #'
 #' @export
 closestdist_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, scale = TRUE,
-                             k = NULL, perm = 10000, method = "euclidean",
-                             minimize_difference = TRUE, max_difference = 0.0000001) {
+                             k = NULL, method = "euclidean",
+                             minimize_difference = TRUE, max_difference = NULL) {
   if(is.list(s)){
     if(!is.data.frame(s[[1]])){
       checkmate::assertList(s, types = "SpatRaster")
@@ -39,7 +49,8 @@ closestdist_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = N
   checkmate::assertCharacter(var_names, unique = TRUE, any.missing = FALSE)
   checkmate::assertChoice(method, c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "pearson", "spearman", "kendall"), null.ok = TRUE)
   checkmate::assertCount(k, positive = TRUE, null.ok = TRUE)
-  checkmate::assertCount(perm, positive = TRUE)
+  checkmate::assertLogical(minimize_difference, len=1, null.ok=FALSE, any.missing = FALSE, all.missing = FALSE)
+  checkmate::assertNumeric(max_difference, lower=0, upper=1, len = 1, any.missing = FALSE, all.missing = FALSE, null.ok = T)
 
   dmat <- chooseGCM::dist_gcms(s=s, var_names=var_names, method=method, study_area=study_area, scale = scale)$distances
   dmat <- as.matrix(dmat)
@@ -58,10 +69,11 @@ closestdist_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = N
   best_subset <- NULL
   best_mean_diff <- Inf
 
+  gcms_comb <- combn(1:N, 2)
   # Repeat the process for a given number of random initializations
-  for (rep in 1:perm) {
+  for (rep in 1:ncol(gcms_comb)) {
     # Start with a random subset of size 2
-    subset <- sample(1:N, size = 2, replace = FALSE)
+    subset <- gcms_comb[,rep]
 
     # Iteratively add GCMs until subset size is k
     while (length(subset) < kn) {
@@ -92,10 +104,13 @@ closestdist_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = N
         }
 
         # 2. Stop if the difference is lower than the threshold (max_difference)
-        if (best_mean_diff_subset < max_difference) {
-          #message("Stopping because mean difference is below threshold from max_difference.")
-          break
+        if(!is.null(max_difference)){
+          if (best_mean_diff_subset < max_difference) {
+            #message("Stopping because mean difference is below threshold from max_difference.")
+            break
+          }
         }
+
       }
       # Add the best GCM found in this iteration to the subset
       subset <- c(subset, best_gcm)
@@ -127,7 +142,7 @@ closestdist_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = N
 
   # Return the best subset found and its mean distance
   res <- list(
-    suggested_gcms = colnames(dmat[best_subset,best_subset]), #"me" "ac" "ca" "mi" "cc"
+    suggested_gcms = colnames(dmat[best_subset,best_subset]),
     best_mean_diff = best_mean_diff,
     global_mean = global_mean
   )

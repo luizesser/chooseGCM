@@ -11,7 +11,8 @@ montecarlo_gcms(
   scale = TRUE,
   perm = 10000,
   dist_method = "euclidean",
-  clustering_method = "kmeans"
+  clustering_method = "closestdist",
+  ...
 )
 }
 \arguments{
@@ -27,10 +28,12 @@ montecarlo_gcms(
 
 \item{dist_method}{The method for distance matrix computation. Standard value is "euclidean". Possible values are: "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski". If NULL, will perform the clustering on raw variables data.}
 
-\item{clustering_method}{The method for clustering. Standard value is "kmeans". Possible values are: "kmeans" or "hclust".}
+\item{clustering_method}{The method for clustering. Standard value is "closestdist". Possible values are: "kmeans", "hclust" or "closestdist".}
+
+\item{...}{Arguments to pass to the clustering function.}
 }
 \value{
-A violin plot of the result. Dashed red line and red dots represent the mean distance between selected GCMs using the kmeans approach. The blue line is the mean distance between all GCMs (i.e. using all available GCMs). Violin plot is built with Monte Carlo permutations, selecting random subsets of GCMs from the given set.
+A violin plot of the result. Dashed red line and red dots represent the mean absolute distance between subset of GCMs using the clustering approach. Violin plot is built with Monte Carlo permutations, selecting random subsets of GCMs from the given set.
 }
 \description{
 This function performs Monte Carlo permutations on a distance matrix and produces a violin plot of the resulting mean distance between subsets of the distance matrix.

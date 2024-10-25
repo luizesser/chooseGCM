@@ -8,7 +8,11 @@ closestdist_gcms(
   s,
   var_names = c("bio_1", "bio_12"),
   study_area = NULL,
-  method = "euclidean"
+  scale = TRUE,
+  k = NULL,
+  method = "euclidean",
+  minimize_difference = TRUE,
+  max_difference = NULL
 )
 }
 \arguments{
@@ -18,13 +22,27 @@ closestdist_gcms(
 
 \item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
 
-\item{method}{The correlation method to use. Default is "euclidean". Possible values are "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "pearson", "spearman" or "kendall".}
+\item{k}{Number of GCMs. If NULL (standard), stopping criteria are applied.}
+
+\item{method}{The distance method to use. Default is "euclidean". Possible values are "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "pearson", "spearman" or "kendall". See ?dist_gcms.}
+
+\item{minimize_difference}{Boolean. If k = NULL, function will search for best value of k. Standard is TRUE.}
+
+\item{max_difference}{Numeric. Distance threshold to stop searching. Standard is NULL.}
 }
 \value{
-Set of two GCMs that have mean distance closer to the mean of all GCMs provided in s.
+Set of GCMs that have mean distance closer to the mean of all GCMs provided in s.
 }
 \description{
 This function compares future climate projections from multiple Global Circulation Models (GCMs) based on their similarity in terms of variables.
+}
+\details{
+\code{minimize_difference} will search for the optimum value of k by incorporating new GCMs
+to the subset until the mean distance of the subset starts to move away from the mean distance from
+all GCMs (global distance).
+By setting a \code{max_difference} value, the function will test if the mean distance between GCMs
+in the subset is lower than max_difference. If TRUE, the function returns the given subset, otherwise
+it will keep searching for better results.
 }
 \examples{
 \dontrun{
@@ -37,7 +55,7 @@ closestdist_gcms(s, method = "euclidean")
 
 }
 \seealso{
-\code{\link{transform_gcms}} \code{\link{flatten_gcms}}
+\code{\link{cor_gcms}} \code{\link{dist_gcms}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)

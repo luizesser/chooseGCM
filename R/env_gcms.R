@@ -30,7 +30,7 @@
 #' @importFrom terra rast ext crs project mask crop
 #'
 #' @export
-env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, highlight = "sum", resolution = 25) {
+env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, highlight = "sum", resolution = 25, title=NULL) {
   if(is.list(s)){
     if(is(s[[1]], "stars")){
       s <- sapply(s,
@@ -139,6 +139,9 @@ env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, hig
     }
     graphics::legend("topright", inset = c(-0.15, 0), legend = names(s2), fill = colors, cex = 0.8)
   } else if (all(highlight %in% names(s))) {
+    if(is.null(title)){
+      title <- paste0("Selected GCMs coverage")
+    }
     background <- do.call(rbind, lapply(s2, as.data.frame))
     x <- background[[var_names[1]]][]
     y <- background[[var_names[2]]][]
@@ -166,9 +169,12 @@ env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, hig
     res_plot <- ggplot2::ggplot(stats::na.omit(grid_back), ggplot2::aes(x, y, fill = GCMs)) +
       ggplot2::geom_tile() +
       ggplot2::scale_fill_viridis_d(alpha = 0.5) +
-      ggplot2::labs(x = var_names[1], y = var_names[2], title = paste0("Selected GCMs coverage")) +
+      ggplot2::labs(x = var_names[1], y = var_names[2], title = title) +
       ggplot2::theme_minimal()
   } else if (highlight == "sum") {
+    if(is.null(title)){
+      title <- paste0("Sum of GCMs in Environmental Space")
+    }
     for (i in 1:length(s2)) {
       x <- s2[[i]][[var_names[1]]][]
       y <- s2[[i]][[var_names[2]]][]
@@ -188,7 +194,7 @@ env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, hig
     res_plot <- ggplot2::ggplot(stats::na.omit(grid_sum), ggplot2::aes(x, y, fill = GCMs)) +
       ggplot2::geom_tile() +
       ggplot2::scale_fill_viridis_c() +
-      ggplot2::labs(x = var_names[1], y = var_names[2], title = paste0("Sum of GCMs in Environmental Space")) +
+      ggplot2::labs(x = var_names[1], y = var_names[2], title = title) +
       ggplot2::theme_minimal()
   }
   return(res_plot)

@@ -3,6 +3,7 @@
 #' @param s A list of stacks of General Circulation Models.
 #' @param var_names Character. A vector with names of the bioclimatic variables to compare OR 'all'.
 #' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
+#' @param scale Boolean. Apply center and scale in data? Default is TRUE.
 #' @param method The correlation method to use. Default is "pearson". Possible values are "pearson", "kendall" or "spearman".
 #'
 #' @return A list with two items: cor_matrix (the correlations between GCMs) and cor_plot (a correlation plot).
@@ -24,9 +25,10 @@
 #'
 #' @import checkmate
 #' @importFrom ggcorrplot ggcorrplot
+#' @importFrom ggplot2 scale_fill_viridis_c
 #'
 #' @export
-cor_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, method = "pearson") {
+cor_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, scale = TRUE, method = "pearson") {
   if(is.list(s)){
     if(!is.data.frame(s[[1]])){
       checkmate::assertList(s, types = "SpatRaster")
@@ -40,21 +42,22 @@ cor_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, met
   }
 
   if(!is.data.frame(s[[1]])){
-    x <- transform_gcms(s, var_names, study_area)
+    x <- transform_gcms(s, var_names, study_area, scale)
   }
   x <- flatten_gcms(x)
   cor_matrix <- stats::cor(as.matrix(x), use = "complete.obs", method = method)
   title <- paste0(method, " Correlation")
   substr(title, 1, 1) <- toupper(substr(title, 1, 1))
   cor_plot <- ggcorrplot::ggcorrplot(cor_matrix,
-    type = "lower",
-    lab = T,
-    lab_size = 3,
-    hc.order = T,
-    hc.method = "ward.D2",
-    show.legend = F,
-    title = title
-  )
+                         type = "lower",
+                         lab = T,
+                         lab_size = 3,
+                         hc.order = T,
+                         hc.method = "ward.D2",
+                         show.legend = F,
+                         title = title
+  ) + ggplot2::scale_fill_viridis_c(limit = c(NA,NA))
+
   return(list(
     cor_matrix = cor_matrix,
     cor_plot = cor_plot

@@ -61,12 +61,6 @@ hclust_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, 
   }
 
   res <- factoextra::hcut(t(x), k = k)
-  dend <- factoextra::fviz_dend(res,
-    cex = 0.5,
-    ylim = c(max(res$height) * 1.1 / 5 * -1, max(res$height) * 1.1),
-    palette = "jco",
-    main = "Hierarchical Clustering"
-  )
 
   mean_all <- sapply(s, function(y) {
     y <- colMeans(y, na.rm = T)
@@ -80,6 +74,14 @@ hclust_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, 
     vals <- as.matrix(dist(t(cbind(mean_cluster, mean_all))))[,"mean_all"]
     res2[i] <- names(which.min(vals[vals > 0]))
   }
+
+  dend <- factoextra::fviz_dend(res,
+    horiz=T,
+    cex = 0.8,
+    palette = "jco",
+    main = "Hierarchical Clustering",
+    label_cols = ifelse(res$labels[res$order] %in% res2, "red", "black")
+  )
 
   return(list(
     suggested_gcms = res2,
