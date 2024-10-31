@@ -42,7 +42,7 @@ cor_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, sca
   }
 
   if(!is.data.frame(s[[1]])){
-    x <- transform_gcms(s, var_names, study_area, scale)
+    x <- transform_gcms(s, var_names, study_area)
   }
   x <- flatten_gcms(x)
   cor_matrix <- stats::cor(as.matrix(x), use = "complete.obs", method = method)

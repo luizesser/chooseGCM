@@ -19,6 +19,10 @@ knitr::opts_chunk$set(
 
 <!-- badges: end -->
 
+
+# chooseGCM <a href="https://luizesser.github.io/chooseGCM/"><img src="man/figures/logo.png" align="right" height="85" alt="chooseGCM website" /></a>
+
+
 The goal of chooseGCM is to help researchers aiming to project Species Distribution Models and Ecological Niche Models to future scenarios by applying a selection routine to the General Circulation Models.
 
 ## Installation
@@ -103,7 +107,7 @@ Regarding the exploratory comparison between GCMs, two functions are available: 
 
 ```{r}
 # Pearson Correlation between GCMs
-s_cor <- cor_gcms(s, var_names, study_area_parana, method = "pearson")
+s_cor <- cor_gcms(s, var_names, study_area_parana, scale = TRUE, method = "pearson")
 s_cor
 ```
 
@@ -166,7 +170,7 @@ optk_gcms(s, var_names, study_area_parana, cluster = "kmeans", method = "gap_sta
 An alternative way to analyse if the mean distance between GCMs is similar to the mean distance between all GCMs is to use the `montecarlo_gcms` function. This function will build a distance matrix (using `method` argument) and plot the mean distance between all GCMs as a blue line. Afterwards, it will run a Monte Carlo permutation to randomly choose a group size ranging from [2] and [total number of GCMs - 1] and randomly choose a subset of GCMs with that group size. The mean distance between the random set is obtained and ploted in a violin plot. Finally, the function accesses the mean distance between selected GCMs using the kmeans function in all possible values of `k` and plots it in red.
 
 ```{r}
-montecarlo_gcms(s, var_names, study_area_parana, perm = 10000, method = "euclidean")
+montecarlo_gcms(s, var_names, study_area_parana, perm = 10000, dist_method = "euclidean", clustering_method = "kmeans")
 ```
 
 #### The environment covered by GCMs selection
@@ -174,11 +178,25 @@ montecarlo_gcms(s, var_names, study_area_parana, perm = 10000, method = "euclide
 We also included in this package a function called `env_gcms`, which is able to project GCMs in the environmental space. With that, researchers are able to see the coverage of GCMs when comparing to all GCMs. It is also possible to see the density of GCMs using the `highlight=sum` as argument.
 
 ```{r}
-env_gcms(s, var_names, study_area_parana, highlight = res$suggested_gcms$`k=3`)
+env_gcms(s, var_names, study_area_parana, highlight = res$suggested_gcms$k3)
 ```
 
 ```{r}
 env_gcms(s, var_names, study_area_parana, highlight = "sum")
+```
+
+#### A greedy algorithm for GCMs selection
+
+As a way to optimize GCMs selection, we implemented a greedy algorithm, which calculates the distance matrix between all GCMs and calculates the mean distance in the matrix (global mean distance). The algorithm selects a random pair of GCMs and test if adding any other GCM to that pair will drive the mean distance closer to the global mean. The algorithm stops when adding a new GCM does not return a mean distance closer to the global mean or when the distance reaches a minimum value (standard = 0.0000001).
+
+```{r}
+closestdist_gcms(s, var_names, study_area_parana)
+```
+
+We can also provide the value of k we want to use:
+
+```{r}
+closestdist_gcms(s, var_names, study_area_parana, k=3)
 ```
 
 #### Wrapping Up

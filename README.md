@@ -6,6 +6,8 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
+# chooseGCM <a href="https://luizesser.github.io/chooseGCM/"><img src="man/figures/logo.png" align="right" height="85" alt="chooseGCM website" /></a>
+
 The goal of chooseGCM is to help researchers aiming to project Species
 Distribution Models and Ecological Niche Models to future scenarios by
 applying a selection routine to the General Circulation Models.
@@ -84,6 +86,7 @@ it is in supplementary data from studies using this package.
 
 ``` r
 res <- compare_gcms(s, var_names, study_area_parana, k = 3)
+#> CRS from s and study_area are not identical. Reprojecting study area.
 #> Warning: The `<scale>` argument of `guides()` cannot be `FALSE`. Use "none" instead as
 #> of ggplot2 3.3.4.
 #> ℹ The deprecated feature was likely used in the factoextra package.
@@ -132,6 +135,7 @@ a list of GCMs with a table associated with each of them.
 ``` r
 # Summary of GCMs
 s_sum <- summary_gcms(s, var_names, study_area_parana)
+#> CRS from s and study_area are not identical. Reprojecting study area.
 s_sum
 #> $ac
 #>         min quantile_0.25 median      mean quantile_0.75   max        sd NAs
@@ -377,7 +381,10 @@ available methods.
 
 ``` r
 # Pearson Correlation between GCMs
-s_cor <- cor_gcms(s, var_names, study_area_parana, method = "pearson")
+s_cor <- cor_gcms(s, var_names, study_area_parana, scale = TRUE, method = "pearson")
+#> CRS from s and study_area are not identical. Reprojecting study area.
+#> Scale for fill is already present.
+#> Adding another scale for fill, which will replace the existing scale.
 s_cor
 #> $cor_matrix
 #>           ac        ae        ca        cc        ce        ch        cn
@@ -499,6 +506,7 @@ clusters in the `compare_gcms` function and in further presented
 ``` r
 # Euclidean Distance between GCMs
 s_dist <- dist_gcms(s, var_names, study_area_parana, method = "euclidean")
+#> CRS from s and study_area are not identical. Reprojecting study area.
 s_dist
 #> $distances
 #>           ac        ae        ca        cc        ce        ch        cn
@@ -614,9 +622,10 @@ clusters.
 
 ``` r
 kmeans_gcms(s, var_names, study_area_parana, k = 3, method = "euclidean")
+#> CRS from s and study_area are not identical. Reprojecting study area.
 #> $suggested_gcms
 #>    1    2    3 
-#> "ml" "uk" "cr" 
+#> "uk" "cr" "ml" 
 #> 
 #> $kmeans_plot
 ```
@@ -637,8 +646,9 @@ variables as axis as provided here.
 
 ``` r
 kmeans_gcms(s, var_names, study_area_parana, k = 3)
+#> CRS from s and study_area are not identical. Reprojecting study area.
 #> $suggested_gcms
-#> [1] "ip" "uk" "ac"
+#> [1] "ic" "gh" "in"
 #> 
 #> $kmeans_plot
 ```
@@ -654,6 +664,11 @@ with metrics in the next section).
 
 ``` r
 hclust_gcms(s, var_names, study_area_parana, k = 3)
+#> CRS from s and study_area are not identical. Reprojecting study area.
+#> $suggested_gcms
+#> [1] "gh" "fi" "ev"
+#> 
+#> $dend_plot
 ```
 
 <img src="man/figures/README-unnamed-chunk-15-1.png" width="100%" />
@@ -664,6 +679,11 @@ resolution data.
 
 ``` r
 hclust_gcms(s, var_names, study_area_parana, k = 3, n = 1000)
+#> CRS from s and study_area are not identical. Reprojecting study area.
+#> $suggested_gcms
+#> [1] "gh" "ml" "fi"
+#> 
+#> $dend_plot
 ```
 
 <img src="man/figures/README-unnamed-chunk-16-1.png" width="100%" />
@@ -686,6 +706,7 @@ and ‘hclust’.
 
 ``` r
 optk_gcms(s, var_names, study_area_parana, cluster = "kmeans", method = "wss", n = 1000)
+#> CRS from s and study_area are not identical. Reprojecting study area.
 ```
 
 <img src="man/figures/README-unnamed-chunk-17-1.png" width="100%" />
@@ -701,6 +722,7 @@ number of clusters is marked with a dashed line (2 clusters).
 
 ``` r
 optk_gcms(s, var_names, study_area_parana, cluster = "kmeans", method = "silhouette", n = 1000)
+#> CRS from s and study_area are not identical. Reprojecting study area.
 ```
 
 <img src="man/figures/README-unnamed-chunk-18-1.png" width="100%" />
@@ -718,6 +740,7 @@ is the number of bootstrap permutations.
 
 ``` r
 optk_gcms(s, var_names, study_area_parana, cluster = "kmeans", method = "gap_stat", n = 1000)
+#> CRS from s and study_area are not identical. Reprojecting study area.
 #> Warning: did not converge in 10 iterations
 #> Warning: did not converge in 10 iterations
 #> Warning: did not converge in 10 iterations
@@ -742,105 +765,105 @@ selected GCMs using the kmeans function in all possible values of `k`
 and plots it in red.
 
 ``` r
-montecarlo_gcms(s, var_names, study_area_parana, perm = 10000, method = "euclidean")
+montecarlo_gcms(s, var_names, study_area_parana, perm = 10000, dist_method = "euclidean", clustering_method = "kmeans")
 #> $montecarlo_plot
 ```
 
 <img src="man/figures/README-unnamed-chunk-20-1.png" width="100%" />
 
     #> 
-    #> $all_kmeans
-    #> $all_kmeans$`k=2`
+    #> $suggested_gcms
+    #> $suggested_gcms$k2
     #>    1    2 
     #> "cr" "ml" 
     #> 
-    #> $all_kmeans$`k=3`
+    #> $suggested_gcms$k3
     #>    1    2    3 
     #> "uk" "ml" "cr" 
     #> 
-    #> $all_kmeans$`k=4`
+    #> $suggested_gcms$k4
     #>    1    2    3    4 
-    #> "ca" "cr" "uk" "gg" 
+    #> "uk" "cr" "gg" "ca" 
     #> 
-    #> $all_kmeans$`k=5`
+    #> $suggested_gcms$k5
     #>    1    2    3    4    5 
-    #> "ac" "gg" "ic" "uk" "ca" 
+    #> "ca" "ac" "uk" "gg" "ic" 
     #> 
-    #> $all_kmeans$`k=6`
+    #> $suggested_gcms$k6
     #>    1    2    3    4    5    6 
-    #> "uk" "me" "ca" "mr" "cr" "ml" 
+    #> "cr" "ml" "me" "mr" "ca" "uk" 
     #> 
-    #> $all_kmeans$`k=7`
+    #> $suggested_gcms$k7
     #>    1    2    3    4    5    6    7 
-    #> "ca" "uk" "ic" "mr" "gg" "cr" "ml" 
+    #> "ca" "uk" "mr" "cr" "ml" "ic" "gg" 
     #> 
-    #> $all_kmeans$`k=8`
+    #> $suggested_gcms$k8
     #>    1    2    3    4    5    6    7    8 
     #> "gg" "ca" "ml" "ec" "ic" "cr" "mr" "hg" 
     #> 
-    #> $all_kmeans$`k=9`
+    #> $suggested_gcms$k9
     #>    1    2    3    4    5    6    7    8    9 
-    #> "hg" "cr" "gh" "gg" "ac" "ml" "ec" "ic" "ca" 
+    #> "hg" "cr" "gg" "ca" "gh" "ic" "ec" "ml" "ac" 
     #> 
-    #> $all_kmeans$`k=10`
+    #> $suggested_gcms$k10
     #>    1    2    3    4    5    6    7    8    9   10 
-    #> "gh" "ml" "cr" "ce" "ec" "ac" "gg" "hg" "ic" "ca" 
+    #> "ca" "ml" "gg" "gh" "cr" "hg" "ic" "ce" "ec" "ac" 
     #> 
-    #> $all_kmeans$`k=11`
+    #> $suggested_gcms$k11
     #>    1    2    3    4    5    6    7    8    9   10   11 
-    #> "cr" "ca" "gg" "ml" "ac" "ec" "gh" "ce" "hg" "ic" "in" 
+    #> "ml" "gg" "ca" "gh" "in" "cr" "ec" "hg" "ic" "ce" "ac" 
     #> 
-    #> $all_kmeans$`k=12`
+    #> $suggested_gcms$k12
     #>    1    2    3    4    5    6    7    8    9   10   11   12 
-    #> "ml" "in" "ac" "ce" "cr" "ic" "gh" "gg" "ip" "ca" "hg" "ec" 
+    #> "ip" "ic" "in" "cr" "gg" "hg" "ml" "ca" "gh" "ec" "ce" "ac" 
     #> 
-    #> $all_kmeans$`k=13`
+    #> $suggested_gcms$k13
     #>    1    2    3    4    5    6    7    8    9   10   11   12   13 
-    #> "ec" "ce" "ic" "hg" "cr" "ae" "in" "fi" "gh" "ml" "ac" "ip" "ca" 
+    #> "ec" "in" "ml" "ac" "ce" "ca" "ae" "gh" "hg" "ic" "cr" "ip" "fi" 
     #> 
-    #> $all_kmeans$`k=14`
+    #> $suggested_gcms$k14
     #>    1    2    3    4    5    6    7    8    9   10   11   12   13   14 
-    #> "cn" "ip" "ca" "hg" "ec" "gh" "ch" "ce" "in" "ml" "fi" "ic" "ae" "ac" 
+    #> "ch" "ce" "ca" "ml" "ae" "gh" "in" "ec" "hg" "ip" "ac" "fi" "ic" "cn" 
     #> 
-    #> $all_kmeans$`k=15`
+    #> $suggested_gcms$k15
     #>    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15 
-    #> "ml" "ae" "hg" "gh" "fi" "cn" "ch" "ce" "ec" "ca" "ac" "ip" "mi" "in" "ic" 
+    #> "ec" "hg" "ae" "in" "ca" "mi" "fi" "ml" "ch" "ce" "ac" "gh" "ip" "cn" "ic" 
     #> 
-    #> $all_kmeans$`k=16`
+    #> $suggested_gcms$k16
     #>    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 
-    #> "in" "ip" "ca" "gh" "ic" "ac" "ce" "ec" "mi" "ch" "ml" "cn" "hg" "gg" "fi" "ae" 
+    #> "fi" "hg" "gh" "ec" "ip" "ch" "mi" "in" "cn" "ac" "ic" "ml" "ca" "ce" "gg" "ae" 
     #> 
-    #> $all_kmeans$`k=17`
+    #> $suggested_gcms$k17
     #>    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 
-    #> "ca" "ae" "ip" "hg" "ce" "ml" "ic" "cc" "gh" "cn" "ch" "ec" "ac" "fi" "gg" "mi" 
+    #> "ic" "gh" "ec" "ml" "ce" "ac" "hg" "mi" "cn" "ch" "ca" "in" "ae" "fi" "gg" "cc" 
     #>   17 
-    #> "in" 
+    #> "ip" 
     #> 
-    #> $all_kmeans$`k=18`
+    #> $suggested_gcms$k18
     #>    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 
-    #> "ca" "in" "ml" "gg" "ce" "cc" "fi" "ip" "ae" "ac" "ic" "gh" "hg" "ch" "mi" "ec" 
+    #> "ch" "mp" "mi" "in" "hg" "ae" "ca" "ec" "ce" "ip" "fi" "cn" "gh" "ml" "ac" "ic" 
     #>   17   18 
-    #> "mp" "cn" 
+    #> "cc" "gg" 
     #> 
-    #> $all_kmeans$`k=19`
+    #> $suggested_gcms$k19
     #>    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 
     #> "ip" "gh" "ca" "ec" "mi" "ac" "ce" "ch" "ae" "fi" "cn" "cr" "in" "ml" "mp" "gg" 
     #>   17   18   19 
     #> "ic" "cc" "hg" 
     #> 
-    #> $all_kmeans$`k=20`
+    #> $suggested_gcms$k20
     #>    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 
     #> "ip" "ec" "mi" "cc" "ch" "ae" "gg" "mp" "ac" "ic" "ca" "cr" "fi" "hg" "gh" "cn" 
     #>   17   18   19   20 
     #> "ml" "in" "mr" "ce" 
     #> 
-    #> $all_kmeans$`k=21`
+    #> $suggested_gcms$k21
     #>    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 
     #> "ip" "cr" "gh" "ev" "ca" "ae" "mi" "ml" "ch" "hg" "fi" "ce" "ec" "gg" "mp" "mr" 
     #>   17   18   19   20   21 
     #> "cc" "cn" "in" "ac" "ic" 
     #> 
-    #> $all_kmeans$`k=22`
+    #> $suggested_gcms$k22
     #>    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 
     #> "ac" "gg" "ev" "mi" "ml" "ip" "ec" "ce" "cn" "ic" "cr" "ch" "fi" "gh" "ca" "ae" 
     #>   17   18   19   20   21   22 
@@ -855,7 +878,7 @@ also possible to see the density of GCMs using the `highlight=sum` as
 argument.
 
 ``` r
-env_gcms(s, var_names, study_area_parana, highlight = res$suggested_gcms$`k=3`)
+env_gcms(s, var_names, study_area_parana, highlight = res$suggested_gcms$k3)
 ```
 
 <img src="man/figures/README-unnamed-chunk-21-1.png" width="100%" />
@@ -865,6 +888,45 @@ env_gcms(s, var_names, study_area_parana, highlight = "sum")
 ```
 
 <img src="man/figures/README-unnamed-chunk-22-1.png" width="100%" />
+
+#### A greedy algorithm for GCMs selection
+
+As a way to optimize GCMs selection, we implemented a greedy algorithm,
+which calculates the distance matrix between all GCMs and calculates the
+mean distance in the matrix (global mean distance). The algorithm
+selects a random pair of GCMs and test if adding any other GCM to that
+pair will drive the mean distance closer to the global mean. The
+algorithm stops when adding a new GCM does not return a mean distance
+closer to the global mean or when the distance reaches a minimum value
+(standard = 0.0000001).
+
+``` r
+closestdist_gcms(s, var_names, study_area_parana)
+#> CRS from s and study_area are not identical. Reprojecting study area.
+#> $suggested_gcms
+#> [1] "ae" "cc" "hg" "mi" "ec" "ml"
+#> 
+#> $best_mean_diff
+#> [1] 3.028944e-05
+#> 
+#> $global_mean
+#> [1] 22.5668
+```
+
+We can also provide the value of k we want to use:
+
+``` r
+closestdist_gcms(s, var_names, study_area_parana, k=3)
+#> CRS from s and study_area are not identical. Reprojecting study area.
+#> $suggested_gcms
+#> [1] "ae" "ce" "ch"
+#> 
+#> $best_mean_diff
+#> [1] 0.001482039
+#> 
+#> $global_mean
+#> [1] 22.5668
+```
 
 #### Wrapping Up
 
@@ -876,5 +938,5 @@ would be able to inform a decent variation in our projections.
 
 ``` r
 tictoc::toc()
-#> 51.309 sec elapsed
+#> 46.26 sec elapsed
 ```
