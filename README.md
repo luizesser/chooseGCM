@@ -4,6 +4,8 @@
 # chooseGCM: an R package with a toolkit to select General Circulation Models
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/luizesser/chooseGCM/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/luizesser/chooseGCM/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 # chooseGCM <a href="https://luizesser.github.io/chooseGCM/"><img src="man/figures/logo.png" align="right" height="85" alt="chooseGCM website" /></a>
@@ -938,5 +940,5 @@ would be able to inform a decent variation in our projections.
 
 ``` r
 tictoc::toc()
-#> 46.26 sec elapsed
+#> 45.645 sec elapsed
 ```
