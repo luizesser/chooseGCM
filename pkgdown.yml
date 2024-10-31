@@ -1,8 +1,9 @@
 pandoc: 3.1.11
 pkgdown: 2.1.1
 pkgdown_sha: ~
-articles: {}
-last_built: 2024-09-23T17:12Z
+articles:
+  Resolution: Resolution.html
+last_built: 2024-10-31T11:16Z
 urls:
   reference: https://luizesser.github.io/chooseGCM/reference
   article: https://luizesser.github.io/chooseGCM/articles
