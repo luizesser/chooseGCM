@@ -30,6 +30,7 @@
 #' @import checkmate
 #' @importFrom factoextra fviz_nbclust hcut
 #' @importFrom cluster clusGap
+#' @importFrom stats hclust kmeans
 #'
 #' @export
 optk_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, cluster = "kmeans", method = "wss", n = NULL, nstart = 10, K.max = 10, B = 100) {
@@ -65,18 +66,18 @@ optk_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, cl
 
   if (cluster == "kmeans") {
     if (method == "gap_stat") {
-      g <- cluster::clusGap(flatten_subset, FUNcluster = kmeans, nstart = nstart, K.max = K.max, B = B)
+      g <- cluster::clusGap(flatten_subset, FUNcluster = stats::kmeans, nstart = nstart, K.max = K.max, B = B)
       y <- factoextra::fviz_gap_stat(g)
     } else {
-      y <- factoextra::fviz_nbclust(flatten_subset, FUNcluster = kmeans, method)
+      y <- factoextra::fviz_nbclust(flatten_subset, FUNcluster = stats::kmeans, method)
     }
   }
 
   if (cluster == "hclust") {
     if (method == "gap_stat") {
-      y <- factoextra::fviz_nbclust(flatten_subset, FUNcluster = hclust, method, k.max = K.max, nboot = B)
+      y <- factoextra::fviz_nbclust(flatten_subset, FUNcluster = stats::hclust, method, k.max = K.max, nboot = B)
     } else {
-      y <- factoextra::fviz_nbclust(flatten_subset, FUNcluster = hclust, method)
+      y <- factoextra::fviz_nbclust(flatten_subset, FUNcluster = stats::hclust, method)
     }
   }
 

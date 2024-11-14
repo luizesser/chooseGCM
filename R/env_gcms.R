@@ -138,9 +138,9 @@ env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, hig
       y <- s2[[i]][[var_names[2]]][]
       grid <- createGrid(x, y, x_bins, y_bins, resolution)
       grid <- ifelse(grid == 0, NA, 1)
-      graphics::image(x_bins, y_bins, grid, col = colors[i], add = TRUE)
+      graphics::image(x_bins, y_bins, grid, col = .data$colors[i], add = TRUE)
     }
-    graphics::legend("topright", inset = c(-0.15, 0), legend = names(s2), fill = colors, cex = 0.8)
+    graphics::legend("topright", inset = c(-0.15, 0), legend = names(s2), fill = .data$colors, cex = 0.8)
   } else if (all(highlight %in% names(s))) {
     if(is.null(title)){
       title <- paste0("Selected GCMs coverage")
@@ -169,7 +169,7 @@ env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, hig
       grid_back <- rbind(grid_back, grid)
     }
     grid_back$GCMs <- factor(grid_back$GCMs, levels = c("All", highlight))
-    res_plot <- ggplot2::ggplot(stats::na.omit(grid_back), ggplot2::aes(x, y, fill = GCMs)) +
+    res_plot <- ggplot2::ggplot(stats::na.omit(grid_back), ggplot2::aes(x, y, fill = .data$GCMs)) +
       ggplot2::geom_tile() +
       ggplot2::scale_fill_viridis_d(alpha = 0.5) +
       ggplot2::labs(x = var_names[1], y = var_names[2], title = title) +
@@ -194,7 +194,7 @@ env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, hig
     grid_sum <- suppressWarnings(reshape2::melt(grid_sum))
     colnames(grid_sum) <- c("x", "y", "GCMs")
 
-    res_plot <- ggplot2::ggplot(stats::na.omit(grid_sum), ggplot2::aes(x, y, fill = GCMs)) +
+    res_plot <- ggplot2::ggplot(stats::na.omit(grid_sum), ggplot2::aes(x, y, fill = .data$GCMs)) +
       ggplot2::geom_tile() +
       ggplot2::scale_fill_viridis_c() +
       ggplot2::labs(x = var_names[1], y = var_names[2], title = title) +
