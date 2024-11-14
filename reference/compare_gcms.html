@@ -44,8 +44,8 @@
 <span>  <span class="va">s</span>,</span>
 <span>  var_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio_1"</span>, <span class="st">"bio_12"</span><span class="op">)</span>,</span>
 <span>  study_area <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  k <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  scale <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  k <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  clustering_method <span class="op">=</span> <span class="st">"closestdist"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -66,12 +66,16 @@
 <dd><p>Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.</p></dd>
 
 
+<dt id="arg-scale">scale<a class="anchor" aria-label="anchor" href="#arg-scale"></a></dt>
+<dd><p>Boolean. Apply center and scale in data? Default is TRUE.</p></dd>
+
+
 <dt id="arg-k">k<a class="anchor" aria-label="anchor" href="#arg-k"></a></dt>
 <dd><p>Numeric. The number of clusters to use for k-means clustering.</p></dd>
 
 
-<dt id="arg-scale">scale<a class="anchor" aria-label="anchor" href="#arg-scale"></a></dt>
-<dd><p>Boolean. Apply center and scale in data? Default is TRUE.</p></dd>
+<dt id="arg-clustering-method">clustering_method<a class="anchor" aria-label="anchor" href="#arg-clustering-method"></a></dt>
+<dd><p>Character. Which method should be used to cluster GCMs. One of: "kmeans", "hclust", "closestdist".</p></dd>
 
 </dl></div>
     <div class="section level2">
