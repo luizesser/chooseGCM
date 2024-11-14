@@ -8,7 +8,7 @@
 [![R-CMD-check](https://github.com/luizesser/chooseGCM/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/luizesser/chooseGCM/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-# chooseGCM <a href="https://luizesser.github.io/chooseGCM/"><img src="man/figures/logo.png" align="right" height="85" alt="chooseGCM website" /></a>
+# chooseGCM <a href="https://luizesser.github.io/chooseGCM/"><img src="man/figures/logo.png" align="right" height="138" alt="chooseGCM website" /></a>
 
 The goal of chooseGCM is to help researchers aiming to project Species
 Distribution Models and Ecological Niche Models to future scenarios by
@@ -947,5 +947,5 @@ would be able to inform a decent variation in our projections.
 
 ``` r
 tictoc::toc()
-#> 47.035 sec elapsed
+#> 46.061 sec elapsed
 ```

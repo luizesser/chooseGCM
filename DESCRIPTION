@@ -11,7 +11,7 @@ Authors@R: c(
            comment = c(ORCID = "0000-0002-5901-0911")),
     person("Luíz", "Esser", , "luizesser@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0003-2982-7223")))
-Maintainer: Luíz Fernando Esser <luizesser@gmail.com>
+Maintainer: Luíz Esser <luizesser@gmail.com>
 Description: Methods to help selecting General Circulation Models (GCMs) 
     in the context of projecting models to future scenarios. It is provided
     clusterization algorithms, distance and correlation metrics, as well as
