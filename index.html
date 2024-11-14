@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>chooseGCM: A package for selecting General Circulation Models for Species Distribution Modeling in R • chooseGCM</title>
+<title>Selecting General Circulation Models for Species Distribution Modeling • chooseGCM</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="chooseGCM: A package for selecting General Circulation Models for Species Distribution Modeling in R">
-<meta name="description" content="This package is intended to help modelers to select General Circulation Models (GCMs) to project Species Distribution Models to future scenarios. The package uses clusterization to detect GCMs that are more different from one another, avoiding highly correlated GCMs.">
-<meta property="og:description" content="This package is intended to help modelers to select General Circulation Models (GCMs) to project Species Distribution Models to future scenarios. The package uses clusterization to detect GCMs that are more different from one another, avoiding highly correlated GCMs.">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Selecting General Circulation Models for Species Distribution Modeling">
+<meta name="description" content="Methods to help selecting General Circulation Models (GCMs) in the context of projecting models to future scenarios. It is provided clusterization algorithms, distance and correlation metrics, as well as a tailor-made algorithm to detect the optimum subset of GCMs that recriate the environment of all GCMs.">
+<meta property="og:description" content="Methods to help selecting General Circulation Models (GCMs) in the context of projecting models to future scenarios. It is provided clusterization algorithms, distance and correlation metrics, as well as a tailor-made algorithm to detect the optimum subset of GCMs that recriate the environment of all GCMs.">
 <meta property="og:image" content="https://luizesser.github.io/chooseGCM/logo.png">
 </head>
 <body>
@@ -39,6 +39,7 @@
 <li><a class="dropdown-item" href="articles/Resolution.html">Resolution</a></li>
   </ul>
 </li>
+<li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -71,12 +72,15 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"luizesser/chooseGCM"</span><span class="op">)</span></span></code></pre></div>
+<p>The package is being submited to CRAN, where users will be able to install it using the following code:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"chooseGCM"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="tutorial">Tutorial<a class="anchor" aria-label="anchor" href="#tutorial"></a>
 </h2>
 <p>This is a basic tutorial which shows you how to use the functions in chooseGCM. After installing the package, we need to open it:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://luizesser.github.io/chooseGCM/">chooseGCM</a></span><span class="op">)</span></span>
 <span><span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
@@ -84,18 +88,18 @@
 <h3 id="downloading-worldclim-21-data">Downloading WorldClim 2.1 Data<a class="anchor" aria-label="anchor" href="#downloading-worldclim-21-data"></a>
 </h3>
 <p>First, we need to use only one time period. Here we use 2090 so the difference between models is more conspicuous. In the same way we are considering the SSP585, which is the more dramatic pathway. The resolution is the lowest to be quicker. The aim here is to maintain all parameters equal, but General Circulation Models (GCMs). In this way we know that the only source of variation comes from them. Note that if you receive a timeout error you can increase timeout value by running , where 600 is the value in seconds that will be enough to download the data.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/WorldClim_data.html">worldclim_data</a></span><span class="op">(</span>period <span class="op">=</span> <span class="st">"future"</span>, variable <span class="op">=</span> <span class="st">"bioc"</span>, year <span class="op">=</span> <span class="st">"2090"</span>, gcm <span class="op">=</span> <span class="st">"all"</span>, ssp <span class="op">=</span> <span class="st">"585"</span>, resolution <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="importing-and-transforming-data">Importing and Transforming Data<a class="anchor" aria-label="anchor" href="#importing-and-transforming-data"></a>
 </h3>
 <p>Now let’s import GCMs to R in a list of stacks and name the list with the names of the GCMs.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">s</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/import_gcms.html">import_gcms</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"_ssp585_10_2090"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>In each function, data will be transformed. To do that you will always need to provide at least: (1) the list of stacks, (2) the variables you want to use in analysis and (3) the shapefile of your study area. You don’t need to previously mask and subset your data, once the functions will perform this task internally for you. Note that the results from these functions are highly sensitive to variables and to study area. In this sense, the decision on what variables should be considered and what is the study area must be carefully made considering biological aspects of the studied group.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">var_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio5"</span>, <span class="st">"bio13"</span>, <span class="st">"bio15"</span><span class="op">)</span></span>
 <span><span class="va">study_area_parana</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="st">"input_data/PR_UF_2022.shp"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -103,7 +107,7 @@
 <h3 id="straigthforward-approach">Straigthforward Approach<a class="anchor" aria-label="anchor" href="#straigthforward-approach"></a>
 </h3>
 <p>There is the option to run each function in separate to better understand what is happening and to better parameterize each step. However there is a wrapper to help run everything at once and could be an alternative to have a broad perspective. <code><a href="reference/compare_gcms.html">compare_gcms()</a></code> will return a list with a vector called <code>suggested_gcms</code> and a Figure called <code>statistics_gcms</code>. We suggest that this Figure could also be included as it is in supplementary data from studies using this package.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/compare_gcms.html">compare_gcms</a></span><span class="op">(</span><span class="va">s</span>, <span class="va">var_names</span>, <span class="va">study_area_parana</span>, k <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; CRS from s and study_area are not identical. Reprojecting study area.</span></span>
 <span><span class="co">#&gt; Warning: The `&lt;scale&gt;` argument of `guides()` cannot be `FALSE`. Use "none" instead as</span></span>
@@ -114,7 +118,7 @@
 <span><span class="co">#&gt; Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span>
 <span><span class="co">#&gt; generated.</span></span>
 <span><span class="va">res</span><span class="op">$</span><span class="va">statistics_gcms</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-9-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-10-1.png" width="100%"></p>
 <p>The aim of this function is to inform the minimum required so users can follow with their workflow in a more straightforward fashion (more on each plot further). If we see the D plot in the Figure, we can infer if the selected GCMs encompass the environmental variety of all GCMs. The focus should be to cover the core environment and not outlier regions on the environmental space. Above that, in plot B, the Monte Carlo permutation between GCMs is presented as a violin plot. Plots A and C are both clusterization methods that can be used to select GCMs. Clusterization will be adapted to the number of clusters <code>k</code> designated in the function. Lastly, suggested GCMs were “uk”, “ml” and “ac”. Those suggestions are the gcms that are closer to the centroid of each K-means cluster, thus they better represent the variation within each cluster.</p>
 </div>
 <div class="section level3">
@@ -125,7 +129,7 @@
 <h4 id="exploratory-analysis">Exploratory Analysis<a class="anchor" aria-label="anchor" href="#exploratory-analysis"></a>
 </h4>
 <p>In chooseGCM we implemented functions to analyze GCMs attributes. <code>summary_gcms</code> is the only function available that describes variations within GCMs. It returns the internal information regarding each variable, as reads: minimum value (min), first quartile (quantile_0.25), second quartile (median), average (mean), third quartile (quantile_0.75), maximum value (max), standard deviation (sd), number of NAs (NAs) and the total number of cells (n_cells). This function returns a list of GCMs with a table associated with each of them.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summary of GCMs</span></span>
 <span><span class="va">s_sum</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/summary_gcms.html">summary_gcms</a></span><span class="op">(</span><span class="va">s</span>, <span class="va">var_names</span>, <span class="va">study_area_parana</span><span class="op">)</span></span>
 <span><span class="co">#&gt; CRS from s and study_area are not identical. Reprojecting study area.</span></span>
@@ -360,7 +364,7 @@
 <span><span class="co">#&gt; bio13     708</span></span>
 <span><span class="co">#&gt; bio15     708</span></span></code></pre></div>
 <p>Regarding the exploratory comparison between GCMs, two functions are available: <code>cor_gcms</code> and <code>dist_gcms</code>. The first is designed to return a list with a correlation matrix between GCMs and a plot of this matrix. We noticed while building this package that (as expected) Pearson correlation values are always very high, rarely reaching values bellow 0.95. In this way we found that this function could not be so informative and decided to present a distance function as seen bellow. However it is noteworthy that through this function the user can change the method used to obtain correlation values. See <code><a href="reference/cor_gcms.html">?cor_gcms</a></code> for available methods.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Pearson Correlation between GCMs</span></span>
 <span><span class="va">s_cor</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cor_gcms.html">cor_gcms</a></span><span class="op">(</span><span class="va">s</span>, <span class="va">var_names</span>, <span class="va">study_area_parana</span>, scale <span class="op">=</span> <span class="cn">TRUE</span>, method <span class="op">=</span> <span class="st">"pearson"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; CRS from s and study_area are not identical. Reprojecting study area.</span></span>
@@ -466,9 +470,9 @@
 <span><span class="co">#&gt; uk 0.8358686 1.0000000</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $cor_plot</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-11-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-12-1.png" width="100%"></p>
 <p>The function <code>dist_gcms</code> is very similar to the previous <code>cor_gcms</code>, but now for distances. This function has the same output: a list with two slots. One is the distance matrix obtained (<code>distances</code>), while the second is the plotted matrix (<code>heatmap</code>). Here the differences between GCMs are way more clear than in the previous plot. As in was it the previous function, methods can also be changed for a number of different distances. For a complete list of available methods see <code><a href="reference/dist_gcms.html">?dist_gcms</a></code>. To build a distance matrix considering multiple variables to each GCM we use a flattening strategy, where values are concatenated in one unique vector to each GCM. In the process, we need to scale variables so they end up with the same measure. This matrix is also used to calculate the clusters in the <code>compare_gcms</code> function and in further presented <code>kmeans_gcms</code> function.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Euclidean Distance between GCMs</span></span>
 <span><span class="va">s_dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dist_gcms.html">dist_gcms</a></span><span class="op">(</span><span class="va">s</span>, <span class="va">var_names</span>, <span class="va">study_area_parana</span>, method <span class="op">=</span> <span class="st">"euclidean"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; CRS from s and study_area are not identical. Reprojecting study area.</span></span>
@@ -568,13 +572,13 @@
 <span><span class="co">#&gt; uk 26.386464</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $heatmap</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-12-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-13-1.png" width="100%"></p>
 </div>
 <div class="section level4">
 <h4 id="obtain-clusters">Obtain Clusters<a class="anchor" aria-label="anchor" href="#obtain-clusters"></a>
 </h4>
 <p>Clusters in chooseGCM are obtained through K-means, a unsupervised machine learning algorithm. K in this case is the number of GCMs the modeler wants to use in projections. As in the previous <code>dist_gcms</code> function, we can address different methods to obtain the distance matrix by changing the <code>method</code> argument. The K-means algorithm uses the distance matrix to obtain clusters, thus a deep analysis of distances using <code>dist_gcms</code> function could prove to be useful. As in <code>compare_gcms</code> function, this function returns the K-means plot and a set of suggested GCMs, i.e. the GCMs closer to the centroid of each clusters.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/kmeans_gcms.html">kmeans_gcms</a></span><span class="op">(</span><span class="va">s</span>, <span class="va">var_names</span>, <span class="va">study_area_parana</span>, k <span class="op">=</span> <span class="fl">3</span>, method <span class="op">=</span> <span class="st">"euclidean"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; CRS from s and study_area are not identical. Reprojecting study area.</span></span>
 <span><span class="co">#&gt; $suggested_gcms</span></span>
@@ -582,50 +586,50 @@
 <span><span class="co">#&gt; "uk" "cr" "ml" </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $kmeans_plot</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-13-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-14-1.png" width="100%"></p>
 <p>Alternatively, instead of using distances, one could run the analysis with raw environmental data by not setting any value to method (note how axis change). As in the previous case, the function also returns GCMs that are closer to the centroids. Note however that the plot below has a cluster with two GCMs, thus both have the same distance from the centroid. In this case, the function randomly suggests one of them. To perform this analysis without a distance matrix, we use only the mean values of each variable selected. In this way, the variability within variables is not considered, as in the above solution. But we recognize that for some purpose it could be useful to have a plot with raw variables as axis as provided here.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/kmeans_gcms.html">kmeans_gcms</a></span><span class="op">(</span><span class="va">s</span>, <span class="va">var_names</span>, <span class="va">study_area_parana</span>, k <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; CRS from s and study_area are not identical. Reprojecting study area.</span></span>
 <span><span class="co">#&gt; $suggested_gcms</span></span>
 <span><span class="co">#&gt; [1] "ic" "gh" "in"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $kmeans_plot</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-14-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-15-1.png" width="100%"></p>
 <p>We can also obtain clusters through hierarchical clustering. In this case, however, the function doesn’t suggest any GCM. It is up to the user to define which GCMs are most suitable in this case. Hierarchical clustering is useful to visually inform the relationship between groups and could also be used to choose a number of clusters to build (together with metrics in the next section).</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/hclust_gcms.html">hclust_gcms</a></span><span class="op">(</span><span class="va">s</span>, <span class="va">var_names</span>, <span class="va">study_area_parana</span>, k <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; CRS from s and study_area are not identical. Reprojecting study area.</span></span>
 <span><span class="co">#&gt; $suggested_gcms</span></span>
 <span><span class="co">#&gt; [1] "gh" "fi" "ev"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $dend_plot</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-15-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-16-1.png" width="100%"></p>
 <p>In this function we also provide a <code>n</code> argument to inform the amount of data to be used in the clustering. This proved valuable when using high resolution data.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/hclust_gcms.html">hclust_gcms</a></span><span class="op">(</span><span class="va">s</span>, <span class="va">var_names</span>, <span class="va">study_area_parana</span>, k <span class="op">=</span> <span class="fl">3</span>, n <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
 <span><span class="co">#&gt; CRS from s and study_area are not identical. Reprojecting study area.</span></span>
 <span><span class="co">#&gt; $suggested_gcms</span></span>
 <span><span class="co">#&gt; [1] "gh" "ml" "fi"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $dend_plot</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-16-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-17-1.png" width="100%"></p>
 </div>
 <div class="section level4">
 <h4 id="number-of-clusters">Number of Clusters<a class="anchor" aria-label="anchor" href="#number-of-clusters"></a>
 </h4>
 <p>But how many clusters are good? There is three metrics implemented to understand that. All of them are a way to see the minimum amount of GCMs that are needed to encompass the variability in the whole set of GCMs. The three methods are implemented in the same function by adjusting the <code>method</code> argument. Within-cluster sum of squares (wss) calculates the internal variability within clusters. Our goal here is to search for the minimum amount of clusters that has the minimum amount of variability. This is shown in the graph were the line changes abruptly its direction (Number of clusters k = 3). As in the previous function, this function provides a <code>n</code> argument to inform the amount of data to be used in the clustering. Finally, one can also indicate the method to build clusters with the argument <code>clusters</code>. Available methods are ‘kmeans’ (standard) and ‘hclust’.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/optk_gcms.html">optk_gcms</a></span><span class="op">(</span><span class="va">s</span>, <span class="va">var_names</span>, <span class="va">study_area_parana</span>, cluster <span class="op">=</span> <span class="st">"kmeans"</span>, method <span class="op">=</span> <span class="st">"wss"</span>, n <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
 <span><span class="co">#&gt; CRS from s and study_area are not identical. Reprojecting study area.</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-17-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-18-1.png" width="100%"></p>
 <p>The Average Silhouette Width method, measures the mean distance from all individuals to the centroid of their own clusters, while comparing to other clusters. This is sometimes also referred as a metric of cluster quality (the higher the better). A number of clusters is the best when the distance from individuals within the cluster to its centroid is lower than the distance from individuals to other clusters centroid (maximizing the average silhouette width). In this method, the best number of clusters is marked with a dashed line (2 clusters).</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/optk_gcms.html">optk_gcms</a></span><span class="op">(</span><span class="va">s</span>, <span class="va">var_names</span>, <span class="va">study_area_parana</span>, cluster <span class="op">=</span> <span class="st">"kmeans"</span>, method <span class="op">=</span> <span class="st">"silhouette"</span>, n <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
 <span><span class="co">#&gt; CRS from s and study_area are not identical. Reprojecting study area.</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-18-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-19-1.png" width="100%"></p>
 <p>Our last method is the Gap Statistics. As in the previous method, here the optimum number of clusters is showed with a dashed line (1 cluster). This method compares the variation within clusters with a set of null clusters build through Monte Carlo (“bootstrap”) sampling. Because of that, the gap statistics can take a longer time to run when compared to previous methods described here. Moreover, some parameters can be changed to improve the Monte Carlo process, such as: <code>nstart</code>, <code>K.max</code> and <code>B</code>, where <code>nstart</code> is the initial number of arrangements to be compared, <code>K.max</code> is the maximum number of clusters to be created and B is the number of bootstrap permutations.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/optk_gcms.html">optk_gcms</a></span><span class="op">(</span><span class="va">s</span>, <span class="va">var_names</span>, <span class="va">study_area_parana</span>, cluster <span class="op">=</span> <span class="st">"kmeans"</span>, method <span class="op">=</span> <span class="st">"gap_stat"</span>, n <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
 <span><span class="co">#&gt; CRS from s and study_area are not identical. Reprojecting study area.</span></span>
 <span><span class="co">#&gt; Warning: did not converge in 10 iterations</span></span>
@@ -633,130 +637,130 @@
 <span><span class="co">#&gt; Warning: did not converge in 10 iterations</span></span>
 <span><span class="co">#&gt; Warning: did not converge in 10 iterations</span></span>
 <span><span class="co">#&gt; Warning: did not converge in 10 iterations</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-19-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-20-1.png" width="100%"></p>
 </div>
 <div class="section level4">
 <h4 id="monte-carlo-permutations">Monte Carlo permutations<a class="anchor" aria-label="anchor" href="#monte-carlo-permutations"></a>
 </h4>
 <p>An alternative way to analyse if the mean distance between GCMs is similar to the mean distance between all GCMs is to use the <code>montecarlo_gcms</code> function. This function will build a distance matrix (using <code>method</code> argument) and plot the mean distance between all GCMs as a blue line. Afterwards, it will run a Monte Carlo permutation to randomly choose a group size ranging from [2] and [total number of GCMs - 1] and randomly choose a subset of GCMs with that group size. The mean distance between the random set is obtained and ploted in a violin plot. Finally, the function accesses the mean distance between selected GCMs using the kmeans function in all possible values of <code>k</code> and plots it in red.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/montecarlo_gcms.html">montecarlo_gcms</a></span><span class="op">(</span><span class="va">s</span>, <span class="va">var_names</span>, <span class="va">study_area_parana</span>, perm <span class="op">=</span> <span class="fl">10000</span>, dist_method <span class="op">=</span> <span class="st">"euclidean"</span>, clustering_method <span class="op">=</span> <span class="st">"kmeans"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $montecarlo_plot</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-20-1.png" width="100%"></p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms</span></span>
-<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k2</span></span>
-<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a><span class="co">#&gt;    1    2 </span></span>
-<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a><span class="co">#&gt; "cr" "ml" </span></span>
-<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k3</span></span>
-<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a><span class="co">#&gt;    1    2    3 </span></span>
-<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a><span class="co">#&gt; "uk" "ml" "cr" </span></span>
-<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k4</span></span>
-<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4 </span></span>
-<span id="cb18-13"><a href="#cb18-13" tabindex="-1"></a><span class="co">#&gt; "uk" "cr" "gg" "ca" </span></span>
-<span id="cb18-14"><a href="#cb18-14" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb18-15"><a href="#cb18-15" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k5</span></span>
-<span id="cb18-16"><a href="#cb18-16" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5 </span></span>
-<span id="cb18-17"><a href="#cb18-17" tabindex="-1"></a><span class="co">#&gt; "ca" "ac" "uk" "gg" "ic" </span></span>
-<span id="cb18-18"><a href="#cb18-18" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb18-19"><a href="#cb18-19" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k6</span></span>
-<span id="cb18-20"><a href="#cb18-20" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6 </span></span>
-<span id="cb18-21"><a href="#cb18-21" tabindex="-1"></a><span class="co">#&gt; "cr" "ml" "me" "mr" "ca" "uk" </span></span>
-<span id="cb18-22"><a href="#cb18-22" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb18-23"><a href="#cb18-23" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k7</span></span>
-<span id="cb18-24"><a href="#cb18-24" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7 </span></span>
-<span id="cb18-25"><a href="#cb18-25" tabindex="-1"></a><span class="co">#&gt; "ca" "uk" "mr" "cr" "ml" "ic" "gg" </span></span>
-<span id="cb18-26"><a href="#cb18-26" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb18-27"><a href="#cb18-27" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k8</span></span>
-<span id="cb18-28"><a href="#cb18-28" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8 </span></span>
-<span id="cb18-29"><a href="#cb18-29" tabindex="-1"></a><span class="co">#&gt; "gg" "ca" "ml" "ec" "ic" "cr" "mr" "hg" </span></span>
-<span id="cb18-30"><a href="#cb18-30" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb18-31"><a href="#cb18-31" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k9</span></span>
-<span id="cb18-32"><a href="#cb18-32" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9 </span></span>
-<span id="cb18-33"><a href="#cb18-33" tabindex="-1"></a><span class="co">#&gt; "hg" "cr" "gg" "ca" "gh" "ic" "ec" "ml" "ac" </span></span>
-<span id="cb18-34"><a href="#cb18-34" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb18-35"><a href="#cb18-35" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k10</span></span>
-<span id="cb18-36"><a href="#cb18-36" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10 </span></span>
-<span id="cb18-37"><a href="#cb18-37" tabindex="-1"></a><span class="co">#&gt; "ca" "ml" "gg" "gh" "cr" "hg" "ic" "ce" "ec" "ac" </span></span>
-<span id="cb18-38"><a href="#cb18-38" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb18-39"><a href="#cb18-39" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k11</span></span>
-<span id="cb18-40"><a href="#cb18-40" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11 </span></span>
-<span id="cb18-41"><a href="#cb18-41" tabindex="-1"></a><span class="co">#&gt; "ml" "gg" "ca" "gh" "in" "cr" "ec" "hg" "ic" "ce" "ac" </span></span>
-<span id="cb18-42"><a href="#cb18-42" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb18-43"><a href="#cb18-43" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k12</span></span>
-<span id="cb18-44"><a href="#cb18-44" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11   12 </span></span>
-<span id="cb18-45"><a href="#cb18-45" tabindex="-1"></a><span class="co">#&gt; "ip" "ic" "in" "cr" "gg" "hg" "ml" "ca" "gh" "ec" "ce" "ac" </span></span>
-<span id="cb18-46"><a href="#cb18-46" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb18-47"><a href="#cb18-47" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k13</span></span>
-<span id="cb18-48"><a href="#cb18-48" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11   12   13 </span></span>
-<span id="cb18-49"><a href="#cb18-49" tabindex="-1"></a><span class="co">#&gt; "ec" "in" "ml" "ac" "ce" "ca" "ae" "gh" "hg" "ic" "cr" "ip" "fi" </span></span>
-<span id="cb18-50"><a href="#cb18-50" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb18-51"><a href="#cb18-51" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k14</span></span>
-<span id="cb18-52"><a href="#cb18-52" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11   12   13   14 </span></span>
-<span id="cb18-53"><a href="#cb18-53" tabindex="-1"></a><span class="co">#&gt; "ch" "ce" "ca" "ml" "ae" "gh" "in" "ec" "hg" "ip" "ac" "fi" "ic" "cn" </span></span>
-<span id="cb18-54"><a href="#cb18-54" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb18-55"><a href="#cb18-55" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k15</span></span>
-<span id="cb18-56"><a href="#cb18-56" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15 </span></span>
-<span id="cb18-57"><a href="#cb18-57" tabindex="-1"></a><span class="co">#&gt; "ec" "hg" "ae" "in" "ca" "mi" "fi" "ml" "ch" "ce" "ac" "gh" "ip" "cn" "ic" </span></span>
-<span id="cb18-58"><a href="#cb18-58" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb18-59"><a href="#cb18-59" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k16</span></span>
-<span id="cb18-60"><a href="#cb18-60" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 </span></span>
-<span id="cb18-61"><a href="#cb18-61" tabindex="-1"></a><span class="co">#&gt; "fi" "hg" "gh" "ec" "ip" "ch" "mi" "in" "cn" "ac" "ic" "ml" "ca" "ce" "gg" "ae" </span></span>
-<span id="cb18-62"><a href="#cb18-62" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb18-63"><a href="#cb18-63" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k17</span></span>
-<span id="cb18-64"><a href="#cb18-64" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 </span></span>
-<span id="cb18-65"><a href="#cb18-65" tabindex="-1"></a><span class="co">#&gt; "ic" "gh" "ec" "ml" "ce" "ac" "hg" "mi" "cn" "ch" "ca" "in" "ae" "fi" "gg" "cc" </span></span>
-<span id="cb18-66"><a href="#cb18-66" tabindex="-1"></a><span class="co">#&gt;   17 </span></span>
-<span id="cb18-67"><a href="#cb18-67" tabindex="-1"></a><span class="co">#&gt; "ip" </span></span>
-<span id="cb18-68"><a href="#cb18-68" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb18-69"><a href="#cb18-69" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k18</span></span>
-<span id="cb18-70"><a href="#cb18-70" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 </span></span>
-<span id="cb18-71"><a href="#cb18-71" tabindex="-1"></a><span class="co">#&gt; "ch" "mp" "mi" "in" "hg" "ae" "ca" "ec" "ce" "ip" "fi" "cn" "gh" "ml" "ac" "ic" </span></span>
-<span id="cb18-72"><a href="#cb18-72" tabindex="-1"></a><span class="co">#&gt;   17   18 </span></span>
-<span id="cb18-73"><a href="#cb18-73" tabindex="-1"></a><span class="co">#&gt; "cc" "gg" </span></span>
-<span id="cb18-74"><a href="#cb18-74" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb18-75"><a href="#cb18-75" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k19</span></span>
-<span id="cb18-76"><a href="#cb18-76" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 </span></span>
-<span id="cb18-77"><a href="#cb18-77" tabindex="-1"></a><span class="co">#&gt; "ip" "gh" "ca" "ec" "mi" "ac" "ce" "ch" "ae" "fi" "cn" "cr" "in" "ml" "mp" "gg" </span></span>
-<span id="cb18-78"><a href="#cb18-78" tabindex="-1"></a><span class="co">#&gt;   17   18   19 </span></span>
-<span id="cb18-79"><a href="#cb18-79" tabindex="-1"></a><span class="co">#&gt; "ic" "cc" "hg" </span></span>
-<span id="cb18-80"><a href="#cb18-80" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb18-81"><a href="#cb18-81" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k20</span></span>
-<span id="cb18-82"><a href="#cb18-82" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 </span></span>
-<span id="cb18-83"><a href="#cb18-83" tabindex="-1"></a><span class="co">#&gt; "ip" "ec" "mi" "cc" "ch" "ae" "gg" "mp" "ac" "ic" "ca" "cr" "fi" "hg" "gh" "cn" </span></span>
-<span id="cb18-84"><a href="#cb18-84" tabindex="-1"></a><span class="co">#&gt;   17   18   19   20 </span></span>
-<span id="cb18-85"><a href="#cb18-85" tabindex="-1"></a><span class="co">#&gt; "ml" "in" "mr" "ce" </span></span>
-<span id="cb18-86"><a href="#cb18-86" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb18-87"><a href="#cb18-87" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k21</span></span>
-<span id="cb18-88"><a href="#cb18-88" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 </span></span>
-<span id="cb18-89"><a href="#cb18-89" tabindex="-1"></a><span class="co">#&gt; "ip" "cr" "gh" "ev" "ca" "ae" "mi" "ml" "ch" "hg" "fi" "ce" "ec" "gg" "mp" "mr" </span></span>
-<span id="cb18-90"><a href="#cb18-90" tabindex="-1"></a><span class="co">#&gt;   17   18   19   20   21 </span></span>
-<span id="cb18-91"><a href="#cb18-91" tabindex="-1"></a><span class="co">#&gt; "cc" "cn" "in" "ac" "ic" </span></span>
-<span id="cb18-92"><a href="#cb18-92" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb18-93"><a href="#cb18-93" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k22</span></span>
-<span id="cb18-94"><a href="#cb18-94" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 </span></span>
-<span id="cb18-95"><a href="#cb18-95" tabindex="-1"></a><span class="co">#&gt; "ac" "gg" "ev" "mi" "ml" "ip" "ec" "ce" "cn" "ic" "cr" "ch" "fi" "gh" "ca" "ae" </span></span>
-<span id="cb18-96"><a href="#cb18-96" tabindex="-1"></a><span class="co">#&gt;   17   18   19   20   21   22 </span></span>
-<span id="cb18-97"><a href="#cb18-97" tabindex="-1"></a><span class="co">#&gt; "cc" "in" "uk" "mr" "mp" "hg"</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-21-1.png" width="100%"></p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms</span></span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k2</span></span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a><span class="co">#&gt;    1    2 </span></span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a><span class="co">#&gt; "cr" "ml" </span></span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k3</span></span>
+<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a><span class="co">#&gt;    1    2    3 </span></span>
+<span id="cb19-9"><a href="#cb19-9" tabindex="-1"></a><span class="co">#&gt; "uk" "ml" "cr" </span></span>
+<span id="cb19-10"><a href="#cb19-10" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-11"><a href="#cb19-11" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k4</span></span>
+<span id="cb19-12"><a href="#cb19-12" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4 </span></span>
+<span id="cb19-13"><a href="#cb19-13" tabindex="-1"></a><span class="co">#&gt; "uk" "cr" "gg" "ca" </span></span>
+<span id="cb19-14"><a href="#cb19-14" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-15"><a href="#cb19-15" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k5</span></span>
+<span id="cb19-16"><a href="#cb19-16" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5 </span></span>
+<span id="cb19-17"><a href="#cb19-17" tabindex="-1"></a><span class="co">#&gt; "ca" "ac" "uk" "gg" "ic" </span></span>
+<span id="cb19-18"><a href="#cb19-18" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-19"><a href="#cb19-19" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k6</span></span>
+<span id="cb19-20"><a href="#cb19-20" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6 </span></span>
+<span id="cb19-21"><a href="#cb19-21" tabindex="-1"></a><span class="co">#&gt; "cr" "ml" "me" "mr" "ca" "uk" </span></span>
+<span id="cb19-22"><a href="#cb19-22" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-23"><a href="#cb19-23" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k7</span></span>
+<span id="cb19-24"><a href="#cb19-24" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7 </span></span>
+<span id="cb19-25"><a href="#cb19-25" tabindex="-1"></a><span class="co">#&gt; "ca" "uk" "mr" "cr" "ml" "ic" "gg" </span></span>
+<span id="cb19-26"><a href="#cb19-26" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-27"><a href="#cb19-27" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k8</span></span>
+<span id="cb19-28"><a href="#cb19-28" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8 </span></span>
+<span id="cb19-29"><a href="#cb19-29" tabindex="-1"></a><span class="co">#&gt; "gg" "ca" "ml" "ec" "ic" "cr" "mr" "hg" </span></span>
+<span id="cb19-30"><a href="#cb19-30" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-31"><a href="#cb19-31" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k9</span></span>
+<span id="cb19-32"><a href="#cb19-32" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9 </span></span>
+<span id="cb19-33"><a href="#cb19-33" tabindex="-1"></a><span class="co">#&gt; "hg" "cr" "gg" "ca" "gh" "ic" "ec" "ml" "ac" </span></span>
+<span id="cb19-34"><a href="#cb19-34" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-35"><a href="#cb19-35" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k10</span></span>
+<span id="cb19-36"><a href="#cb19-36" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10 </span></span>
+<span id="cb19-37"><a href="#cb19-37" tabindex="-1"></a><span class="co">#&gt; "ca" "ml" "gg" "gh" "cr" "hg" "ic" "ce" "ec" "ac" </span></span>
+<span id="cb19-38"><a href="#cb19-38" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-39"><a href="#cb19-39" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k11</span></span>
+<span id="cb19-40"><a href="#cb19-40" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11 </span></span>
+<span id="cb19-41"><a href="#cb19-41" tabindex="-1"></a><span class="co">#&gt; "ml" "gg" "ca" "gh" "in" "cr" "ec" "hg" "ic" "ce" "ac" </span></span>
+<span id="cb19-42"><a href="#cb19-42" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-43"><a href="#cb19-43" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k12</span></span>
+<span id="cb19-44"><a href="#cb19-44" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11   12 </span></span>
+<span id="cb19-45"><a href="#cb19-45" tabindex="-1"></a><span class="co">#&gt; "ip" "ic" "in" "cr" "gg" "hg" "ml" "ca" "gh" "ec" "ce" "ac" </span></span>
+<span id="cb19-46"><a href="#cb19-46" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-47"><a href="#cb19-47" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k13</span></span>
+<span id="cb19-48"><a href="#cb19-48" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11   12   13 </span></span>
+<span id="cb19-49"><a href="#cb19-49" tabindex="-1"></a><span class="co">#&gt; "ec" "in" "ml" "ac" "ce" "ca" "ae" "gh" "hg" "ic" "cr" "ip" "fi" </span></span>
+<span id="cb19-50"><a href="#cb19-50" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-51"><a href="#cb19-51" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k14</span></span>
+<span id="cb19-52"><a href="#cb19-52" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11   12   13   14 </span></span>
+<span id="cb19-53"><a href="#cb19-53" tabindex="-1"></a><span class="co">#&gt; "ch" "ce" "ca" "ml" "ae" "gh" "in" "ec" "hg" "ip" "ac" "fi" "ic" "cn" </span></span>
+<span id="cb19-54"><a href="#cb19-54" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-55"><a href="#cb19-55" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k15</span></span>
+<span id="cb19-56"><a href="#cb19-56" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15 </span></span>
+<span id="cb19-57"><a href="#cb19-57" tabindex="-1"></a><span class="co">#&gt; "ec" "hg" "ae" "in" "ca" "mi" "fi" "ml" "ch" "ce" "ac" "gh" "ip" "cn" "ic" </span></span>
+<span id="cb19-58"><a href="#cb19-58" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-59"><a href="#cb19-59" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k16</span></span>
+<span id="cb19-60"><a href="#cb19-60" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 </span></span>
+<span id="cb19-61"><a href="#cb19-61" tabindex="-1"></a><span class="co">#&gt; "fi" "hg" "gh" "ec" "ip" "ch" "mi" "in" "cn" "ac" "ic" "ml" "ca" "ce" "gg" "ae" </span></span>
+<span id="cb19-62"><a href="#cb19-62" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-63"><a href="#cb19-63" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k17</span></span>
+<span id="cb19-64"><a href="#cb19-64" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 </span></span>
+<span id="cb19-65"><a href="#cb19-65" tabindex="-1"></a><span class="co">#&gt; "ic" "gh" "ec" "ml" "ce" "ac" "hg" "mi" "cn" "ch" "ca" "in" "ae" "fi" "gg" "cc" </span></span>
+<span id="cb19-66"><a href="#cb19-66" tabindex="-1"></a><span class="co">#&gt;   17 </span></span>
+<span id="cb19-67"><a href="#cb19-67" tabindex="-1"></a><span class="co">#&gt; "ip" </span></span>
+<span id="cb19-68"><a href="#cb19-68" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-69"><a href="#cb19-69" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k18</span></span>
+<span id="cb19-70"><a href="#cb19-70" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 </span></span>
+<span id="cb19-71"><a href="#cb19-71" tabindex="-1"></a><span class="co">#&gt; "ch" "mp" "mi" "in" "hg" "ae" "ca" "ec" "ce" "ip" "fi" "cn" "gh" "ml" "ac" "ic" </span></span>
+<span id="cb19-72"><a href="#cb19-72" tabindex="-1"></a><span class="co">#&gt;   17   18 </span></span>
+<span id="cb19-73"><a href="#cb19-73" tabindex="-1"></a><span class="co">#&gt; "cc" "gg" </span></span>
+<span id="cb19-74"><a href="#cb19-74" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-75"><a href="#cb19-75" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k19</span></span>
+<span id="cb19-76"><a href="#cb19-76" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 </span></span>
+<span id="cb19-77"><a href="#cb19-77" tabindex="-1"></a><span class="co">#&gt; "ip" "gh" "ca" "ec" "mi" "ac" "ce" "ch" "ae" "fi" "cn" "cr" "in" "ml" "mp" "gg" </span></span>
+<span id="cb19-78"><a href="#cb19-78" tabindex="-1"></a><span class="co">#&gt;   17   18   19 </span></span>
+<span id="cb19-79"><a href="#cb19-79" tabindex="-1"></a><span class="co">#&gt; "ic" "cc" "hg" </span></span>
+<span id="cb19-80"><a href="#cb19-80" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-81"><a href="#cb19-81" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k20</span></span>
+<span id="cb19-82"><a href="#cb19-82" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 </span></span>
+<span id="cb19-83"><a href="#cb19-83" tabindex="-1"></a><span class="co">#&gt; "ip" "ec" "mi" "cc" "ch" "ae" "gg" "mp" "ac" "ic" "ca" "cr" "fi" "hg" "gh" "cn" </span></span>
+<span id="cb19-84"><a href="#cb19-84" tabindex="-1"></a><span class="co">#&gt;   17   18   19   20 </span></span>
+<span id="cb19-85"><a href="#cb19-85" tabindex="-1"></a><span class="co">#&gt; "ml" "in" "mr" "ce" </span></span>
+<span id="cb19-86"><a href="#cb19-86" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-87"><a href="#cb19-87" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k21</span></span>
+<span id="cb19-88"><a href="#cb19-88" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 </span></span>
+<span id="cb19-89"><a href="#cb19-89" tabindex="-1"></a><span class="co">#&gt; "ip" "cr" "gh" "ev" "ca" "ae" "mi" "ml" "ch" "hg" "fi" "ce" "ec" "gg" "mp" "mr" </span></span>
+<span id="cb19-90"><a href="#cb19-90" tabindex="-1"></a><span class="co">#&gt;   17   18   19   20   21 </span></span>
+<span id="cb19-91"><a href="#cb19-91" tabindex="-1"></a><span class="co">#&gt; "cc" "cn" "in" "ac" "ic" </span></span>
+<span id="cb19-92"><a href="#cb19-92" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb19-93"><a href="#cb19-93" tabindex="-1"></a><span class="co">#&gt; $suggested_gcms$k22</span></span>
+<span id="cb19-94"><a href="#cb19-94" tabindex="-1"></a><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 </span></span>
+<span id="cb19-95"><a href="#cb19-95" tabindex="-1"></a><span class="co">#&gt; "ac" "gg" "ev" "mi" "ml" "ip" "ec" "ce" "cn" "ic" "cr" "ch" "fi" "gh" "ca" "ae" </span></span>
+<span id="cb19-96"><a href="#cb19-96" tabindex="-1"></a><span class="co">#&gt;   17   18   19   20   21   22 </span></span>
+<span id="cb19-97"><a href="#cb19-97" tabindex="-1"></a><span class="co">#&gt; "cc" "in" "uk" "mr" "mp" "hg"</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="the-environment-covered-by-gcms-selection">The environment covered by GCMs selection<a class="anchor" aria-label="anchor" href="#the-environment-covered-by-gcms-selection"></a>
 </h4>
 <p>We also included in this package a function called <code>env_gcms</code>, which is able to project GCMs in the environmental space. With that, researchers are able to see the coverage of GCMs when comparing to all GCMs. It is also possible to see the density of GCMs using the <code>highlight=sum</code> as argument.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/env_gcms.html">env_gcms</a></span><span class="op">(</span><span class="va">s</span>, <span class="va">var_names</span>, <span class="va">study_area_parana</span>, highlight <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">suggested_gcms</span><span class="op">$</span><span class="va">k3</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-21-1.png" width="100%"></p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/env_gcms.html">env_gcms</a></span><span class="op">(</span><span class="va">s</span>, <span class="va">var_names</span>, <span class="va">study_area_parana</span>, highlight <span class="op">=</span> <span class="st">"sum"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/env_gcms.html">env_gcms</a></span><span class="op">(</span><span class="va">s</span>, <span class="va">var_names</span>, <span class="va">study_area_parana</span>, highlight <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">suggested_gcms</span><span class="op">$</span><span class="va">k3</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-22-1.png" width="100%"></p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/env_gcms.html">env_gcms</a></span><span class="op">(</span><span class="va">s</span>, <span class="va">var_names</span>, <span class="va">study_area_parana</span>, highlight <span class="op">=</span> <span class="st">"sum"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-23-1.png" width="100%"></p>
 </div>
 <div class="section level4">
 <h4 id="a-greedy-algorithm-for-gcms-selection">A greedy algorithm for GCMs selection<a class="anchor" aria-label="anchor" href="#a-greedy-algorithm-for-gcms-selection"></a>
 </h4>
 <p>As a way to optimize GCMs selection, we implemented a greedy algorithm, which calculates the distance matrix between all GCMs and calculates the mean distance in the matrix (global mean distance). The algorithm selects a random pair of GCMs and test if adding any other GCM to that pair will drive the mean distance closer to the global mean. The algorithm stops when adding a new GCM does not return a mean distance closer to the global mean or when the distance reaches a minimum value (standard = 0.0000001).</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/closestdist_gcms.html">closestdist_gcms</a></span><span class="op">(</span><span class="va">s</span>, <span class="va">var_names</span>, <span class="va">study_area_parana</span><span class="op">)</span></span>
 <span><span class="co">#&gt; CRS from s and study_area are not identical. Reprojecting study area.</span></span>
 <span><span class="co">#&gt; $suggested_gcms</span></span>
@@ -768,7 +772,7 @@
 <span><span class="co">#&gt; $global_mean</span></span>
 <span><span class="co">#&gt; [1] 22.5668</span></span></code></pre></div>
 <p>We can also provide the value of k we want to use:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/closestdist_gcms.html">closestdist_gcms</a></span><span class="op">(</span><span class="va">s</span>, <span class="va">var_names</span>, <span class="va">study_area_parana</span>, k<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; CRS from s and study_area are not identical. Reprojecting study area.</span></span>
 <span><span class="co">#&gt; $suggested_gcms</span></span>
@@ -784,9 +788,9 @@
 <h4 id="wrapping-up">Wrapping Up<a class="anchor" aria-label="anchor" href="#wrapping-up"></a>
 </h4>
 <p>From our analysis, we can infer that something between two and three clusters is enough to inform regarding the environmental variation from given GCMs. In this way, if we use GCMs CNRM-ESM2-1 (cr), MPI-ESM1-2-LR (ml) and UKESM1-0-LL (uk) to project our models into future scenarios we would be able to inform a decent variation in our projections.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 45.645 sec elapsed</span></span></code></pre></div>
+<span><span class="co">#&gt; 47.035 sec elapsed</span></span></code></pre></div>
 </div>
 </div>
 </div>
@@ -811,7 +815,10 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Luíz Fernando Esser <br><small class="roles"> Maintainer </small>  </li>
+<li>Dayani Baili <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-6954-9902" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Reginaldo Ré <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0001-6452-3466" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Marcos Lima <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-5901-0911" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Luíz Esser <br><small class="roles"> Author, maintainer, copyright holder </small> <a href="https://orcid.org/0000-0003-2982-7223" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 </ul>
 </div>
 
@@ -827,7 +834,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Luíz Fernando Esser.</p>
+  <p>Developed by Dayani Baili, Reginaldo Ré, Marcos Lima, Luíz Esser.</p>
 </div>
 
 <div class="pkgdown-footer-right">
