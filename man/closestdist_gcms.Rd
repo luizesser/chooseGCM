@@ -22,6 +22,8 @@ closestdist_gcms(
 
 \item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
 
+\item{scale}{Boolean. Apply center and scale in data? Default is TRUE.}
+
 \item{k}{Number of GCMs. If NULL (standard), stopping criteria are applied.}
 
 \item{method}{The distance method to use. Default is "euclidean". Possible values are "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "pearson", "spearman" or "kendall". See ?dist_gcms.}

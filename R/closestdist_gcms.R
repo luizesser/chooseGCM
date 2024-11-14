@@ -4,6 +4,7 @@
 #'
 #' @param s A list of stacks of General Circulation Models.
 #' @param var_names Character. A vector with names of the bioclimatic variables to compare OR 'all'.
+#' @param scale Boolean. Apply center and scale in data? Default is TRUE.
 #' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
 #' @param method The distance method to use. Default is "euclidean". Possible values are "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "pearson", "spearman" or "kendall". See ?dist_gcms.
 #' @param k Number of GCMs. If NULL (standard), stopping criteria are applied.
@@ -36,6 +37,7 @@
 #'
 #' @import checkmate
 #' @importFrom factoextra fviz_dist get_dist
+#' @importFrom utils combn
 #'
 #' @export
 closestdist_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, scale = TRUE,
@@ -69,7 +71,7 @@ closestdist_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = N
   best_subset <- NULL
   best_mean_diff <- Inf
 
-  gcms_comb <- combn(1:N, 2)
+  gcms_comb <- utils::combn(1:N, 2)
   # Repeat the process for a given number of random initializations
   for (rep in 1:ncol(gcms_comb)) {
     # Start with a random subset of size 2

@@ -28,6 +28,7 @@
 #'
 #' @import checkmate
 #' @importFrom factoextra hcut fviz_dend
+#' @importFrom stats dist
 #'
 #' @export
 hclust_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, scale = TRUE, k = 3, n = NULL) {
@@ -71,7 +72,7 @@ hclust_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, 
     mean_cluster <- sapply(s[res$cluster==i], function(y) {
       y <- colMeans(y, na.rm = T)
     })
-    vals <- as.matrix(dist(t(cbind(mean_cluster, mean_all))))[,"mean_all"]
+    vals <- as.matrix(stats::dist(t(cbind(mean_cluster, mean_all))))[,"mean_all"]
     res2[i] <- names(which.min(vals[vals > 0]))
   }
 

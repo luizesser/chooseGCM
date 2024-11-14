@@ -7,6 +7,8 @@
 #' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
 #' @param scale Boolean. Apply center and scale in data? Default is TRUE.
 #' @param k Numeric. The number of clusters to use for k-means clustering.
+#' @param clustering_method Character. Which method should be used to cluster GCMs. One of: "kmeans", "hclust", "closestdist".
+#'
 #'
 #' @return A list with two items: suggested_gcms (the names of the GCMs suggested for further analysis) and statistics_gcms (a grid of plots).
 #'
@@ -29,9 +31,10 @@
 #' @import ggplot2
 #' @importFrom factoextra fviz_cluster fviz_nbclust fviz_dend
 #' @importFrom cowplot plot_grid
+#' @importFrom stats dist
 #'
 #' @export
-compare_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, k = 3, scale=TRUE, clustering_method = "closestdist") {
+compare_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, scale=TRUE, k = 3, clustering_method = "closestdist") {
   checkmate::assertList(s, types = "SpatRaster")
   checkmate::assertCharacter(var_names, unique = T, any.missing = F)
   checkmate::assertCount(k, positive = T)
@@ -113,7 +116,7 @@ compare_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL,
     mean_cluster <- sapply(x[res$cluster==i], function(y) {
       y <- colMeans(y, na.rm = T)
     })
-    vals <- as.matrix(dist(t(cbind(mean_cluster, mean_all))))[,"mean_all"]
+    vals <- as.matrix(stats::dist(t(cbind(mean_cluster, mean_all))))[,"mean_all"]
     res2[i] <- names(which.min(vals[vals > 0]))
   }
   dend <- factoextra::fviz_dend(res,

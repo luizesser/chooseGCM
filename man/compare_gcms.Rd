@@ -8,8 +8,8 @@ compare_gcms(
   s,
   var_names = c("bio_1", "bio_12"),
   study_area = NULL,
-  k = 3,
   scale = TRUE,
+  k = 3,
   clustering_method = "closestdist"
 )
 }
@@ -20,9 +20,11 @@ compare_gcms(
 
 \item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
 
+\item{scale}{Boolean. Apply center and scale in data? Default is TRUE.}
+
 \item{k}{Numeric. The number of clusters to use for k-means clustering.}
 
-\item{scale}{Boolean. Apply center and scale in data? Default is TRUE.}
+\item{clustering_method}{Character. Which method should be used to cluster GCMs. One of: "kmeans", "hclust", "closestdist".}
 }
 \value{
 A list with two items: suggested_gcms (the names of the GCMs suggested for further analysis) and statistics_gcms (a grid of plots).

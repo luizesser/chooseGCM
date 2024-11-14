@@ -22,7 +22,9 @@ env_gcms(
 
 \item{highlight}{Character. A vector with names of gcms to be highlighted. In this case, the sum of all but chosen GCMs will appear in grey.}
 
-\item{resolution}{Res}
+\item{resolution}{Numeric. Resolution to be used in the plot. Standard is 25.}
+
+\item{title}{Character. Title of the plot.}
 }
 \value{
 a data frame with the summary statistics for each variable

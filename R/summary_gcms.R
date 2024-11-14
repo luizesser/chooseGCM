@@ -23,6 +23,7 @@
 #' }
 #'
 #' @import checkmate
+#' @importFrom stats quantile median sd
 #'
 #' @export
 summary_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL) {
@@ -43,12 +44,12 @@ summary_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL)
     df_m <- apply(y, 2, function(x) {
       data.frame(
         min = min(x, na.rm = T),
-        quantile_0.25 = quantile(x, 0.25, na.rm = T),
+        quantile_0.25 = stats::quantile(x, 0.25, na.rm = T),
         median = median(x, na.rm = T),
         mean = mean(x, na.rm = T),
-        quantile_0.75 = quantile(x, 0.75, na.rm = T),
+        quantile_0.75 = stats::quantile(x, 0.75, na.rm = T),
         max = max(x, na.rm = T),
-        sd = sd(x, na.rm = T),
+        sd = stats::sd(x, na.rm = T),
         NAs = sum(is.na(x)),
         n_cells = length(x)
       )

@@ -26,20 +26,21 @@
 #'
 #' @import checkmate
 #' @importFrom terra crs project crop mask ext rast res
+#' @importFrom methods is as
 #'
 #' @export
 transform_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL) {
   if(is.list(s)){
-    if(is(s[[1]], "stars")){
+    if(methods::is(s[[1]], "stars")){
       s <- sapply(s,
                   function(x){
-                    x <- as(x, "SpatRaster")
+                    x <- methods::as(x, "SpatRaster")
                     return(x)
                   },
                   USE.NAMES = TRUE,
                   simplify = FALSE)
     }
-    if(is(s[[1]], "RasterStack")){
+    if(methods::is(s[[1]], "RasterStack")){
       s <- sapply(s,
                   function(x){
                     x <- terra::rast(x)
@@ -48,16 +49,16 @@ transform_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NUL
                   USE.NAMES = TRUE,
                   simplify = FALSE)
     }
-    if(is(s[[1]], "data.frame")){
+    if(methods::is(s[[1]], "data.frame")){
       return(s)
     }
   }
 
   if(!is.null(study_area)){
-    if(!is(study_area, "SpatVector") & !is(study_area, "Extent")){
-      study_area <- as(study_area, "SpatVector")
+    if(!methods::is(study_area, "SpatVector") & !methods::is(study_area, "Extent")){
+      study_area <- methods::as(study_area, "SpatVector")
     }
-    if(is(study_area, "Extent")){
+    if(methods::is(study_area, "Extent")){
       study_area <- terra::ext(study_area)
     }
   }

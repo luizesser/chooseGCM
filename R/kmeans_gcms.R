@@ -29,6 +29,7 @@
 #' @import checkmate
 #' @import ggplot2
 #' @importFrom factoextra fviz_cluster
+#' @importFrom stats dist
 #'
 #' @export
 kmeans_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, scale = TRUE, k = 3, method = NULL) {
@@ -60,7 +61,7 @@ kmeans_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, 
     cl <- stats::kmeans(t(flatten_vars), k, nstart = 10000, iter.max = 1000)
 
     gcms <- vector()
-    gcms_mat <- as.matrix(dist(t(cbind(t(cl$centers), flatten_vars))))[-c(1:k), c(1:k)]
+    gcms_mat <- as.matrix(stats::dist(t(cbind(t(cl$centers), flatten_vars))))[-c(1:k), c(1:k)]
     gcms_dist <- apply(gcms_mat, 2, min)[1:k]
     for (i in 1:length(gcms_dist)) {
       v <- names(which(gcms_mat[, i] == gcms_dist[i]))

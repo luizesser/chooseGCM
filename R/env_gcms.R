@@ -6,7 +6,8 @@
 #' @param var_names Character. A vector with names of the bioclimatic variables to compare OR 'all'.
 #' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
 #' @param highlight Character. A vector with names of gcms to be highlighted. In this case, the sum of all but chosen GCMs will appear in grey.
-#' @param resolution Res
+#' @param resolution Numeric. Resolution to be used in the plot. Standard is 25.
+#' @param title Character. Title of the plot.
 #'
 #' @return a data frame with the summary statistics for each variable
 #'
@@ -28,20 +29,22 @@
 #' @import ggplot2
 #' @importFrom reshape2 melt
 #' @importFrom terra rast ext crs project mask crop
+#' @importFrom methods is as
+#' @importFrom graphics image
 #'
 #' @export
 env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, highlight = "sum", resolution = 25, title=NULL) {
   if(is.list(s)){
-    if(is(s[[1]], "stars")){
+    if(methods::is(s[[1]], "stars")){
       s <- sapply(s,
                   function(x){
-                    x <- as(x, "SpatRaster")
+                    x <- methods::as(x, "SpatRaster")
                     return(x)
                   },
                   USE.NAMES = TRUE,
                   simplify = FALSE)
     }
-    if(is(s[[1]], "RasterStack")){
+    if(methods::is(s[[1]], "RasterStack")){
       s <- sapply(s,
                   function(x){
                     x <- terra::rast(x)
@@ -53,10 +56,10 @@ env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, hig
   }
 
   if(!is.null(study_area)){
-    if(!is(study_area, "SpatVector") & !is(study_area, "Extent")){
-      study_area <- as(study_area, "SpatVector")
+    if(!methods::is(study_area, "SpatVector") & !methods::is(study_area, "Extent")){
+      study_area <- methods::as(study_area, "SpatVector")
     }
-    if(is(study_area, "Extent")){
+    if(methods::is(study_area, "Extent")){
       study_area <- terra::ext(study_area)
     }
   }
@@ -135,7 +138,7 @@ env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, hig
       y <- s2[[i]][[var_names[2]]][]
       grid <- createGrid(x, y, x_bins, y_bins, resolution)
       grid <- ifelse(grid == 0, NA, 1)
-      image(x_bins, y_bins, grid, col = colors[i], add = TRUE)
+      graphics::image(x_bins, y_bins, grid, col = colors[i], add = TRUE)
     }
     graphics::legend("topright", inset = c(-0.15, 0), legend = names(s2), fill = colors, cex = 0.8)
   } else if (all(highlight %in% names(s))) {
