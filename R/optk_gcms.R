@@ -8,9 +8,9 @@
 #' @param cluster A character string specifying the method to build the clusters. Options are 'kmeans' (standard) or 'hclust'.
 #' @param method A character string specifying the method to use for determining the optimal number of clusters. Options are 'wss' for within-cluster sum of squares, 'silhouette' for average silhouette width and 'gap_stat' for the gap statistic method. Default is 'wss'.
 #' @param n An integer specifying the number of randomly selected samples to use in the clustering analysis. If NULL (default) all data is used.
-#' @param nstart A
-#' @param K.max A
-#' @param B A
+#' @param nstart Numeric. Number of random sets should be chosen. Standard is 10. Argument is passed to stats::kmeans().
+#' @param K.max Numeric. The maximum number of clusters to consider. Standard is 10. Argument is passed to factoextra::fviz_nbclust().
+#' @param B Integer. Number of Monte Carlo (“bootstrap”) samples. Standard is 100. Argument is passed to cluster::clusGap().
 #'
 #' @return A ggplot object representing the optimal number of clusters.
 #'
@@ -24,8 +24,7 @@
 #' s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
 #' study_area <- extent(c(-57, -22, -48, -33))
 #' var_names <- c("bio_1", "bio_12")
-#'
-#' optk_gcms(flattened_gcms)
+#' optk_gcms(s, var_names, study_area)
 #' }
 #'
 #' @import checkmate

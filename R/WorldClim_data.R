@@ -45,7 +45,13 @@
 #' @param resolution You can select one resolution from the following alternatives: 10, 5, 2.5 OR 30.
 #' @param path Directory path to save downloads.
 #'
-#' @details This function will create a folder entitled 'worldclim_data'. All the data downloaded will be stored in this folder. Note that, despite being possible to retrieve a lot of data at once, it is not recommended to do so, since the data is very heavy.
+#' @return This function does not return any value.
+#'
+#' @details This function will create a folder entitled 'input_data/WorldClim_data_future' or 'input_data/WorldClim_data_future'.
+#' All the data downloaded will be stored in this folder.
+#' Note that, despite being possible to retrieve a lot of data at once, it is not recommended to do so, since the data is very heavy.
+#' If the function fails to obtain big datasets (such as 30 arcsec resolution, which can have almos 4GB),
+#' you can try to set \code{options(timeout=600)} to increase the available time for internet connection.
 #'
 #' @references https://www.worldclim.org/data/index.html
 #'
@@ -56,10 +62,10 @@
 #' \dontrun{
 #' # download data from multiple periods:
 #' year <- c(2050, 2090)
-#' worldclim_data("bioc", year, "mi", 126, 10)
+#' worldclim_data("future", "bioc", year, "mi", 126, 10)
 #'
 #' # download data from one specific period
-#' worldclim_data("bioc", 2070, "mi", 585, 10)
+#' worldclim_data("future", "bioc", 2070, "mi", 585, 10)
 #' }
 #'
 #' @import checkmate

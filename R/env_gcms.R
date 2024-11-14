@@ -9,7 +9,7 @@
 #' @param resolution Numeric. Resolution to be used in the plot. Standard is 25.
 #' @param title Character. Title of the plot.
 #'
-#' @return a data frame with the summary statistics for each variable
+#' @return A plot with environmental space for the given GCMs.
 #'
 #' @seealso \code{\link{summary_gcms}}
 #'

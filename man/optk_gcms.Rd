@@ -29,11 +29,11 @@ optk_gcms(
 
 \item{n}{An integer specifying the number of randomly selected samples to use in the clustering analysis. If NULL (default) all data is used.}
 
-\item{nstart}{A}
+\item{nstart}{Numeric. Number of random sets should be chosen. Standard is 10. Argument is passed to stats::kmeans().}
 
-\item{K.max}{A}
+\item{K.max}{Numeric. The maximum number of clusters to consider. Standard is 10. Argument is passed to factoextra::fviz_nbclust().}
 
-\item{B}{A}
+\item{B}{Integer. Number of Monte Carlo (“bootstrap”) samples. Standard is 100. Argument is passed to cluster::clusGap().}
 }
 \value{
 A ggplot object representing the optimal number of clusters.

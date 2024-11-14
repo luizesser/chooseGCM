@@ -27,7 +27,7 @@ env_gcms(
 \item{title}{Character. Title of the plot.}
 }
 \value{
-a data frame with the summary statistics for each variable
+A plot with environmental space for the given GCMs.
 }
 \description{
 This function plots GCMs data in environmental space, possibly highlighting clusters or specific GCMs.

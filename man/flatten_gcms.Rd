@@ -7,10 +7,10 @@
 flatten_gcms(s)
 }
 \arguments{
-\item{s}{A list of transformed data frames (GCMs)}
+\item{s}{A list of transformed data frames (GCMs).}
 }
 \value{
-A named list of flattened data.frame
+A named list of flattened data.frame.
 }
 \description{
 Scale and flatten a list of rasters (GCMs) to a vector.

@@ -6,7 +6,7 @@
 #' @param var_names Character. A vector with names of the bioclimatic variables to compare OR 'all'.
 #' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
 #'
-#' @return a data frame with the summary statistics for each variable
+#' @return A data frame with the summary statistics for each variable.
 #'
 #' @seealso \code{\link{transform_gcms}}
 #'
@@ -18,8 +18,7 @@
 #' s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
 #' study_area <- extent(c(-57, -22, -48, -33))
 #' var_names <- c("bio_1", "bio_12")
-#' s <- transform_gcms(s, var_names, study_area)
-#' summary_gcms(s)
+#' summary_gcms(s, var_names, study_area)
 #' }
 #'
 #' @import checkmate

@@ -24,6 +24,13 @@ install.packages("devtools")
 devtools::install_github("luizesser/chooseGCM")
 ```
 
+The package is being submited to CRAN, where users will be able to
+install it using the following code:
+
+``` r
+install.packages("chooseGCM")
+```
+
 ## Tutorial
 
 This is a basic tutorial which shows you how to use the functions in
@@ -99,7 +106,7 @@ res <- compare_gcms(s, var_names, study_area_parana, k = 3)
 res$statistics_gcms
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-10-1.png" width="100%" />
 
 The aim of this function is to inform the minimum required so users can
 follow with their workflow in a more straightforward fashion (more on
@@ -489,7 +496,7 @@ s_cor
 #> $cor_plot
 ```
 
-<img src="man/figures/README-unnamed-chunk-11-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-12-1.png" width="100%" />
 
 The function `dist_gcms` is very similar to the previous `cor_gcms`, but
 now for distances. This function has the same output: a list with two
@@ -607,7 +614,7 @@ s_dist
 #> $heatmap
 ```
 
-<img src="man/figures/README-unnamed-chunk-12-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-13-1.png" width="100%" />
 
 #### Obtain Clusters
 
@@ -632,7 +639,7 @@ kmeans_gcms(s, var_names, study_area_parana, k = 3, method = "euclidean")
 #> $kmeans_plot
 ```
 
-<img src="man/figures/README-unnamed-chunk-13-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-14-1.png" width="100%" />
 
 Alternatively, instead of using distances, one could run the analysis
 with raw environmental data by not setting any value to method (note how
@@ -655,7 +662,7 @@ kmeans_gcms(s, var_names, study_area_parana, k = 3)
 #> $kmeans_plot
 ```
 
-<img src="man/figures/README-unnamed-chunk-14-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-15-1.png" width="100%" />
 
 We can also obtain clusters through hierarchical clustering. In this
 case, however, the function doesn’t suggest any GCM. It is up to the
@@ -673,7 +680,7 @@ hclust_gcms(s, var_names, study_area_parana, k = 3)
 #> $dend_plot
 ```
 
-<img src="man/figures/README-unnamed-chunk-15-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-16-1.png" width="100%" />
 
 In this function we also provide a `n` argument to inform the amount of
 data to be used in the clustering. This proved valuable when using high
@@ -688,7 +695,7 @@ hclust_gcms(s, var_names, study_area_parana, k = 3, n = 1000)
 #> $dend_plot
 ```
 
-<img src="man/figures/README-unnamed-chunk-16-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-17-1.png" width="100%" />
 
 #### Number of Clusters
 
@@ -711,7 +718,7 @@ optk_gcms(s, var_names, study_area_parana, cluster = "kmeans", method = "wss", n
 #> CRS from s and study_area are not identical. Reprojecting study area.
 ```
 
-<img src="man/figures/README-unnamed-chunk-17-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-18-1.png" width="100%" />
 
 The Average Silhouette Width method, measures the mean distance from all
 individuals to the centroid of their own clusters, while comparing to
@@ -727,7 +734,7 @@ optk_gcms(s, var_names, study_area_parana, cluster = "kmeans", method = "silhoue
 #> CRS from s and study_area are not identical. Reprojecting study area.
 ```
 
-<img src="man/figures/README-unnamed-chunk-18-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-19-1.png" width="100%" />
 
 Our last method is the Gap Statistics. As in the previous method, here
 the optimum number of clusters is showed with a dashed line (1 cluster).
@@ -750,7 +757,7 @@ optk_gcms(s, var_names, study_area_parana, cluster = "kmeans", method = "gap_sta
 #> Warning: did not converge in 10 iterations
 ```
 
-<img src="man/figures/README-unnamed-chunk-19-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-20-1.png" width="100%" />
 
 #### Monte Carlo permutations
 
@@ -771,7 +778,7 @@ montecarlo_gcms(s, var_names, study_area_parana, perm = 10000, dist_method = "eu
 #> $montecarlo_plot
 ```
 
-<img src="man/figures/README-unnamed-chunk-20-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-21-1.png" width="100%" />
 
     #> 
     #> $suggested_gcms
@@ -883,13 +890,13 @@ argument.
 env_gcms(s, var_names, study_area_parana, highlight = res$suggested_gcms$k3)
 ```
 
-<img src="man/figures/README-unnamed-chunk-21-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-22-1.png" width="100%" />
 
 ``` r
 env_gcms(s, var_names, study_area_parana, highlight = "sum")
 ```
 
-<img src="man/figures/README-unnamed-chunk-22-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-23-1.png" width="100%" />
 
 #### A greedy algorithm for GCMs selection
 
@@ -940,5 +947,5 @@ would be able to inform a decent variation in our projections.
 
 ``` r
 tictoc::toc()
-#> 46.411 sec elapsed
+#> 47.035 sec elapsed
 ```

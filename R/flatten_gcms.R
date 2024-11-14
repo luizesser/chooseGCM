@@ -2,9 +2,9 @@
 #'
 #' Scale and flatten a list of rasters (GCMs) to a vector.
 #'
-#' @param s A list of transformed data frames (GCMs)
+#' @param s A list of transformed data frames (GCMs).
 #'
-#' @return A named list of flattened data.frame
+#' @return A named list of flattened data.frame.
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com

@@ -35,6 +35,12 @@ install.packages("devtools")
 devtools::install_github("luizesser/chooseGCM")
 ```
 
+The package is being submited to CRAN, where users will be able to install it using the following code:
+
+```{r, eval=F}
+install.packages("chooseGCM")
+```
+
 ## Tutorial
 
 This is a basic tutorial which shows you how to use the functions in chooseGCM. After installing the package, we need to open it:
