@@ -35,9 +35,6 @@ s <- import_gcms(
   path = "input_data/WorldClim_data_future", extension = ".tif",
   recursive = TRUE, gcm_names = NULL
 )
-study_area <- extent(c(-57, -22, -48, -33))
-var_names <- c("bio_1", "bio_12")
-t <- transform_gcms(s, var_names, study_area)
 }
 
 }

@@ -44,8 +44,7 @@ This function performs Monte Carlo permutations on a distance matrix and produce
 s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
 study_area <- extent(c(-57, -22, -48, -33))
 var_names <- c("bio_1", "bio_12")
-
-montecarlo_gcms(s, study_area = study_area)
+montecarlo_gcms(s, var_names, study_area)
 }
 
 }

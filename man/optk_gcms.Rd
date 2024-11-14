@@ -46,8 +46,7 @@ This function performs clustering analysis on a dataset and determines the optim
 s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
 study_area <- extent(c(-57, -22, -48, -33))
 var_names <- c("bio_1", "bio_12")
-
-optk_gcms(flattened_gcms)
+optk_gcms(s, var_names, study_area)
 }
 
 }

@@ -38,8 +38,7 @@ This function performs hierarchical clustering on a random subset of the raster 
 s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
 study_area <- extent(c(-57, -22, -48, -33))
 var_names <- c("bio_1", "bio_12")
-dend <- hclust_gcms(stack, k = 4, n = 500)
-plot(dend)
+dend <- hclust_gcms(s, var_names, study_area, k = 4, n = 500)
 }
 
 }

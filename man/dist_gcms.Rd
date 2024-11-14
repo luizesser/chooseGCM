@@ -34,8 +34,7 @@ This function compares future climate projections from multiple Global Circulati
 s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
 study_area <- extent(c(-57, -22, -48, -33))
 var_names <- c("bio_1", "bio_12")
-
-dist_gcms(s, method = "euclidean")
+dist_gcms(s, var_names, study_area, method = "euclidean")
 }
 
 }

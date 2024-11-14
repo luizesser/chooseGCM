@@ -34,14 +34,10 @@ This function compares future climate projections from multiple Global Circulati
 }
 \examples{
 \dontrun{
-# compare GCMS
-compare_gcms(
-  s = import_gcms("path/to/folder"),
-  study_area = terra::vect("path/to/gpkg"),
-  var_names = c("bio_1", "bio_12"),
-  gcm_names = c("gcm1", "gcm2", "gcm3"),
-  k = 3
-)
+s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
+study_area <- extent(c(-57, -22, -48, -33))
+var_names <- c("bio_1", "bio_12")
+compare_gcms(s, var_names, study_area, k = 3, clustering_method = "closestdist")
 }
 
 }
