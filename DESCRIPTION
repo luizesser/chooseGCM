@@ -1,7 +1,7 @@
 Type: Package
 Package: chooseGCM
 Title: Selecting General Circulation Models for Species Distribution Modeling
-Version: 1.0
+Version: 1.0.1
 Authors@R: c(
     person("Dayani", "Baili", role = "aut",
            comment = c(ORCID = "0000-0002-6954-9902")),
