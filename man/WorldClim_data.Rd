@@ -2,68 +2,68 @@
 % Please edit documentation in R/WorldClim_data.R
 \name{worldclim_data}
 \alias{worldclim_data}
-\title{Download WorldClim v.2.1 bioclimatic data}
+\title{Download WorldClim v2.1 Bioclimatic Data}
 \usage{
 worldclim_data(period = 'current', variable = 'bioc', year = '2030',
-gcm = 'mi', ssp = '126', resolution = 10, path=NULL)
+gcm = 'mi', ssp = '126', resolution = 10, path = NULL)
 }
 \arguments{
-\item{period}{Can be 'current' or 'future'.}
+\item{period}{Character. Can be 'current' or 'future'.}
 
-\item{variable}{Allows to specify which variables you want to retrieve Possible entries are:
-'tmax','tmin','prec' and/or 'bioc'.}
+\item{variable}{Character. Specifies which variables to retrieve. Possible entries are:
+'tmax', 'tmin', 'prec', and/or 'bioc'.}
 
-\item{year}{Specify the year you want to retrieve data. Possible entries are:
-'2030', '2050', '2070' and/or '2090'. You can  use a vector to provide more than one entry.}
+\item{year}{Character or vector. Specifies the year(s) to retrieve data for. Possible entries are:
+'2030', '2050', '2070', and/or '2090'.}
 
-\item{gcm}{GCMs to be considered in future scenarios. You can use a vector to provide more than one entry.\tabular{ll}{
-   \strong{CODE} \tab \strong{GCM} \cr
-   ac \tab ACCESS-CM2 \cr
-   ae \tab ACCESS-ESM1-5 \cr
-   bc \tab BCC-CSM2-MR \cr
-   ca \tab CanESM5 \cr
-   cc \tab CanESM5-CanOE \cr
-   ce \tab CMCC-ESM2 \cr
-   cn \tab CNRM-CM6-1 \cr
-   ch \tab CNRM-CM6-1-HR \cr
-   cr \tab CNRM-ESM2-1 \cr
-   ec \tab EC-Earth3-Veg \cr
-   ev \tab EC-Earth3-Veg-LR \cr
-   fi \tab FIO-ESM-2-0 \cr
-   gf \tab GFDL-ESM4 \cr
-   gg \tab GISS-E2-1-G \cr
-   gh \tab GISS-E2-1-H \cr
-   hg \tab HadGEM3-GC31-LL \cr
-   in \tab INM-CM4-8 \cr
-   ic \tab INM-CM5-0 \cr
-   ip \tab IPSL-CM6A-LR \cr
-   me \tab MIROC-ES2L \cr
-   mi \tab MIROC6 \cr
-   mp \tab MPI-ESM1-2-HR \cr
-   ml \tab MPI-ESM1-2-LR \cr
-   mr \tab MRI-ESM2-0 \cr
-   uk \tab UKESM1-0-LL \cr
-}}
+\item{gcm}{Character or vector. Specifies the GCM(s) to consider for future scenarios. See the table below for available options:
 
-\item{ssp}{SSPs for future data. Possible entries are: '126', '245', '370' and/or '585'.
-You can use a vector to provide more than one entry.}
+| **CODE** | **GCM**              |
+|----------|----------------------|
+| ac       | ACCESS-CM2           |
+| ae       | ACCESS-ESM1-5        |
+| bc       | BCC-CSM2-MR          |
+| ca       | CanESM5              |
+| cc       | CanESM5-CanOE        |
+| ce       | CMCC-ESM2            |
+| cn       | CNRM-CM6-1           |
+| ch       | CNRM-CM6-1-HR        |
+| cr       | CNRM-ESM2-1          |
+| ec       | EC-Earth3-Veg        |
+| ev       | EC-Earth3-Veg-LR     |
+| fi       | FIO-ESM-2-0          |
+| gf       | GFDL-ESM4            |
+| gg       | GISS-E2-1-G          |
+| gh       | GISS-E2-1-H          |
+| hg       | HadGEM3-GC31-LL      |
+| in       | INM-CM4-8            |
+| ic       | INM-CM5-0            |
+| ip       | IPSL-CM6A-LR         |
+| me       | MIROC-ES2L           |
+| mi       | MIROC6               |
+| mp       | MPI-ESM1-2-HR        |
+| ml       | MPI-ESM1-2-LR        |
+| mr       | MRI-ESM2-0           |
+| uk       | UKESM1-0-LL          |}
 
-\item{resolution}{You can select one resolution from the following alternatives: 10, 5, 2.5 OR 30.}
+\item{ssp}{Character or vector. SSP(s) for future data. Possible entries are: '126', '245', '370', and/or '585'.}
 
-\item{path}{Directory path to save downloads.}
+\item{resolution}{Numeric. Specifies the resolution. Possible values are 10, 5, 2.5, or 30 arcseconds.}
+
+\item{path}{Character. Directory path to save the downloaded files. Default is NULL.}
 }
 \value{
 This function does not return any value.
 }
 \description{
-This function allows to download data from WorldClim v.2.1 (https://www.worldclim.org/data/index.html) considering multiple GCMs, time periods and SSPs.
+This function allows downloading data from WorldClim v2.1 (https://www.worldclim.org/data/index.html) for multiple GCMs, time periods, and SSPs.
 }
 \details{
-This function will create a folder entitled 'input_data/WorldClim_data_future' or 'input_data/WorldClim_data_future'.
-All the data downloaded will be stored in this folder.
-Note that, despite being possible to retrieve a lot of data at once, it is not recommended to do so, since the data is very heavy.
-If the function fails to obtain big datasets (such as 30 arcsec resolution, which can have almos 4GB),
-you can try to set \code{options(timeout=600)} to increase the available time for internet connection.
+This function creates a folder titled 'input_data/WorldClim_data_future' or 'input_data/WorldClim_data_current'.
+All downloaded data will be stored in this folder.
+Note: While it is possible to retrieve a large volume of data, it is not recommended to do so due to the large file sizes.
+For example, datasets at 30 arcseconds resolution can exceed 4 GB. If the function fails to retrieve large datasets,
+consider increasing the timeout by setting \code{options(timeout = 600)}.
 }
 \examples{
 \dontrun{

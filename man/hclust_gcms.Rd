@@ -14,23 +14,24 @@ hclust_gcms(
 )
 }
 \arguments{
-\item{s}{A list of stacks of General Circulation Models.}
+\item{s}{A list of stacks of General Circulation Models (GCMs).}
 
-\item{var_names}{Character. A vector with names of the bioclimatic variables to compare OR 'all'.}
+\item{var_names}{Character. A vector of names of the variables to include, or 'all' to include all variables.}
 
-\item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
+\item{study_area}{An Extent object, or any object from which an Extent object can be extracted.
+Defines the study area for cropping and masking the rasters.}
 
-\item{scale}{Boolean. Apply center and scale in data? Default is TRUE.}
+\item{scale}{Logical. Should the data be centered and scaled? Default is \code{TRUE}.}
 
-\item{k}{The number of clusters to identify.}
+\item{k}{Integer. The number of clusters to identify.}
 
-\item{n}{The number of values to use in the clustering. If NULL (default) all data is used.}
+\item{n}{Integer. The number of values to use in the clustering. If \code{NULL} (default), all data is used.}
 }
 \value{
 A dendrogram visualizing the clusters and the suggested GCMs.
 }
 \description{
-This function performs hierarchical clustering on a random subset of the raster values and produces a dendrogram visualization of the clusters.
+This function performs hierarchical clustering on a random subset of raster values and produces a dendrogram visualization of the clusters.
 }
 \examples{
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/import_gcms.R
 \name{import_gcms}
 \alias{import_gcms}
-\title{Import GCM data to R}
+\title{Import GCM Data to R}
 \usage{
 import_gcms(
   path = "input_data/WorldClim_data_gcms",
@@ -13,21 +13,21 @@ import_gcms(
 )
 }
 \arguments{
-\item{path}{A string with the path to GCM files.}
+\item{path}{Character. A string specifying the path to the GCM files.}
 
-\item{extension}{Extension of stack files. Standard is ".tif", which is the extension from WorldClim 2.1.}
+\item{extension}{Character. The file extension of the stack files. Default is \code{".tif"}, the standard extension for WorldClim 2.1 data.}
 
-\item{recursive}{Logical. Should the function import stacks recursively (i.e. search files from folders within folders)? Standard is TRUE.}
+\item{recursive}{Logical. Should the function import stacks recursively (i.e., search for files within subfolders)? Default is \code{TRUE}.}
 
-\item{gcm_names}{A vector with names to be addressed to each GCM.}
+\item{gcm_names}{Character. A vector of names to assign to each GCM.}
 
-\item{var_names}{A vector with names to be addressed to each variable.}
+\item{var_names}{Character. A vector of names to assign to each variable.}
 }
 \value{
-A list of stacks, with each element of the list corresponding to a GCM from given path.
+A list of stacks, where each element corresponds to a GCM from the specified path.
 }
 \description{
-This function imports GCM stack files from folder to R.
+This function imports GCM stack files from a folder into R.
 }
 \examples{
 \dontrun{

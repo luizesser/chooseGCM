@@ -1,12 +1,13 @@
-#' Summarize General Circulation Model (GCM) data
+#' Summarize General Circulation Model (GCM) Data
 #'
-#' This function summarizes GCM data by calculating several statistics for each variable
+#' This function summarizes GCM data by calculating various statistics for each variable.
 #'
-#' @param s A list of stacks of General Circulation Models.
-#' @param var_names Character. A vector with names of the bioclimatic variables to compare OR 'all'.
-#' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
+#' @param s A list of stacks of General Circulation Models (GCMs).
+#' @param var_names Character. A vector of names of the variables to include, or 'all' to include all variables.
+#' @param study_area An Extent object, or any object from which an Extent object can be extracted.
+#' Defines the study area for cropping and masking the rasters.
 #'
-#' @return A data frame with the summary statistics for each variable.
+#' @return A data frame containing the summary statistics for each variable.
 #'
 #' @seealso \code{\link{transform_gcms}}
 #'

@@ -15,7 +15,7 @@ Maintainer: Luíz Esser <luizesser@gmail.com>
 Description: Methods to help selecting General Circulation Models (GCMs) 
     in the context of projecting models to future scenarios. It is provided
     clusterization algorithms, distance and correlation metrics, as well as
-    a tailor-made algorithm to detect the optimum subset of GCMs that recriate
+    a tailor-made algorithm to detect the optimum subset of GCMs that recreate
     the environment of all GCMs.
 License: MIT + file LICENSE
 Imports:

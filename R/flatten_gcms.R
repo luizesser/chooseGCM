@@ -1,10 +1,10 @@
 #' Flatten GCMs
 #'
-#' Scale and flatten a list of rasters (GCMs) to a vector.
+#' Scale and flatten a list of General Circulation Models (GCMs) from rasters to vectors.
 #'
-#' @param s A list of transformed data frames (GCMs).
+#' @param s A list of transformed data frames representing GCMs.
 #'
-#' @return A named list of flattened data.frame.
+#' @return A named list of flattened \code{data.frame} objects.
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com

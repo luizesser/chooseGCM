@@ -2,22 +2,23 @@
 % Please edit documentation in R/summary_gcms.R
 \name{summary_gcms}
 \alias{summary_gcms}
-\title{Summarize General Circulation Model (GCM) data}
+\title{Summarize General Circulation Model (GCM) Data}
 \usage{
 summary_gcms(s, var_names = c("bio_1", "bio_12"), study_area = NULL)
 }
 \arguments{
-\item{s}{A list of stacks of General Circulation Models.}
+\item{s}{A list of stacks of General Circulation Models (GCMs).}
 
-\item{var_names}{Character. A vector with names of the bioclimatic variables to compare OR 'all'.}
+\item{var_names}{Character. A vector of names of the variables to include, or 'all' to include all variables.}
 
-\item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
+\item{study_area}{An Extent object, or any object from which an Extent object can be extracted.
+Defines the study area for cropping and masking the rasters.}
 }
 \value{
-A data frame with the summary statistics for each variable.
+A data frame containing the summary statistics for each variable.
 }
 \description{
-This function summarizes GCM data by calculating several statistics for each variable
+This function summarizes GCM data by calculating various statistics for each variable.
 }
 \examples{
 \dontrun{

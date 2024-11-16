@@ -1,14 +1,15 @@
-#' Import GCM data to R
+#' Import GCM Data to R
 #'
-#' This function imports GCM stack files from folder to R.
+#' This function imports GCM stack files from a folder into R.
 #'
-#' @param path A string with the path to GCM files.
-#' @param extension Extension of stack files. Standard is ".tif", which is the extension from WorldClim 2.1.
-#' @param recursive Logical. Should the function import stacks recursively (i.e. search files from folders within folders)? Standard is TRUE.
-#' @param gcm_names A vector with names to be addressed to each GCM.
-#' @param var_names A vector with names to be addressed to each variable.
+#' @param path Character. A string specifying the path to the GCM files.
+#' @param extension Character. The file extension of the stack files. Default is \code{".tif"}, the standard extension for WorldClim 2.1 data.
+#' @param recursive Logical. Should the function import stacks recursively (i.e., search for files within subfolders)? Default is \code{TRUE}.
+#' @param gcm_names Character. A vector of names to assign to each GCM.
+#' @param var_names Character. A vector of names to assign to each variable.
 #'
-#' @return A list of stacks, with each element of the list corresponding to a GCM from given path.
+#' @return A list of stacks, where each element corresponds to a GCM from the specified path.
+
 #'
 #' @seealso \code{\link{worldclim_data}}
 #'

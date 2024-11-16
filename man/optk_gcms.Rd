@@ -2,7 +2,7 @@
 % Please edit documentation in R/optk_gcms.R
 \name{optk_gcms}
 \alias{optk_gcms}
-\title{Optimize number of clusters for a dataset}
+\title{Optimize the number of clusters for a dataset}
 \usage{
 optk_gcms(
   s,
@@ -19,21 +19,21 @@ optk_gcms(
 \arguments{
 \item{s}{A list of stacks of General Circulation Models.}
 
-\item{var_names}{Character. A vector with names of the bioclimatic variables to compare OR 'all'.}
+\item{var_names}{Character. A vector with the names of the variables to compare OR 'all'.}
 
-\item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
+\item{study_area}{Extent object, or any object from which an Extent object can be extracted. An object that defines the study area for cropping and masking the rasters.}
 
-\item{cluster}{A character string specifying the method to build the clusters. Options are 'kmeans' (standard) or 'hclust'.}
+\item{cluster}{A character string specifying the method to build the clusters. Options are 'kmeans' (default) or 'hclust'.}
 
-\item{method}{A character string specifying the method to use for determining the optimal number of clusters. Options are 'wss' for within-cluster sum of squares, 'silhouette' for average silhouette width and 'gap_stat' for the gap statistic method. Default is 'wss'.}
+\item{method}{A character string specifying the method to use for determining the optimal number of clusters. Options are 'wss' for within-cluster sum of squares, 'silhouette' for average silhouette width, and 'gap_stat' for the gap statistic method. Default is 'wss'.}
 
-\item{n}{An integer specifying the number of randomly selected samples to use in the clustering analysis. If NULL (default) all data is used.}
+\item{n}{An integer specifying the number of randomly selected samples to use in the clustering analysis. If NULL (default), all data is used.}
 
-\item{nstart}{Numeric. Number of random sets should be chosen. Standard is 10. Argument is passed to stats::kmeans().}
+\item{nstart}{Numeric. The number of random sets to be chosen. Default is 10. Argument is passed to `stats::kmeans()`.}
 
-\item{K.max}{Numeric. The maximum number of clusters to consider. Standard is 10. Argument is passed to factoextra::fviz_nbclust().}
+\item{K.max}{Numeric. The maximum number of clusters to consider. Default is 10. Argument is passed to `factoextra::fviz_nbclust()`.}
 
-\item{B}{Integer. Number of Monte Carlo (“bootstrap”) samples. Standard is 100. Argument is passed to cluster::clusGap().}
+\item{B}{Integer. The number of Monte Carlo (“bootstrap”) samples. Default is 100. Argument is passed to `cluster::clusGap()`.}
 }
 \value{
 A ggplot object representing the optimal number of clusters.

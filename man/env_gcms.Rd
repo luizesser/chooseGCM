@@ -2,7 +2,7 @@
 % Please edit documentation in R/env_gcms.R
 \name{env_gcms}
 \alias{env_gcms}
-\title{General Circulation Model (GCM) environmental distribution}
+\title{General Circulation Model (GCM) Environmental Distribution}
 \usage{
 env_gcms(
   s,
@@ -14,23 +14,23 @@ env_gcms(
 )
 }
 \arguments{
-\item{s}{A list of stacks of General Circulation Models.}
+\item{s}{A list of stacks of General Circulation Models (GCMs).}
 
-\item{var_names}{Character. A vector with names of the bioclimatic variables to compare OR 'all'.}
+\item{var_names}{Character. A vector of names of the variables to include, or 'all' to include all variables.}
 
-\item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
+\item{study_area}{An Extent object, or any object from which an Extent object can be extracted. Defines the study area for cropping and masking the rasters.}
 
-\item{highlight}{Character. A vector with names of gcms to be highlighted. In this case, the sum of all but chosen GCMs will appear in grey.}
+\item{highlight}{Character. A vector of GCM names to be highlighted. All other GCMs will appear in grey.}
 
-\item{resolution}{Numeric. Resolution to be used in the plot. Standard is 25.}
+\item{resolution}{Numeric. The resolution to be used in the plot. Default is \code{25}.}
 
-\item{title}{Character. Title of the plot.}
+\item{title}{Character. The title of the plot.}
 }
 \value{
-A plot with environmental space for the given GCMs.
+A plot displaying the environmental space for the specified GCMs.
 }
 \description{
-This function plots GCMs data in environmental space, possibly highlighting clusters or specific GCMs.
+This function visualizes GCM data in environmental space, with options to highlight clusters or specific GCMs.
 }
 \examples{
 \dontrun{

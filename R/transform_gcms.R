@@ -1,15 +1,16 @@
-#' Transform General Circulation Model (GCM) stacks
+#' Transform General Circulation Model (GCM) Stacks
 #'
-#' This function transforms a list of stacks of GCMs by subsetting it to only include the variable
-#' names specified in \code{var_names}, reprojecting it to match the CRS of \code{study_area},
+#' This function transforms a list of GCM stacks by subsetting it to include only the variables
+#' specified in \code{var_names}, reprojecting it to match the CRS of \code{study_area},
 #' cropping and masking it to \code{study_area}, and returning a list of data frames.
 #'
-#' @param s A list of stacks of General Circulation Models.
-#' @param var_names Character. A vector with names of the bioclimatic variables to compare OR 'all'.
-#' @param study_area Extent object, or any object from which an Extent object can be extracted.
-#' A object that defines the study area for cropping and masking the rasters.
+#' @param s A list of stacks of General Circulation Models (GCMs).
+#' @param var_names Character. A vector of names of the variables to include, or 'all' to include all variables.
+#' @param study_area An Extent object, or any object from which an Extent object can be extracted.
+#' Defines the study area for cropping and masking the rasters.
 #'
-#' @return A list of data frames, with each element of the list corresponding to a GCM in the input list.
+#' @return A list of data frames, where each element corresponds to a GCM in the input list.
+
 #'
 #' @seealso \code{\link{summary_gcms}}
 #'

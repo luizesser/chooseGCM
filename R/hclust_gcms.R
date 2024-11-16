@@ -1,13 +1,14 @@
 #' Hierarchical Clustering of GCMs
 #'
-#' This function performs hierarchical clustering on a random subset of the raster values and produces a dendrogram visualization of the clusters.
+#' This function performs hierarchical clustering on a random subset of raster values and produces a dendrogram visualization of the clusters.
 #'
-#' @param s A list of stacks of General Circulation Models.
-#' @param var_names Character. A vector with names of the bioclimatic variables to compare OR 'all'.
-#' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
-#' @param scale Boolean. Apply center and scale in data? Default is TRUE.
-#' @param k The number of clusters to identify.
-#' @param n The number of values to use in the clustering. If NULL (default) all data is used.
+#' @param s A list of stacks of General Circulation Models (GCMs).
+#' @param var_names Character. A vector of names of the variables to include, or 'all' to include all variables.
+#' @param study_area An Extent object, or any object from which an Extent object can be extracted.
+#' Defines the study area for cropping and masking the rasters.
+#' @param scale Logical. Should the data be centered and scaled? Default is \code{TRUE}.
+#' @param k Integer. The number of clusters to identify.
+#' @param n Integer. The number of values to use in the clustering. If \code{NULL} (default), all data is used.
 #'
 #' @return A dendrogram visualizing the clusters and the suggested GCMs.
 #'

@@ -1,16 +1,16 @@
-#' Optimize number of clusters for a dataset
+#' Optimize the number of clusters for a dataset
 #'
 #' This function performs clustering analysis on a dataset and determines the optimal number of clusters based on a specified method.
 #'
 #' @param s A list of stacks of General Circulation Models.
-#' @param var_names Character. A vector with names of the bioclimatic variables to compare OR 'all'.
-#' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
-#' @param cluster A character string specifying the method to build the clusters. Options are 'kmeans' (standard) or 'hclust'.
-#' @param method A character string specifying the method to use for determining the optimal number of clusters. Options are 'wss' for within-cluster sum of squares, 'silhouette' for average silhouette width and 'gap_stat' for the gap statistic method. Default is 'wss'.
-#' @param n An integer specifying the number of randomly selected samples to use in the clustering analysis. If NULL (default) all data is used.
-#' @param nstart Numeric. Number of random sets should be chosen. Standard is 10. Argument is passed to stats::kmeans().
-#' @param K.max Numeric. The maximum number of clusters to consider. Standard is 10. Argument is passed to factoextra::fviz_nbclust().
-#' @param B Integer. Number of Monte Carlo (“bootstrap”) samples. Standard is 100. Argument is passed to cluster::clusGap().
+#' @param var_names Character. A vector with the names of the variables to compare OR 'all'.
+#' @param study_area Extent object, or any object from which an Extent object can be extracted. An object that defines the study area for cropping and masking the rasters.
+#' @param cluster A character string specifying the method to build the clusters. Options are 'kmeans' (default) or 'hclust'.
+#' @param method A character string specifying the method to use for determining the optimal number of clusters. Options are 'wss' for within-cluster sum of squares, 'silhouette' for average silhouette width, and 'gap_stat' for the gap statistic method. Default is 'wss'.
+#' @param n An integer specifying the number of randomly selected samples to use in the clustering analysis. If NULL (default), all data is used.
+#' @param nstart Numeric. The number of random sets to be chosen. Default is 10. Argument is passed to `stats::kmeans()`.
+#' @param K.max Numeric. The maximum number of clusters to consider. Default is 10. Argument is passed to `factoextra::fviz_nbclust()`.
+#' @param B Integer. The number of Monte Carlo (“bootstrap”) samples. Default is 100. Argument is passed to `cluster::clusGap()`.
 #'
 #' @return A ggplot object representing the optimal number of clusters.
 #'

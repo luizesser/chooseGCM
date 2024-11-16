@@ -1,14 +1,14 @@
-#' Distance between GCMs
+#' Distance Between GCMs
 #'
-#' This function compares future climate projections from multiple Global Circulation Models (GCMs) based on their similarity in terms of bioclimatic variables. The function calculates distance metrics and plot it on a heatmap.
+#' This function compares future climate projections from multiple General Circulation Models (GCMs) based on their similarity in terms of variables. It calculates distance metrics and plots the results on a heatmap.
 #'
-#' @param s A list of stacks of General Circulation Models.
-#' @param var_names Character. A vector with names of the bioclimatic variables to compare OR 'all'.
-#' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
-#' @param scale Boolean. Apply center and scale in data? Default is TRUE.
-#' @param method The correlation method to use. Default is "euclidean". Possible values are "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "pearson", "spearman" or "kendall".
+#' @param s A list of stacks of General Circulation Models (GCMs).
+#' @param var_names Character. A vector of names of the variables to compare, or 'all' to include all variables.
+#' @param study_area An Extent object, or any object from which an Extent object can be extracted. Defines the study area for cropping and masking the rasters.
+#' @param scale Logical. Whether to apply centering and scaling to the data. Default is \code{TRUE}.
+#' @param method Character. The correlation method to use. Default is "euclidean". Possible values are: "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "pearson", "spearman", or "kendall".
 #'
-#' @return A list with two items: distances (the distances between GCMs) and heatmap (a plot).
+#' @return A list containing two items: \code{distances} (the calculated distances between GCMs) and \code{heatmap} (a plot displaying the heatmap).
 #'
 #' @seealso \code{\link{transform_gcms}} \code{\link{flatten_gcms}}
 #'

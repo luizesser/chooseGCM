@@ -2,7 +2,7 @@
 % Please edit documentation in R/compare_gcms.R
 \name{compare_gcms}
 \alias{compare_gcms}
-\title{Compare GCMS}
+\title{Compare General Circulation Models (GCMs)}
 \usage{
 compare_gcms(
   s,
@@ -14,23 +14,23 @@ compare_gcms(
 )
 }
 \arguments{
-\item{s}{A list of stacks of General Circulation Models.}
+\item{s}{A list of stacks of General Circulation Models (GCMs).}
 
-\item{var_names}{Character. A vector with names of the bioclimatic variables to compare OR 'all'.}
+\item{var_names}{Character. A vector with the names of the variables to compare, or 'all' to include all available variables.}
 
-\item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
+\item{study_area}{An Extent object, or any object from which an Extent object can be extracted. Defines the study area for cropping and masking the rasters.}
 
-\item{scale}{Boolean. Apply center and scale in data? Default is TRUE.}
+\item{scale}{Logical. Whether to apply centering and scaling to the data. Default is \code{TRUE}.}
 
 \item{k}{Numeric. The number of clusters to use for k-means clustering.}
 
-\item{clustering_method}{Character. Which method should be used to cluster GCMs. One of: "kmeans", "hclust", "closestdist".}
+\item{clustering_method}{Character. The clustering method to use. One of: "kmeans", "hclust", or "closestdist". Default is "closestdist".}
 }
 \value{
-A list with two items: suggested_gcms (the names of the GCMs suggested for further analysis) and statistics_gcms (a grid of plots).
+A list with two items: \code{suggested_gcms} (the names of the GCMs suggested for further analysis) and \code{statistics_gcms} (a grid of plots visualizing the clustering results).
 }
 \description{
-This function compares future climate projections from multiple Global Circulation Models (GCMs) based on their similarity in terms of bioclimatic variables. The function clusters the GCMs using k-means clustering and hierarchical clustering, calculates the Euclidean distance matrix, and generates plots for the clusters and the distance matrix.
+This function compares future climate projections from multiple General Circulation Models (GCMs) based on their similarity in terms of variables. The function uses three clustering algorithms — k-means, hierarchical clustering, and closestdist — to group GCMs, and generates visualizations for the resulting clusters.
 }
 \examples{
 \dontrun{

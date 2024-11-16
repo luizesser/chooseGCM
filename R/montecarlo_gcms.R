@@ -1,17 +1,19 @@
-#' Perform Monte Carlo permutations on GCMs
+#' Perform Monte Carlo Permutations on GCMs
 #'
-#' This function performs Monte Carlo permutations on a distance matrix and produces a violin plot of the resulting mean distance between subsets of the distance matrix.
+#' This function performs Monte Carlo permutations on a distance matrix and produces a violin plot showing the mean distance between subsets of the distance matrix.
 #'
-#' @param s A list of stacks of General Circulation Models.
-#' @param var_names Character. A vector with names of the bioclimatic variables to compare OR 'all'.
-#' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
-#' @param scale Boolean. Apply center and scale in data? Default is TRUE.
-#' @param perm Number of permutations.
-#' @param dist_method The method for distance matrix computation. Standard value is "euclidean". Possible values are: "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski". If NULL, will perform the clustering on raw variables data.
-#' @param clustering_method The method for clustering. Standard value is "closestdist". Possible values are: "kmeans", "hclust" or "closestdist".
-#' @param ... Arguments to pass to the clustering function.
+#' @param s A list of stacks of General Circulation Models (GCMs).
+#' @param var_names Character. A vector of names of the variables to include, or 'all' to include all variables.
+#' @param study_area An Extent object, or any object from which an Extent object can be extracted.
+#' Defines the study area for cropping and masking the rasters.
+#' @param scale Logical. Should the data be centered and scaled? Default is \code{TRUE}.
+#' @param perm Integer. The number of permutations to perform.
+#' @param dist_method Character. The method for distance matrix computation. Default is "euclidean." Possible values are:
+#' "euclidean," "maximum," "manhattan," "canberra," "binary," or "minkowski." If \code{NULL}, clustering will be performed on the raw variable data.
+#' @param clustering_method Character. The method for clustering. Default is "closestdist." Possible values are: "kmeans," "hclust," or "closestdist."
+#' @param ... Additional arguments to pass to the clustering function.
 #'
-#' @return A violin plot of the result. Dashed red line and red dots represent the mean absolute distance between subset of GCMs using the clustering approach. Violin plot is built with Monte Carlo permutations, selecting random subsets of GCMs from the given set.
+#' @return A violin plot showing the results. The dashed red line and red dots represent the mean absolute distance between subsets of GCMs using the clustering approach. The violin plot is generated from Monte Carlo permutations, selecting random subsets of GCMs from the provided set.
 #'
 #' @seealso \code{\link{hclust_gcms}} \code{\link{env_gcms}} \code{\link{kmeans_gcms}}
 #'

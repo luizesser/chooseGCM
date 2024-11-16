@@ -1,57 +1,56 @@
-#' Download WorldClim v.2.1 bioclimatic data
+#' Download WorldClim v2.1 Bioclimatic Data
 #'
-#' This function allows to download data from WorldClim v.2.1 (https://www.worldclim.org/data/index.html) considering multiple GCMs, time periods and SSPs.
+#' This function allows downloading data from WorldClim v2.1 (https://www.worldclim.org/data/index.html) for multiple GCMs, time periods, and SSPs.
 #'
 #' @usage worldclim_data(period = 'current', variable = 'bioc', year = '2030',
-#' gcm = 'mi', ssp = '126', resolution = 10, path=NULL)
+#' gcm = 'mi', ssp = '126', resolution = 10, path = NULL)
 #'
-#' @param period Can be 'current' or 'future'.
-#' @param variable Allows to specify which variables you want to retrieve Possible entries are:
-#' 'tmax','tmin','prec' and/or 'bioc'.
-#' @param path Directory path to save downloads.
-#' @param year Specify the year you want to retrieve data. Possible entries are:
-#' '2030', '2050', '2070' and/or '2090'. You can  use a vector to provide more than one entry.
-#' @param gcm GCMs to be considered in future scenarios. You can use a vector to provide more than one entry.
-#'  | **CODE** | **GCM** |
-#'  | ---- | ---------------- |
-#'  | ac  | ACCESS-CM2 |
-#'  | ae  | ACCESS-ESM1-5 |
-#'  | bc  | BCC-CSM2-MR |
-#'  | ca  | CanESM5 |
-#'  | cc  | CanESM5-CanOE |
-#'  | ce  | CMCC-ESM2 |
-#'  | cn  | CNRM-CM6-1 |
-#'  | ch  | CNRM-CM6-1-HR |
-#'  | cr  | CNRM-ESM2-1 |
-#'  | ec  | EC-Earth3-Veg |
-#'  | ev  | EC-Earth3-Veg-LR |
-#'  | fi  | FIO-ESM-2-0 |
-#'  | gf  | GFDL-ESM4 |
-#'  | gg  | GISS-E2-1-G |
-#'  | gh  | GISS-E2-1-H |
-#'  | hg  | HadGEM3-GC31-LL |
-#'  | in  | INM-CM4-8 |
-#'  | ic  | INM-CM5-0 |
-#'  | ip  | IPSL-CM6A-LR |
-#'  | me  | MIROC-ES2L |
-#'  | mi  | MIROC6 | ###
-#'  | mp  | MPI-ESM1-2-HR |
-#'  | ml  | MPI-ESM1-2-LR |
-#'  | mr  | MRI-ESM2-0 |
-#'  | uk  | UKESM1-0-LL |
-#' @md
-#' @param ssp SSPs for future data. Possible entries are: '126', '245', '370' and/or '585'.
-#' You can use a vector to provide more than one entry.
-#' @param resolution You can select one resolution from the following alternatives: 10, 5, 2.5 OR 30.
-#' @param path Directory path to save downloads.
+#' @param period Character. Can be 'current' or 'future'.
+#' @param variable Character. Specifies which variables to retrieve. Possible entries are:
+#' 'tmax', 'tmin', 'prec', and/or 'bioc'.
+#' @param path Character. Directory path to save the downloaded files. Default is NULL.
+#' @param year Character or vector. Specifies the year(s) to retrieve data for. Possible entries are:
+#' '2030', '2050', '2070', and/or '2090'.
+#' @param gcm Character or vector. Specifies the GCM(s) to consider for future scenarios. See the table below for available options:
+#'
+#' | **CODE** | **GCM**              |
+#' |----------|----------------------|
+#' | ac       | ACCESS-CM2           |
+#' | ae       | ACCESS-ESM1-5        |
+#' | bc       | BCC-CSM2-MR          |
+#' | ca       | CanESM5              |
+#' | cc       | CanESM5-CanOE        |
+#' | ce       | CMCC-ESM2            |
+#' | cn       | CNRM-CM6-1           |
+#' | ch       | CNRM-CM6-1-HR        |
+#' | cr       | CNRM-ESM2-1          |
+#' | ec       | EC-Earth3-Veg        |
+#' | ev       | EC-Earth3-Veg-LR     |
+#' | fi       | FIO-ESM-2-0          |
+#' | gf       | GFDL-ESM4            |
+#' | gg       | GISS-E2-1-G          |
+#' | gh       | GISS-E2-1-H          |
+#' | hg       | HadGEM3-GC31-LL      |
+#' | in       | INM-CM4-8            |
+#' | ic       | INM-CM5-0            |
+#' | ip       | IPSL-CM6A-LR         |
+#' | me       | MIROC-ES2L           |
+#' | mi       | MIROC6               |
+#' | mp       | MPI-ESM1-2-HR        |
+#' | ml       | MPI-ESM1-2-LR        |
+#' | mr       | MRI-ESM2-0           |
+#' | uk       | UKESM1-0-LL          |
+#'
+#' @param ssp Character or vector. SSP(s) for future data. Possible entries are: '126', '245', '370', and/or '585'.
+#' @param resolution Numeric. Specifies the resolution. Possible values are 10, 5, 2.5, or 30 arcseconds.
 #'
 #' @return This function does not return any value.
 #'
-#' @details This function will create a folder entitled 'input_data/WorldClim_data_future' or 'input_data/WorldClim_data_future'.
-#' All the data downloaded will be stored in this folder.
-#' Note that, despite being possible to retrieve a lot of data at once, it is not recommended to do so, since the data is very heavy.
-#' If the function fails to obtain big datasets (such as 30 arcsec resolution, which can have almos 4GB),
-#' you can try to set \code{options(timeout=600)} to increase the available time for internet connection.
+#' @details This function creates a folder titled 'input_data/WorldClim_data_future' or 'input_data/WorldClim_data_current'.
+#' All downloaded data will be stored in this folder.
+#' Note: While it is possible to retrieve a large volume of data, it is not recommended to do so due to the large file sizes.
+#' For example, datasets at 30 arcseconds resolution can exceed 4 GB. If the function fails to retrieve large datasets,
+#' consider increasing the timeout by setting \code{options(timeout = 600)}.
 #'
 #' @references https://www.worldclim.org/data/index.html
 #'

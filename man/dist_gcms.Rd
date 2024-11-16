@@ -2,7 +2,7 @@
 % Please edit documentation in R/dist_gcms.R
 \name{dist_gcms}
 \alias{dist_gcms}
-\title{Distance between GCMs}
+\title{Distance Between GCMs}
 \usage{
 dist_gcms(
   s,
@@ -13,21 +13,21 @@ dist_gcms(
 )
 }
 \arguments{
-\item{s}{A list of stacks of General Circulation Models.}
+\item{s}{A list of stacks of General Circulation Models (GCMs).}
 
-\item{var_names}{Character. A vector with names of the bioclimatic variables to compare OR 'all'.}
+\item{var_names}{Character. A vector of names of the variables to compare, or 'all' to include all variables.}
 
-\item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
+\item{study_area}{An Extent object, or any object from which an Extent object can be extracted. Defines the study area for cropping and masking the rasters.}
 
-\item{scale}{Boolean. Apply center and scale in data? Default is TRUE.}
+\item{scale}{Logical. Whether to apply centering and scaling to the data. Default is \code{TRUE}.}
 
-\item{method}{The correlation method to use. Default is "euclidean". Possible values are "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "pearson", "spearman" or "kendall".}
+\item{method}{Character. The correlation method to use. Default is "euclidean". Possible values are: "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "pearson", "spearman", or "kendall".}
 }
 \value{
-A list with two items: distances (the distances between GCMs) and heatmap (a plot).
+A list containing two items: \code{distances} (the calculated distances between GCMs) and \code{heatmap} (a plot displaying the heatmap).
 }
 \description{
-This function compares future climate projections from multiple Global Circulation Models (GCMs) based on their similarity in terms of bioclimatic variables. The function calculates distance metrics and plot it on a heatmap.
+This function compares future climate projections from multiple General Circulation Models (GCMs) based on their similarity in terms of variables. It calculates distance metrics and plots the results on a heatmap.
 }
 \examples{
 \dontrun{

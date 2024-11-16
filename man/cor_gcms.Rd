@@ -2,7 +2,7 @@
 % Please edit documentation in R/cor_gcms.R
 \name{cor_gcms}
 \alias{cor_gcms}
-\title{Compute and plot correlation matrix for a set of General Circulation Models.}
+\title{Compute and Plot Correlation Matrix for a Set of General Circulation Models}
 \usage{
 cor_gcms(
   s,
@@ -13,21 +13,21 @@ cor_gcms(
 )
 }
 \arguments{
-\item{s}{A list of stacks of General Circulation Models.}
+\item{s}{A list of stacks of General Circulation Models (GCMs).}
 
-\item{var_names}{Character. A vector with names of the bioclimatic variables to compare OR 'all'.}
+\item{var_names}{Character. A vector with names of the variables to compare, or 'all' to include all variables.}
 
-\item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
+\item{study_area}{An Extent object, or any object from which an Extent object can be extracted. Defines the study area for cropping and masking the rasters.}
 
-\item{scale}{Boolean. Apply center and scale in data? Default is TRUE.}
+\item{scale}{Logical. Whether to apply centering and scaling to the data. Default is \code{TRUE}.}
 
-\item{method}{The correlation method to use. Default is "pearson". Possible values are "pearson", "kendall" or "spearman".}
+\item{method}{Character. The correlation method to use. Default is "pearson". Possible values are: "pearson", "kendall", or "spearman".}
 }
 \value{
-A list with two items: cor_matrix (the correlations between GCMs) and cor_plot (a correlation plot).
+A list containing two items: \code{cor_matrix} (the calculated correlations between GCMs) and \code{cor_plot} (a plot visualizing the correlation matrix).
 }
 \description{
-Compute and plot correlation matrix for a set of General Circulation Models.
+This function computes and visualizes the correlation matrix for a set of General Circulation Models (GCMs) based on their variables.
 }
 \examples{
 \dontrun{

@@ -7,13 +7,13 @@
 flatten_gcms(s)
 }
 \arguments{
-\item{s}{A list of transformed data frames (GCMs).}
+\item{s}{A list of transformed data frames representing GCMs.}
 }
 \value{
-A named list of flattened data.frame.
+A named list of flattened \code{data.frame} objects.
 }
 \description{
-Scale and flatten a list of rasters (GCMs) to a vector.
+Scale and flatten a list of General Circulation Models (GCMs) from rasters to vectors.
 }
 \examples{
 \dontrun{

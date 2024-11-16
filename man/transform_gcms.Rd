@@ -2,24 +2,24 @@
 % Please edit documentation in R/transform_gcms.R
 \name{transform_gcms}
 \alias{transform_gcms}
-\title{Transform General Circulation Model (GCM) stacks}
+\title{Transform General Circulation Model (GCM) Stacks}
 \usage{
 transform_gcms(s, var_names = c("bio_1", "bio_12"), study_area = NULL)
 }
 \arguments{
-\item{s}{A list of stacks of General Circulation Models.}
+\item{s}{A list of stacks of General Circulation Models (GCMs).}
 
-\item{var_names}{Character. A vector with names of the bioclimatic variables to compare OR 'all'.}
+\item{var_names}{Character. A vector of names of the variables to include, or 'all' to include all variables.}
 
-\item{study_area}{Extent object, or any object from which an Extent object can be extracted.
-A object that defines the study area for cropping and masking the rasters.}
+\item{study_area}{An Extent object, or any object from which an Extent object can be extracted.
+Defines the study area for cropping and masking the rasters.}
 }
 \value{
-A list of data frames, with each element of the list corresponding to a GCM in the input list.
+A list of data frames, where each element corresponds to a GCM in the input list.
 }
 \description{
-This function transforms a list of stacks of GCMs by subsetting it to only include the variable
-names specified in \code{var_names}, reprojecting it to match the CRS of \code{study_area},
+This function transforms a list of GCM stacks by subsetting it to include only the variables
+specified in \code{var_names}, reprojecting it to match the CRS of \code{study_area},
 cropping and masking it to \code{study_area}, and returning a list of data frames.
 }
 \examples{

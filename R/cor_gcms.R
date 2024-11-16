@@ -1,12 +1,14 @@
-#' Compute and plot correlation matrix for a set of General Circulation Models.
+#' Compute and Plot Correlation Matrix for a Set of General Circulation Models
 #'
-#' @param s A list of stacks of General Circulation Models.
-#' @param var_names Character. A vector with names of the bioclimatic variables to compare OR 'all'.
-#' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
-#' @param scale Boolean. Apply center and scale in data? Default is TRUE.
-#' @param method The correlation method to use. Default is "pearson". Possible values are "pearson", "kendall" or "spearman".
+#' This function computes and visualizes the correlation matrix for a set of General Circulation Models (GCMs) based on their variables.
 #'
-#' @return A list with two items: cor_matrix (the correlations between GCMs) and cor_plot (a correlation plot).
+#' @param s A list of stacks of General Circulation Models (GCMs).
+#' @param var_names Character. A vector with names of the variables to compare, or 'all' to include all variables.
+#' @param study_area An Extent object, or any object from which an Extent object can be extracted. Defines the study area for cropping and masking the rasters.
+#' @param scale Logical. Whether to apply centering and scaling to the data. Default is \code{TRUE}.
+#' @param method Character. The correlation method to use. Default is "pearson". Possible values are: "pearson", "kendall", or "spearman".
+#'
+#' @return A list containing two items: \code{cor_matrix} (the calculated correlations between GCMs) and \code{cor_plot} (a plot visualizing the correlation matrix).
 #'
 #' @seealso \code{\link{transform_gcms}} \code{\link{flatten_gcms}} \code{\link{summary_gcms}}
 #'

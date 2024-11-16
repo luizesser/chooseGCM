@@ -1,15 +1,15 @@
-#' Compare GCMS
+#' Compare General Circulation Models (GCMs)
 #'
-#' This function compares future climate projections from multiple Global Circulation Models (GCMs) based on their similarity in terms of bioclimatic variables. The function clusters the GCMs using k-means clustering and hierarchical clustering, calculates the Euclidean distance matrix, and generates plots for the clusters and the distance matrix.
+#' This function compares future climate projections from multiple General Circulation Models (GCMs) based on their similarity in terms of variables. The function uses three clustering algorithms — k-means, hierarchical clustering, and closestdist — to group GCMs, and generates visualizations for the resulting clusters.
 #'
-#' @param s A list of stacks of General Circulation Models.
-#' @param var_names Character. A vector with names of the bioclimatic variables to compare OR 'all'.
-#' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
-#' @param scale Boolean. Apply center and scale in data? Default is TRUE.
+#' @param s A list of stacks of General Circulation Models (GCMs).
+#' @param var_names Character. A vector with the names of the variables to compare, or 'all' to include all available variables.
+#' @param study_area An Extent object, or any object from which an Extent object can be extracted. Defines the study area for cropping and masking the rasters.
+#' @param scale Logical. Whether to apply centering and scaling to the data. Default is \code{TRUE}.
 #' @param k Numeric. The number of clusters to use for k-means clustering.
-#' @param clustering_method Character. Which method should be used to cluster GCMs. One of: "kmeans", "hclust", "closestdist".
+#' @param clustering_method Character. The clustering method to use. One of: "kmeans", "hclust", or "closestdist". Default is "closestdist".
 #'
-#' @return A list with two items: suggested_gcms (the names of the GCMs suggested for further analysis) and statistics_gcms (a grid of plots).
+#' @return A list with two items: \code{suggested_gcms} (the names of the GCMs suggested for further analysis) and \code{statistics_gcms} (a grid of plots visualizing the clustering results).
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com

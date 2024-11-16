@@ -2,7 +2,7 @@
 % Please edit documentation in R/closestdist_gcms.R
 \name{closestdist_gcms}
 \alias{closestdist_gcms}
-\title{Distance between GCMs}
+\title{Distance between General Circulation Models (GCMs)}
 \usage{
 closestdist_gcms(
   s,
@@ -16,35 +16,42 @@ closestdist_gcms(
 )
 }
 \arguments{
-\item{s}{A list of stacks of General Circulation Models.}
+\item{s}{A list of stacks of General Circulation Models (GCMs).}
 
-\item{var_names}{Character. A vector with names of the bioclimatic variables to compare OR 'all'.}
+\item{var_names}{Character. A vector with names of the bioclimatic variables to compare, or 'all'
+to include all available variables.}
 
-\item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
+\item{study_area}{An Extent object, or any object from which an Extent object can be extracted.
+Defines the study area for cropping and masking the rasters.}
 
-\item{scale}{Boolean. Apply center and scale in data? Default is TRUE.}
+\item{scale}{Logical. Whether to apply centering and scaling to the data. Default is \code{TRUE}.}
 
-\item{k}{Number of GCMs. If NULL (standard), stopping criteria are applied.}
+\item{k}{Numeric. The number of GCMs to include in the subset. If \code{NULL} (default), stopping criteria are applied.}
 
-\item{method}{The distance method to use. Default is "euclidean". Possible values are "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "pearson", "spearman" or "kendall". See ?dist_gcms.}
+\item{method}{The distance method to use. Default is "euclidean". Possible values are: "euclidean",
+"maximum", "manhattan", "canberra", "binary", "minkowski", "pearson", "spearman", or "kendall". See \code{?dist_gcms}.}
 
-\item{minimize_difference}{Boolean. If k = NULL, function will search for best value of k. Standard is TRUE.}
+\item{minimize_difference}{Logical. If \code{k = NULL}, the function will search for the optimal
+value of \code{k} by adding GCMs to the subset until the mean distance starts to diverge from the
+global mean distance. Default is \code{TRUE}.}
 
-\item{max_difference}{Numeric. Distance threshold to stop searching. Standard is NULL.}
+\item{max_difference}{Numeric. A distance threshold to stop searching for the optimal subset.
+If \code{NULL}, no threshold is set. Default is \code{NULL}.}
 }
 \value{
-Set of GCMs that have mean distance closer to the mean of all GCMs provided in s.
+A set of GCMs that have a mean distance closer to the global mean distance of all GCMs provided in \code{s}.
 }
 \description{
-This function compares future climate projections from multiple Global Circulation Models (GCMs) based on their similarity in terms of variables.
+This function compares future climate projections from multiple General Circulation Models (GCMs)
+based on their similarity in terms of bioclimatic variables. It computes distance metrics between
+GCMs and identifies subsets of GCMs that are similar to the global set.
 }
 \details{
-\code{minimize_difference} will search for the optimum value of k by incorporating new GCMs
-to the subset until the mean distance of the subset starts to move away from the mean distance from
-all GCMs (global distance).
-By setting a \code{max_difference} value, the function will test if the mean distance between GCMs
-in the subset is lower than max_difference. If TRUE, the function returns the given subset, otherwise
-it will keep searching for better results.
+The \code{minimize_difference} option searches for the best value of \code{k} by progressively
+adding GCMs to the subset. The function monitors the mean distance between the subset of GCMs and
+the global mean distance, stopping when the distance begins to increase.
+The \code{max_difference} option sets a maximum distance difference. If the mean distance between
+the subset GCMs exceeds this threshold, the function stops searching and returns the current subset.
 }
 \examples{
 \dontrun{

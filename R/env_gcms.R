@@ -1,15 +1,15 @@
-#' General Circulation Model (GCM) environmental distribution
+#' General Circulation Model (GCM) Environmental Distribution
 #'
-#' This function plots GCMs data in environmental space, possibly highlighting clusters or specific GCMs.
+#' This function visualizes GCM data in environmental space, with options to highlight clusters or specific GCMs.
 #'
-#' @param s A list of stacks of General Circulation Models.
-#' @param var_names Character. A vector with names of the bioclimatic variables to compare OR 'all'.
-#' @param study_area Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.
-#' @param highlight Character. A vector with names of gcms to be highlighted. In this case, the sum of all but chosen GCMs will appear in grey.
-#' @param resolution Numeric. Resolution to be used in the plot. Standard is 25.
-#' @param title Character. Title of the plot.
+#' @param s A list of stacks of General Circulation Models (GCMs).
+#' @param var_names Character. A vector of names of the variables to include, or 'all' to include all variables.
+#' @param study_area An Extent object, or any object from which an Extent object can be extracted. Defines the study area for cropping and masking the rasters.
+#' @param highlight Character. A vector of GCM names to be highlighted. All other GCMs will appear in grey.
+#' @param resolution Numeric. The resolution to be used in the plot. Default is \code{25}.
+#' @param title Character. The title of the plot.
 #'
-#' @return A plot with environmental space for the given GCMs.
+#' @return A plot displaying the environmental space for the specified GCMs.
 #'
 #' @seealso \code{\link{summary_gcms}}
 #'

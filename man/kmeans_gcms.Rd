@@ -2,7 +2,7 @@
 % Please edit documentation in R/kmeans_gcms.R
 \name{kmeans_gcms}
 \alias{kmeans_gcms}
-\title{Perform k-means clustering on GCMs}
+\title{Perform K-Means Clustering on GCMs}
 \usage{
 kmeans_gcms(
   s,
@@ -14,20 +14,22 @@ kmeans_gcms(
 )
 }
 \arguments{
-\item{s}{A list of stacks of General Circulation Models.}
+\item{s}{A list of stacks of General Circulation Models (GCMs).}
 
-\item{var_names}{Character. A vector with names of the bioclimatic variables to compare OR 'all'.}
+\item{var_names}{Character. A vector of names of the variables to include, or 'all' to include all variables.}
 
-\item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
+\item{study_area}{An Extent object, or any object from which an Extent object can be extracted.
+Defines the study area for cropping and masking the rasters.}
 
-\item{scale}{Boolean. Apply center and scale in data? Default is TRUE.}
+\item{scale}{Logical. Should the data be centered and scaled? Default is \code{TRUE}.}
 
-\item{k}{Number of clusters.}
+\item{k}{Integer. The number of clusters to create.}
 
-\item{method}{The method for distance matrix computation. Standard value is "euclidean". Possible values are: "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski". If NULL, will perform the clustering on raw variables data.}
+\item{method}{Character. The method for distance matrix computation. Default is "euclidean." Possible values are:
+"euclidean," "maximum," "manhattan," "canberra," "binary," or "minkowski." If \code{NULL}, clustering will be performed on the raw variable data.}
 }
 \value{
-A scatter plot of the resulting clusters and the suggested GCMs.
+A scatter plot showing the resulting clusters and the suggested GCMs.
 }
 \description{
 This function performs k-means clustering on a distance matrix and produces a scatter plot of the resulting clusters.

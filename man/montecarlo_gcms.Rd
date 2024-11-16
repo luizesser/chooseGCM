@@ -2,7 +2,7 @@
 % Please edit documentation in R/montecarlo_gcms.R
 \name{montecarlo_gcms}
 \alias{montecarlo_gcms}
-\title{Perform Monte Carlo permutations on GCMs}
+\title{Perform Monte Carlo Permutations on GCMs}
 \usage{
 montecarlo_gcms(
   s,
@@ -16,27 +16,29 @@ montecarlo_gcms(
 )
 }
 \arguments{
-\item{s}{A list of stacks of General Circulation Models.}
+\item{s}{A list of stacks of General Circulation Models (GCMs).}
 
-\item{var_names}{Character. A vector with names of the bioclimatic variables to compare OR 'all'.}
+\item{var_names}{Character. A vector of names of the variables to include, or 'all' to include all variables.}
 
-\item{study_area}{Extent object, or any object from which an Extent object can be extracted. A object that defines the study area for cropping and masking the rasters.}
+\item{study_area}{An Extent object, or any object from which an Extent object can be extracted.
+Defines the study area for cropping and masking the rasters.}
 
-\item{scale}{Boolean. Apply center and scale in data? Default is TRUE.}
+\item{scale}{Logical. Should the data be centered and scaled? Default is \code{TRUE}.}
 
-\item{perm}{Number of permutations.}
+\item{perm}{Integer. The number of permutations to perform.}
 
-\item{dist_method}{The method for distance matrix computation. Standard value is "euclidean". Possible values are: "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski". If NULL, will perform the clustering on raw variables data.}
+\item{dist_method}{Character. The method for distance matrix computation. Default is "euclidean." Possible values are:
+"euclidean," "maximum," "manhattan," "canberra," "binary," or "minkowski." If \code{NULL}, clustering will be performed on the raw variable data.}
 
-\item{clustering_method}{The method for clustering. Standard value is "closestdist". Possible values are: "kmeans", "hclust" or "closestdist".}
+\item{clustering_method}{Character. The method for clustering. Default is "closestdist." Possible values are: "kmeans," "hclust," or "closestdist."}
 
-\item{...}{Arguments to pass to the clustering function.}
+\item{...}{Additional arguments to pass to the clustering function.}
 }
 \value{
-A violin plot of the result. Dashed red line and red dots represent the mean absolute distance between subset of GCMs using the clustering approach. Violin plot is built with Monte Carlo permutations, selecting random subsets of GCMs from the given set.
+A violin plot showing the results. The dashed red line and red dots represent the mean absolute distance between subsets of GCMs using the clustering approach. The violin plot is generated from Monte Carlo permutations, selecting random subsets of GCMs from the provided set.
 }
 \description{
-This function performs Monte Carlo permutations on a distance matrix and produces a violin plot of the resulting mean distance between subsets of the distance matrix.
+This function performs Monte Carlo permutations on a distance matrix and produces a violin plot showing the mean distance between subsets of the distance matrix.
 }
 \examples{
 
