@@ -21,12 +21,10 @@ A data frame containing the summary statistics for each variable.
 This function summarizes GCM data by calculating various statistics for each variable.
 }
 \examples{
-\dontrun{
-s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
-study_area <- extent(c(-57, -22, -48, -33))
 var_names <- c("bio_1", "bio_12")
+s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_names)
+study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:4326")
 summary_gcms(s, var_names, study_area)
-}
 
 }
 \seealso{

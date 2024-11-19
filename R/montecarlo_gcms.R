@@ -23,7 +23,7 @@
 #' @examples
 #' var_names <- c("bio_1", "bio_12")
 #' s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_names)
-#' study_area <- ext(c(-80, -30, -50, 10)) |> vect(crs="epsg:4326")
+#' study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:4326")
 #' montecarlo_gcms(s, var_names, study_area)
 #'
 #' @import checkmate

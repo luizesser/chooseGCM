@@ -41,13 +41,10 @@ A violin plot showing the results. The dashed red line and red dots represent th
 This function performs Monte Carlo permutations on a distance matrix and produces a violin plot showing the mean distance between subsets of the distance matrix.
 }
 \examples{
-
-\dontrun{
-s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
-study_area <- extent(c(-57, -22, -48, -33))
 var_names <- c("bio_1", "bio_12")
+s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_names)
+study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:4326")
 montecarlo_gcms(s, var_names, study_area)
-}
 
 }
 \seealso{

@@ -33,12 +33,10 @@ A list with two items: \code{suggested_gcms} (the names of the GCMs suggested fo
 This function compares future climate projections from multiple General Circulation Models (GCMs) based on their similarity in terms of variables. The function uses three clustering algorithms — k-means, hierarchical clustering, and closestdist — to group GCMs, and generates visualizations for the resulting clusters.
 }
 \examples{
-\dontrun{
-s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
-study_area <- extent(c(-57, -22, -48, -33))
 var_names <- c("bio_1", "bio_12")
+s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_names)
+study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:4326")
 compare_gcms(s, var_names, study_area, k = 3, clustering_method = "closestdist")
-}
 
 }
 \author{

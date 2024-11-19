@@ -19,14 +19,14 @@
 #' @examples
 #' var_names <- c("bio_1", "bio_12")
 #' s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_names)
-#' study_area <- ext(c(-80, -30, -50, 10)) |> vect(crs="epsg:4326")
+#' study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:4326")
 #' env_gcms(s, var_names, study_area, highlight = "sum")
 #' env_gcms(s, var_names, study_area, highlight = c("ae", "ch", "cr"))
 #'
 #' @import checkmate
 #' @import ggplot2
 #' @importFrom reshape2 melt
-#' @importFrom terra rast ext crs project mask crop
+#' @importFrom terra rast ext crs project mask crop vect
 #' @importFrom methods is as
 #' @importFrom graphics image
 #'

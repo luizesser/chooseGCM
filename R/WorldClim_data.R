@@ -58,13 +58,13 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # download data from multiple periods:
-#' year <- c(2050, 2090)
-#' worldclim_data("future", "bioc", year, "mi", 126, 10, path="input_data/WorldClim_data_future")
+#' year <- c("2050", "2090")
+#' worldclim_data("future", "bioc", year, "mi", "126", 10, path=tempdir())
 #'
 #' # download data from one specific period:
-#' worldclim_data("future", "bioc", 2070, "mi", 585, 10, path="input_data/WorldClim_data_current")
+#' worldclim_data("future", "bioc", "2070", "mi", "585", 10, path=tempdir())
 #' }
 #'
 #' @import checkmate

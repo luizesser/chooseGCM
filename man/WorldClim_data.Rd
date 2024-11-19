@@ -66,13 +66,13 @@ For example, datasets at 30 arcseconds resolution can exceed 4 GB. If the functi
 consider increasing the timeout by setting \code{options(timeout = 600)}.
 }
 \examples{
-\donttest{
+\dontrun{
 # download data from multiple periods:
-year <- c(2050, 2090)
-worldclim_data("future", "bioc", year, "mi", 126, 10)
+year <- c("2050", "2090")
+worldclim_data("future", "bioc", year, "mi", "126", 10, path=tempdir())
 
 # download data from one specific period:
-worldclim_data("future", "bioc", 2070, "mi", 585, 10)
+worldclim_data("future", "bioc", "2070", "mi", "585", 10, path=tempdir())
 }
 
 }

@@ -35,13 +35,10 @@ A scatter plot showing the resulting clusters and the suggested GCMs.
 This function performs k-means clustering on a distance matrix and produces a scatter plot of the resulting clusters.
 }
 \examples{
-
-\dontrun{
-s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
-study_area <- extent(c(-57, -22, -48, -33))
 var_names <- c("bio_1", "bio_12")
+s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_names)
+study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:4326")
 kmeans_gcms(s, var_names, study_area, k = 3)
-}
 
 }
 \seealso{
