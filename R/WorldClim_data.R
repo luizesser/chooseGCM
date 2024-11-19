@@ -46,7 +46,7 @@
 #'
 #' @return This function does not return any value.
 #'
-#' @details This function creates a folder titled 'input_data/WorldClim_data_future' or 'input_data/WorldClim_data_current'.
+#' @details This function creates a folder in \code{path}.
 #' All downloaded data will be stored in this folder.
 #' Note: While it is possible to retrieve a large volume of data, it is not recommended to do so due to the large file sizes.
 #' For example, datasets at 30 arcseconds resolution can exceed 4 GB. If the function fails to retrieve large datasets,
@@ -58,13 +58,13 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # download data from multiple periods:
 #' year <- c(2050, 2090)
-#' worldclim_data("future", "bioc", year, "mi", 126, 10)
+#' worldclim_data("future", "bioc", year, "mi", 126, 10, path="input_data/WorldClim_data_future")
 #'
-#' # download data from one specific period
-#' worldclim_data("future", "bioc", 2070, "mi", 585, 10)
+#' # download data from one specific period:
+#' worldclim_data("future", "bioc", 2070, "mi", 585, 10, path="input_data/WorldClim_data_current")
 #' }
 #'
 #' @import checkmate
@@ -108,9 +108,6 @@ worldclim_data <- function(period = "current", variable = "bioc", year = "2030",
   res <- ifelse(resolution == 30, "s", "m")
 
   if (period == "current") {
-    if (is.null(path)) {
-      path <- "input_data/WorldClim_data_current"
-    }
     if (!dir.exists(path)) {
       dir.create(path, recursive = TRUE)
     }
@@ -134,9 +131,6 @@ worldclim_data <- function(period = "current", variable = "bioc", year = "2030",
   }
 
   if (period == "future") {
-    if (is.null(path)) {
-      path <- "input_data/WorldClim_data_future"
-    }
     all_gcm <- c(
       "ac", "ae", "bc", "ca", "cc", "ce", "cn", "ch", "cr", "ec", "ev", "fi",
       "gf", "gg", "gh", "hg", "in", "ic", "ip", "me", "mi", "mp", "ml",

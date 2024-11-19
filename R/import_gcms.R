@@ -17,12 +17,7 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
-#' \dontrun{
-#' s <- import_gcms(
-#'   path = "input_data/WorldClim_data_future", extension = ".tif",
-#'   recursive = TRUE, gcm_names = NULL
-#' )
-#' }
+#' s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = c("bio1", "bio12"))
 #'
 #' @import checkmate
 #' @importFrom terra rast
@@ -34,6 +29,7 @@ import_gcms <- function(path = "input_data/WorldClim_data_gcms", extension = ".t
   checkmate::assertLogical(recursive)
   checkmate::assertCharacter(gcm_names, null.ok = T)
   checkmate::assertDirectoryExists(path)
+  checkmate::assertCharacter(var_names, null.ok = T)
 
   if (is.null(var_names)) {
     var_names <- paste0("bio", 1:19)
@@ -45,8 +41,9 @@ import_gcms <- function(path = "input_data/WorldClim_data_gcms", extension = ".t
   }
   s <- lapply(l, function(x) {
     s <- terra::rast(x)
+    checkmate::assertCharacter(var_names, len=length(names(s)))
     names(s) <- var_names
-      return(s)
+    return(s)
   })
   if (is.null(gcm_names)) {
     gcm_names <- gsub(extension, "", list.files(path, pattern = extension, full.names = F, recursive = recursive))

@@ -48,3 +48,5 @@ Config/testthat/edition: 3
 URL: https://luizesser.github.io/chooseGCM/, https://github.com/luizesser/chooseGCM
 VignetteBuilder: knitr
 BugReports: https://github.com/luizesser/chooseGCM/issues
+Depends: 
+    R (>= 2.10)

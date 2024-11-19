@@ -1,22 +1,22 @@
-#' Flatten GCMs
+#' Flatten General Circulation Models (GCMs)
 #'
-#' Scale and flatten a list of General Circulation Models (GCMs) from rasters to vectors.
+#' Scale and flatten a list of GCMs \code{data.frame}s.
 #'
-#' @param s A list of transformed data frames representing GCMs.
+#' @param s A list of transformed \code{data.frame}s representing GCMs.
 #'
-#' @return A named list of flattened \code{data.frame} objects.
+#' @return A \code{data.frame} with columns as GCMs and rows as values from each cell to each variable.
+#'
+#' @seealso \code{\link{transform_gcms}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
-#' \dontrun{
-#' s <- list(stack("gcm1.tif"), stack("gcm2.tif"), stack("gcm3.tif"))
-#' study_area <- extent(c(-57, -22, -48, -33))
 #' var_names <- c("bio_1", "bio_12")
-#' s <- transform_gcms(s, var_names, study_area)
-#' flattened_gcms <- flatten_gcms(s)
-#' }
+#' s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_names)
+#' study_area <- ext(c(-80, -30, -50, 10)) |> vect(crs="epsg:4326")
+#' s_t <- transform_gcms(s, var_names, study_area)
+#' flattened_gcms <- flatten_gcms(s_t)
 #'
 #' @import checkmate
 #'

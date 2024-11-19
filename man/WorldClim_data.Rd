@@ -59,19 +59,19 @@ This function does not return any value.
 This function allows downloading data from WorldClim v2.1 (https://www.worldclim.org/data/index.html) for multiple GCMs, time periods, and SSPs.
 }
 \details{
-This function creates a folder titled 'input_data/WorldClim_data_future' or 'input_data/WorldClim_data_current'.
+This function creates a folder in \code{path}.
 All downloaded data will be stored in this folder.
 Note: While it is possible to retrieve a large volume of data, it is not recommended to do so due to the large file sizes.
 For example, datasets at 30 arcseconds resolution can exceed 4 GB. If the function fails to retrieve large datasets,
 consider increasing the timeout by setting \code{options(timeout = 600)}.
 }
 \examples{
-\dontrun{
+\donttest{
 # download data from multiple periods:
 year <- c(2050, 2090)
 worldclim_data("future", "bioc", year, "mi", 126, 10)
 
-# download data from one specific period
+# download data from one specific period:
 worldclim_data("future", "bioc", 2070, "mi", 585, 10)
 }
 
