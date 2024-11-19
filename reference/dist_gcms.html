@@ -91,12 +91,38 @@ https://luizfesser.wordpress.com</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="va">s</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/stack.html" class="external-link">stack</a></span><span class="op">(</span><span class="st">"gcm1.tif"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/utils/stack.html" class="external-link">stack</a></span><span class="op">(</span><span class="st">"gcm2.tif"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/utils/stack.html" class="external-link">stack</a></span><span class="op">(</span><span class="st">"gcm3.tif"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">study_area</span> <span class="op">&lt;-</span> <span class="fu">extent</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">57</span>, <span class="op">-</span><span class="fl">22</span>, <span class="op">-</span><span class="fl">48</span>, <span class="op">-</span><span class="fl">33</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">var_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio_1"</span>, <span class="st">"bio_12"</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">var_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bio_1"</span>, <span class="st">"bio_12"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">s</span> <span class="op">&lt;-</span> <span class="fu"><a href="import_gcms.html">import_gcms</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, package <span class="op">=</span> <span class="st">"chooseGCM"</span><span class="op">)</span>, var_names <span class="op">=</span> <span class="va">var_names</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">study_area</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/ext.html" class="external-link">ext</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">80</span>, <span class="op">-</span><span class="fl">30</span>, <span class="op">-</span><span class="fl">50</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span>crs<span class="op">=</span><span class="st">"epsg:4326"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">dist_gcms</span><span class="op">(</span><span class="va">s</span>, <span class="va">var_names</span>, <span class="va">study_area</span>, method <span class="op">=</span> <span class="st">"euclidean"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> CRS from s and study_area are not identical. Reprojecting study area.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $distances</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           ae        cc        ch        cr        ev        gg        hg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> cc 12.098570                                                            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ch  8.969913  7.552224                                                  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> cr  8.514195  8.163410  4.086509                                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ev  9.754736  7.253076  4.989154  5.755512                              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gg  8.111254  9.078551  5.713758  5.705027  6.511863                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> hg  5.589097 10.904037  7.580155  7.217513  9.222617  8.074113          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> in 11.336510  7.728264  5.306804  7.057019  6.010795  6.224649 10.381061</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> me  9.123887  8.189250  4.604741  5.604862  6.179877  6.365865  8.078647</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ml 10.160126  8.502065  6.040417  6.187604  7.007226  5.508376  8.708759</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mr  8.788592  8.784732  4.298812  5.906397  5.869130  5.112497  8.145027</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           in        me        ml</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> cc                              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ch                              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> cr                              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ev                              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> gg                              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> hg                              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> in                              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> me  5.774464                    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ml  6.445012  6.018782          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mr  5.131127  4.670026  5.373297</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $heatmap</span>
+<span class="r-plt img"><img src="dist_gcms-1.png" alt="" width="700" height="433"></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
