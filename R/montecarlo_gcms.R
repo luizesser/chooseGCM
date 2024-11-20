@@ -36,9 +36,9 @@
 montecarlo_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, scale = TRUE,
                             perm = 10000, dist_method = "euclidean", clustering_method = "closestdist",
                             ...) {
-  checkmate::assertCharacter(var_names, unique = T, any.missing = F)
+  checkmate::assertCharacter(var_names, unique = TRUE, any.missing = FALSE)
   checkmate::assertSubset(var_names, c(names(s[[1]]), "all"))
-  checkmate::assertCount(perm, positive = T)
+  checkmate::assertCount(perm, positive = TRUE)
   checkmate::assertChoice(dist_method, c("euclidean", "maximum", "manhattan", "canberra", "minkowski"))
   checkmate::assertChoice(clustering_method, c("kmeans", "hclust", "closestdist"))
 
@@ -107,10 +107,10 @@ montecarlo_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NU
   k <- NULL
   r <- replicate(perm, expr = {
     size <- sample(2:n, 1)
-    gcms <- sample(names(s), size = size, replace = F)
+    gcms <- sample(names(s), size = size, replace = FALSE)
     df <- data.frame(k = size, mean = mean(usedist::dist_subset(d, gcms)))
     return(df)
-  }, simplify = T)
+  }, simplify = TRUE)
   r <- as.data.frame(t(r))
   r$k <- as.numeric(r$k)
   r$mean <- as.numeric(r$mean)

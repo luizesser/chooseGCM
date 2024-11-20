@@ -34,9 +34,9 @@ hclust_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, 
       checkmate::assertList(s, types = "SpatRaster")
     }
   }
-  checkmate::assertCharacter(var_names, unique = T, any.missing = F)
-  checkmate::assertCount(k, positive = T)
-  checkmate::assertCount(n, positive = T, null.ok = T)
+  checkmate::assertCharacter(var_names, unique = TRUE, any.missing = FALSE)
+  checkmate::assertCount(k, positive = TRUE)
+  checkmate::assertCount(n, positive = TRUE, null.ok = TRUE)
 
   if ("all" %in% var_names) {
     var_names <- names(s[[1]])
@@ -61,20 +61,20 @@ hclust_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, 
   res <- factoextra::hcut(t(x), k = k)
 
   mean_all <- sapply(s, function(y) {
-    y <- colMeans(y, na.rm = T)
+    y <- colMeans(y, na.rm = TRUE)
   })
   mean_all <- rowMeans(mean_all)
   res2 <- vector()
   for (i in 1:k) {
     mean_cluster <- sapply(s[res$cluster==i], function(y) {
-      y <- colMeans(y, na.rm = T)
+      y <- colMeans(y, na.rm = TRUE)
     })
     vals <- as.matrix(stats::dist(t(cbind(mean_cluster, mean_all))))[,"mean_all"]
     res2[i] <- names(which.min(vals[vals > 0]))
   }
 
   dend <- factoextra::fviz_dend(res,
-    horiz=T,
+    horiz = TRUE,
     cex = 0.8,
     palette = "jco",
     main = "Hierarchical Clustering",

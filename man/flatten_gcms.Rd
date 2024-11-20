@@ -19,8 +19,8 @@ Scale and flatten a list of GCMs \code{data.frame}s.
 var_names <- c("bio_1", "bio_12")
 s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_names)
 study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:4326")
-s_t <- transform_gcms(s, var_names, study_area)
-flattened_gcms <- flatten_gcms(s_t)
+s_trans <- transform_gcms(s, var_names, study_area)
+flattened_gcms <- flatten_gcms(s_trans)
 
 }
 \seealso{

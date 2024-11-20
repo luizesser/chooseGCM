@@ -58,7 +58,7 @@
 #' https://luizfesser.wordpress.com
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # download data from multiple periods:
 #' year <- c("2050", "2090")
 #' worldclim_data("future", "bioc", year, "mi", "126", 10, path=tempdir())
@@ -111,7 +111,7 @@ worldclim_data <- function(period = "current", variable = "bioc", year = "2030",
     if (!dir.exists(path)) {
       dir.create(path, recursive = TRUE)
     }
-    if (length(list.files(path, pattern = ".tif$", full.names = T)) == 0) {
+    if (length(list.files(path, pattern = ".tif$", full.names = TRUE)) == 0) {
       message(paste0("current_", resolution, res))
       GET(
         url = paste0(

@@ -1,0 +1,338 @@
+---
+author: "Luíz Fernando Esser"
+date: "2024-11-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Is chooseGCM affected by variable selection?
+
+This Rmarkdown is part of the following article:
+
+Esser, L.F., Bailly, D., Lima, M.R., Ré, R. 2024. chooseGCM: a toolkit to select General Circulation Models in R. *In prep*.
+
+## Introduction
+
+chooseGCM is a solution for GCMs selection in Climate Change research. We built this Rmarkdown as a way to test the properties of the methods underlying chooseGCM. Results from each function will be presented side by side with changing variables, allowing better comparison. Here, we have already downloaded GCMs data.
+
+This Rmarkdown will apply different algorithms implemented in chooseGCM in different variables sets. The aim is to understand if different variables sets will affect the GCMs subset selected by algorithms. We expect that results will change with varibles sets, since this change will change the very core of the comparison process, which is values presented. To showcase this, we used four sets of bioclimatic variables: (1) Bio1 and Bio12, which are the main temperature and precipitation variables (Annual Mean Temperature and Annual Precipitation, respectively); (2) Temperature variables (Bio1 to Bio11); (3) Precipitation variables (Bio12 to Bio19); and (4) all bioclimatic variables.
+
+
+```{r libs, message=F, warning=F}
+# Install and open CRAN libraries
+for(x in c("devtools", "geodata", "terra", "tictoc") ){
+  if (!require(x, character.only = TRUE)) {
+      install.packages(x, dependencies = TRUE)
+      library(x, character.only = TRUE)
+  }
+}
+
+# Install and open chooseGCM
+if (!require("chooseGCM", character.only = TRUE)) {
+    devtools::install_github("luizesser/chooseGCM")
+    library("chooseGCM", character.only = TRUE)
+}
+
+# Install and open caretSDM
+if (!require("caretSDM", character.only = TRUE)) {
+    devtools::install_github("luizesser/caretSDM")
+    library("caretSDM", character.only = TRUE)
+}
+```
+
+## Preparing data
+
+### Import study_area
+
+For the first part of this Rmarkdown, we will import data for the study area.
+
+```{r study_area_parana}
+study_area_parana <- geodata::gadm(country = "Brazil", returnclass = "sv", path="input_data/")
+study_area_parana <- subset(study_area_parana, study_area_parana$NAME_1 == "Paraná")
+study_area_parana |> plot()
+```
+
+### Download GCMs
+
+To obtain GCMs data, we recommend using `geodata` package, which links directly to the WorldClim 2.1 database. We have previously downloaded GCMs data, but an example code is supplied below.
+
+```{r download_gcms, eval=FALSE}
+gcms <- geodata:::.cmods
+for (r in c(10)) {
+  for ( g in gcms ) {
+    geodata::cmip6_world(model = g,
+                         ssp = "585",
+                         time = "2081-2100",
+                         var = "bioc",
+                         res = r,
+                         path = ""
+    )
+  }
+}
+```
+
+### Import GCMs
+
+The function `import_gcms` helps the user to import data in the correct way, which is a list of GCMs. Each element of the list is a `SpatRaster` from `terra` package, containing all variables. The list should be named with GCMs names to better plot results.
+
+```{r import_gcms10}
+tictoc::tic()
+s10 <- chooseGCM::import_gcms(path = "~/storage/WC_data/WC_data_all_gcms_10/", 
+                              gcm_names = c("ACCESS-CM2","ACCESS-ESM1-5",
+                                            "CanESM5-CanOE","CMCC-ESM2",
+                                            "CNRM-CM6-1-HR","CNRM-CM6-1",
+                                            "CNRM-ESM2-1","EC-Earth3-Veg",
+                                            "EC-Earth3-Veg-LR","FIO-ESM-2-0",
+                                            "GISS-E2-1-G","GISS-E2-1-H",
+                                            "HadGEM3-GC31-LL","INM-CM5-0",
+                                            "INM-CM4-8","IPSL-CM6A-LR",
+                                            "MIROC-ES2L","MIROC6",
+                                            "MPI-ESM1-2-LR","MPI-ESM1-2-HR",
+                                            "MRI-ESM2-0","UKESM1-0-LL"))
+tictoc::toc()
+```
+
+## Applying algorithms
+
+First we will set a seed to standardize randomic outputs.
+
+```{r seed}
+set.seed(1)
+```
+
+Now we will perform the Monte Carlo analysis to each type of algorithm and to different sets of variables.
+
+### Hierarchical Clustering selection
+
+```{r hclust_gcms10}
+tictoc::tic("Hierarchical Clustering Main Bioclimatics")
+mc_hclust_main <- montecarlo_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = study_area_parana, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "hclust")
+mc_hclust_main
+hclust_main <- mc_hclust_main$suggested_gcms$k5
+tictoc::toc()
+```
+
+```{r hclust_gcms5}
+tictoc::tic("Hierarchical Clustering Temperature Variables")
+mc_hclust_temp <- montecarlo_gcms(s10, 
+                             var_names = c("bio1", "bio2", "bio3", "bio4", "bio5", "bio6", "bio7", "bio8", "bio9", "bio10", "bio11"), 
+                             study_area = study_area_parana, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "hclust")
+mc_hclust_temp
+hclust_temp <- mc_hclust_temp$suggested_gcms$k5
+tictoc::toc()
+```
+
+```{r hclust_gcms25}
+tictoc::tic("Hierarchical Clustering Precipitation Variables")
+mc_hclust_prec <- montecarlo_gcms(s10, 
+                             var_names = c("bio12", "bio13", "bio14", "bio15", "bio16", "bio17", "bio18", "bio19"), 
+                             study_area = study_area_parana, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "hclust")
+mc_hclust_prec
+hclust_prec <- mc_hclust_prec$suggested_gcms$k5
+tictoc::toc()
+```
+
+```{r hclust_gcms30}
+tictoc::tic("Hierarchical Clustering All Variables")
+mc_hclust_all <- montecarlo_gcms(s10, 
+                             var_names = "all", 
+                             study_area = study_area_parana, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "hclust")
+mc_hclust_all
+hclust_all <- mc_hclust_all$suggested_gcms$k5
+tictoc::toc()
+```
+
+### Kmeans selection
+
+```{r kmeans_gcms10}
+tictoc::tic("K-means Clustering Main Variables")
+mc_kmeans_main <- montecarlo_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = study_area_parana, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "kmeans")
+mc_kmeans_main
+kmeans_main <- mc_kmeans_main$suggested_gcms$k5
+tictoc::toc()
+```
+
+```{r kmeans_gcms5}
+tictoc::tic("K-means Clustering Temperature Variables")
+mc_kmeans_temp <- montecarlo_gcms(s10, 
+                             var_names = c("bio1", "bio2", "bio3", "bio4", "bio5", "bio6", "bio7", "bio8", "bio9", "bio10", "bio11"), 
+                             study_area = study_area_parana, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "kmeans")
+mc_kmeans_temp
+kmeans_temp <- mc_kmeans_temp$suggested_gcms$k5
+tictoc::toc()
+```
+
+```{r kmeans_gcms25}
+tictoc::tic("K-means Clustering Precipitation Variables")
+mc_kmeans_prec <- montecarlo_gcms(s10, 
+                             var_names = c("bio12", "bio13", "bio14", "bio15", "bio16", "bio17", "bio18", "bio19"), 
+                             study_area = study_area_parana, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "kmeans")
+mc_kmeans_prec
+kmeans_prec <- mc_kmeans_prec$suggested_gcms$k5
+tictoc::toc()
+```
+
+```{r kmeans_gcms30}
+tictoc::tic("K-means Clustering All Variables")
+mc_kmeans_all <- montecarlo_gcms(s10, 
+                             var_names = "all", 
+                             study_area = study_area_parana, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "kmeans")
+mc_kmeans_all
+kmeans_all <- mc_kmeans_all$suggested_gcms$k5
+tictoc::toc()
+```
+
+### Closestdist selection
+
+```{r closestdist_gcms10}
+tictoc::tic("Closestdist Main Variables")
+mc_closestdist_main <- closestdist_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = study_area_parana, 
+                             method = "euclidean")
+mc_closestdist_main
+closestdist_main <- mc_closestdist_main$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist_gcms5}
+tictoc::tic("Closestdist Temperature Variables")
+mc_closestdist_temp <- closestdist_gcms(s10, 
+                             var_names = c("bio1", "bio2", "bio3", "bio4", "bio5", "bio6", "bio7", "bio8", "bio9", "bio10", "bio11"), 
+                             study_area = study_area_parana, 
+                             method = "euclidean")
+mc_closestdist_temp
+closestdist_temp <- mc_closestdist_temp$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist_gcms25}
+tictoc::tic("Closestdist Precipitation Variables")
+mc_closestdist_prec <- closestdist_gcms(s10, 
+                             var_names = c("bio12", "bio13", "bio14", "bio15", "bio16", "bio17", "bio18", "bio19"), 
+                             study_area = study_area_parana, 
+                             method = "euclidean")
+mc_closestdist_prec
+closestdist_prec <- mc_closestdist_prec$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist_gcms30}
+tictoc::tic("Closestdist All Variables")
+mc_closestdist_all <- closestdist_gcms(s10, 
+                             var_names = "all", 
+                             study_area = study_area_parana, 
+                             method = "euclidean")
+mc_closestdist_all
+closestdist_all <- mc_closestdist_all$suggested_gcms
+tictoc::toc()
+```
+
+### Closestdist selection with fixed k
+
+```{r closestdist3_gcms10}
+tictoc::tic("Closestdist3 Main Variables")
+mc_closestdist3_main <- closestdist_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = study_area_parana, 
+                             method = "euclidean",
+                             k = 3)
+mc_closestdist3_main
+closestdist3_main <- mc_closestdist3_main$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist3_gcms5}
+tictoc::tic("Closestdist3 Temperature Variables")
+mc_closestdist3_temp <- closestdist_gcms(s10, 
+                             var_names = c("bio1", "bio2", "bio3", "bio4", "bio5", "bio6", "bio7", "bio8", "bio9", "bio10", "bio11"), 
+                             study_area = study_area_parana, 
+                             method = "euclidean",
+                             k = 3)
+mc_closestdist3_temp
+closestdist3_temp <- mc_closestdist3_temp$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist3_gcms25}
+tictoc::tic("Closestdist3 Precipitation Variables")
+mc_closestdist3_prec <- closestdist_gcms(s10, 
+                             var_names = c("bio12", "bio13", "bio14", "bio15", "bio16", "bio17", "bio18", "bio19"), 
+                             study_area = study_area_parana, 
+                             method = "euclidean",
+                             k = 3)
+mc_closestdist3_prec
+closestdist3_prec <- mc_closestdist3_prec$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist3_gcms30}
+tictoc::tic("Closestdist3 All Variables")
+mc_closestdist3_all <- closestdist_gcms(s10, 
+                             var_names = "all", 
+                             study_area = study_area_parana, 
+                             method = "euclidean",
+                             k = 3)
+mc_closestdist3_all
+closestdist3_all <- mc_closestdist3_all$suggested_gcms
+tictoc::toc()
+```
+
+## Results
+
+As we expected, the change in variables affected the outputs in every algorithm implemented. It is possible to see that in the following chunks it was rare a GCM to be selected more than 2 times in the same algorithm.
+
+```{r result_hclust}
+table(c(hclust_main, hclust_temp, hclust_prec, hclust_all))
+```
+
+```{r result_kmeans}
+table(c(kmeans_main, kmeans_temp, kmeans_prec, kmeans_all))
+```
+
+```{r result_closestdist}
+table(c(closestdist_main, closestdist_temp, closestdist_prec, closestdist_all))
+```
+
+```{r result_closestdist3}
+table(c(closestdist3_main, closestdist3_temp, closestdist3_prec, closestdist3_all))
+```

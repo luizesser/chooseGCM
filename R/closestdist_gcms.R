@@ -53,10 +53,11 @@ closestdist_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = N
     }
   }
   checkmate::assertCharacter(var_names, unique = TRUE, any.missing = FALSE)
-  checkmate::assertChoice(method, c("euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski", "pearson", "spearman", "kendall"), null.ok = TRUE)
+  checkmate::assertChoice(method, c("euclidean", "maximum", "manhattan", "canberra", "binary",
+                                    "minkowski", "pearson", "spearman", "kendall"), null.ok = TRUE)
   checkmate::assertCount(k, positive = TRUE, null.ok = TRUE)
-  checkmate::assertLogical(minimize_difference, len=1, null.ok=FALSE, any.missing = FALSE, all.missing = FALSE)
-  checkmate::assertNumeric(max_difference, lower=0, upper=1, len = 1, any.missing = FALSE, all.missing = FALSE, null.ok = T)
+  checkmate::assertLogical(minimize_difference, len=1, null.ok = FALSE, any.missing = FALSE, all.missing = FALSE)
+  checkmate::assertNumeric(max_difference, lower=0, upper=1, len = 1, any.missing = FALSE, all.missing = FALSE, null.ok = TRUE)
 
   dmat <- chooseGCM::dist_gcms(s=s, var_names=var_names, method=method, study_area=study_area, scale = scale)$distances
   dmat <- as.matrix(dmat)

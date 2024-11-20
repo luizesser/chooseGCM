@@ -21,7 +21,7 @@
 #' var_names <- c("bio_1", "bio_12")
 #' s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_names)
 #' study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:4326")
-#' t <- transform_gcms(s, var_names, study_area)
+#' transform_gcms(s, var_names, study_area)
 #'
 #' @import checkmate
 #' @importFrom terra crs project crop mask ext rast res
@@ -63,7 +63,7 @@ transform_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NUL
   }
 
   checkmate::assertList(s, types = "SpatRaster")
-  checkmate::assertCharacter(var_names, unique = T, any.missing = F)
+  checkmate::assertCharacter(var_names, unique = TRUE, any.missing = FALSE)
   checkmate::assertSubset(var_names, c(names(s[[1]]), "all"))
   if(!class(study_area) %in% c("SpatVector", "SpatExtent")) {
     checkmate::assertClass(study_area, classes = c("SpatVector"), null.ok = TRUE)
@@ -113,7 +113,7 @@ transform_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NUL
     }
     x <- as.data.frame(x)
     return(x)
-  }, USE.NAMES = T, simplify = F)
+  }, USE.NAMES = TRUE, simplify = FALSE)
 
   test <- lapply(s2, nrow) |> unlist() |> unique() |> length() != 1
 
@@ -140,7 +140,7 @@ transform_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NUL
       }
       x <- as.data.frame(x)
       return(x)
-    }, USE.NAMES = T, simplify = F)
+    }, USE.NAMES = TRUE, simplify = FALSE)
 
   }
 

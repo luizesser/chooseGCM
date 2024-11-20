@@ -31,7 +31,7 @@
 #' @importFrom graphics image
 #'
 #' @export
-env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, highlight = "sum", resolution = 25, title=NULL) {
+env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, highlight = "sum", resolution = 25, title = NULL) {
   if(is.list(s)){
     if(methods::is(s[[1]], "stars")){
       s <- sapply(s,
@@ -67,7 +67,7 @@ env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, hig
       checkmate::assertList(s, types = "SpatRaster")
     }
   }
-  checkmate::assertCharacter(var_names, unique = T, any.missing = F)
+  checkmate::assertCharacter(var_names, unique = TRUE, any.missing = FALSE)
   checkmate::assertSubset(var_names, c(names(s[[1]]), "all"))
 
   if (!is.null(highlight) & !all(highlight %in% c("sum", names(s)))) {
@@ -93,7 +93,7 @@ env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, hig
       x <- terra::mask(terra::crop(x, study_area), study_area)
     }
     return(x)
-  }, USE.NAMES = T, simplify = F)
+  }, USE.NAMES = TRUE, simplify = FALSE)
 
   createGrid <- function(x, y, x_bins, y_bins, resolution, sum = FALSE) {
     x <- stats::na.omit(x)
@@ -113,19 +113,19 @@ env_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, hig
 
   x_bins <- seq(
     min(unlist(lapply(s2, function(x) {
-      min(x[[var_names[1]]][], na.rm = T)
+      min(x[[var_names[1]]][], na.rm = TRUE)
     }))),
     max(unlist(lapply(s2, function(x) {
-      max(x[[var_names[1]]][], na.rm = T)
+      max(x[[var_names[1]]][], na.rm = TRUE)
     }))),
     length.out = resolution
   )
   y_bins <- seq(
     min(unlist(lapply(s2, function(x) {
-      min(x[[var_names[2]]][], na.rm = T)
+      min(x[[var_names[2]]][], na.rm = TRUE)
     }))),
     max(unlist(lapply(s2, function(x) {
-      max(x[[var_names[2]]][], na.rm = T)
+      max(x[[var_names[2]]][], na.rm = TRUE)
     }))),
     length.out = resolution
   )

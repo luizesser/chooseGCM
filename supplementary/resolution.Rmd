@@ -1,0 +1,382 @@
+---
+author: "Luíz Fernando Esser"
+date: "2024-11-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Is chooseGCM affected by resolution?
+
+This Rmarkdown is part of the following article:
+
+Esser, L.F., Bailly, D., Lima, M.R., Ré, R. 2024. chooseGCM: a toolkit to select General Circulation Models in R. *In prep*.
+
+## Introduction
+
+chooseGCM is a solution for GCMs selection in Climate Change research. We built this Rmarkdown as a way to test the properties of the methods underlying chooseGCM. Results from each function will be presented side by side with changing resolution, allowing better comparison. Here, we have already downloaded GCMs data.
+
+This Rmarkdown will apply different algorithms implemented in chooseGCM in different resolutions. The aim is to understand if resolution changes will affect the GCMs subset selected by algorithms. We expect that results will not change with resolution, since the increase in resolution is just an interpolation of coarser resolution. As a 30 arcsec resolution will be used, we considered just a local scale due to computational and time limitations. We also restricted the variables used to bio1 and bio12 to restrict variation included with variables selection (see the proper Rmarkdown on the effects of variable selection for more information).
+
+```{r libs, message=F, warning=F}
+# Install and open CRAN libraries
+for(x in c("devtools", "geodata", "terra", "tictoc") ){
+  if (!require(x, character.only = TRUE)) {
+      install.packages(x, dependencies = TRUE)
+      library(x, character.only = TRUE)
+  }
+}
+
+# Install and open chooseGCM
+if (!require("chooseGCM", character.only = TRUE)) {
+    devtools::install_github("luizesser/chooseGCM")
+    library("chooseGCM", character.only = TRUE)
+}
+
+# Install and open caretSDM
+if (!require("caretSDM", character.only = TRUE)) {
+    devtools::install_github("luizesser/caretSDM")
+    library("caretSDM", character.only = TRUE)
+}
+```
+
+## Preparing data
+
+### Import study_area
+
+For the first part of this Rmarkdown, we will import data from study area.
+
+```{r study_area_parana}
+study_area_parana <- geodata::gadm(country = "Brazil", returnclass = "sv", path="input_data/")
+study_area_parana <- subset(study_area_parana, study_area_parana$NAME_1 == "Paraná")
+study_area_parana |> plot()
+```
+
+### Download GCMs
+
+To obtain GCMs data, we recommend using `geodata` package, which links directly to the WorldClim 2.1 database. We have previously downloaded GCMs data, but an example code is supplied below.
+
+```{r download_gcms, eval=FALSE}
+gcms <- geodata:::.cmods
+for (r in c(10, 5, 2.5)) {
+  for ( g in gcms ) {
+    geodata::cmip6_world(model = g,
+                         ssp = "585",
+                         time = "2081-2100",
+                         var = "bioc",
+                         res = r,
+                         path = ""
+    )
+  }
+}
+```
+
+### Import GCMs
+
+The function `import_gcms` helps the user to import data in the correct way, which is a list of GCMs. Each element of the list is a `SpatRaster` from `terra` package, containing all variables. The list should be named with GCMs names to better plot results.
+
+```{r import_gcms10}
+tictoc::tic()
+s10 <- chooseGCM::import_gcms(path = "~/storage/WC_data/WC_data_all_gcms_10/", 
+                              gcm_names = c("ACCESS-CM2","ACCESS-ESM1-5",
+                                            "CanESM5-CanOE","CMCC-ESM2",
+                                            "CNRM-CM6-1-HR","CNRM-CM6-1",
+                                            "CNRM-ESM2-1","EC-Earth3-Veg",
+                                            "EC-Earth3-Veg-LR","FIO-ESM-2-0",
+                                            "GISS-E2-1-G","GISS-E2-1-H",
+                                            "HadGEM3-GC31-LL","INM-CM5-0",
+                                            "INM-CM4-8","IPSL-CM6A-LR",
+                                            "MIROC-ES2L","MIROC6",
+                                            "MPI-ESM1-2-LR","MPI-ESM1-2-HR",
+                                            "MRI-ESM2-0","UKESM1-0-LL"))
+tictoc::toc()
+```
+
+```{r import_gcms5}
+tictoc::tic()
+s5 <- chooseGCM::import_gcms(path = "~/storage/WC_data/WC_data_all_gcms_5", 
+                              gcm_names = c("ACCESS-CM2","ACCESS-ESM1-5",
+                                            "CanESM5-CanOE","CMCC-ESM2",
+                                            "CNRM-CM6-1-HR","CNRM-CM6-1",
+                                            "CNRM-ESM2-1","EC-Earth3-Veg",
+                                            "EC-Earth3-Veg-LR","FIO-ESM-2-0",
+                                            "GISS-E2-1-G","GISS-E2-1-H",
+                                            "HadGEM3-GC31-LL","INM-CM5-0",
+                                            "INM-CM4-8","IPSL-CM6A-LR",
+                                            "MIROC-ES2L","MIROC6",
+                                            "MPI-ESM1-2-LR","MPI-ESM1-2-HR",
+                                            "MRI-ESM2-0","UKESM1-0-LL"))
+tictoc::toc()
+```
+
+```{r import_gcms25}
+tictoc::tic()
+s25 <- chooseGCM::import_gcms(path = "~/storage/WC_data/WC_data_all_gcms_25", 
+                              gcm_names = c("ACCESS-CM2","ACCESS-ESM1-5",
+                                            "CanESM5-CanOE","CMCC-ESM2",
+                                            "CNRM-CM6-1-HR","CNRM-CM6-1",
+                                            "CNRM-ESM2-1","EC-Earth3-Veg",
+                                            "EC-Earth3-Veg-LR","FIO-ESM-2-0",
+                                            "GISS-E2-1-G","GISS-E2-1-H",
+                                            "HadGEM3-GC31-LL","INM-CM5-0",
+                                            "INM-CM4-8","IPSL-CM6A-LR",
+                                            "MIROC-ES2L","MIROC6",
+                                            "MPI-ESM1-2-LR","MPI-ESM1-2-HR",
+                                            "MRI-ESM2-0","UKESM1-0-LL"))
+tictoc::toc()
+```
+
+```{r import_gcms30}
+tictoc::tic()
+s30 <- chooseGCM::import_gcms(path = "~/storage/WC_data/WC_data_all_gcms_30", 
+                              gcm_names = c("ACCESS-CM2","ACCESS-ESM1-5",
+                                            "CanESM5-CanOE","CMCC-ESM2",
+                                            "CNRM-CM6-1-HR","CNRM-CM6-1",
+                                            "CNRM-ESM2-1","EC-Earth3-Veg",
+                                            "EC-Earth3-Veg-LR","FIO-ESM-2-0",
+                                            "GISS-E2-1-G","GISS-E2-1-H",
+                                            "HadGEM3-GC31-LL","INM-CM5-0",
+                                            "INM-CM4-8","IPSL-CM6A-LR",
+                                            "MIROC-ES2L","MIROC6",
+                                            "MPI-ESM1-2-LR","MPI-ESM1-2-HR",
+                                            "MRI-ESM2-0","UKESM1-0-LL"))
+tictoc::toc()
+```
+
+Importing GCMs data into R had an marginal difference in time, despite the big difference in size from different files.
+
+## Applying algorithms
+
+### Hierarchical Clustering selection
+
+```{r hclust_gcms10}
+tictoc::tic("Hierarchical Clustering subset s10")
+mc_hclust10 <- montecarlo_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = study_area_parana, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "hclust")
+mc_hclust10
+hclust_subset10 <- mc_hclust10$suggested_gcms$k5
+tictoc::toc()
+```
+
+```{r hclust_gcms5}
+tictoc::tic("Hierarchical Clustering subset s5")
+mc_hclust5 <- montecarlo_gcms(s5, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = study_area_parana, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "hclust")
+mc_hclust5
+hclust_subset5 <- mc_hclust5$suggested_gcms$k5
+tictoc::toc()
+```
+
+```{r hclust_gcms25}
+tictoc::tic("Hierarchical Clustering subset s25")
+mc_hclust25 <- montecarlo_gcms(s25, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = study_area_parana, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "hclust")
+mc_hclust25
+hclust_subset25 <- mc_hclust25$suggested_gcms$k5
+tictoc::toc()
+```
+
+```{r hclust_gcms30}
+tictoc::tic("Hierarchical Clustering subset s30")
+mc_hclust30 <- montecarlo_gcms(s30, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = study_area_parana, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "hclust")
+mc_hclust30
+hclust_subset30 <- mc_hclust30$suggested_gcms$k5
+tictoc::toc()
+```
+
+### Kmeans selection
+
+```{r kmeans_gcms10}
+tictoc::tic("K-means Clustering subset s10")
+mc_kmeans10 <- montecarlo_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = study_area_parana, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "kmeans")
+mc_kmeans10
+kmeans_subset10 <- mc_kmeans10$suggested_gcms$k5
+tictoc::toc()
+```
+
+```{r kmeans_gcms5}
+tictoc::tic("K-means Clustering subset s5")
+mc_kmeans5 <- montecarlo_gcms(s5, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = study_area_parana, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "kmeans")
+mc_kmeans5
+kmeans_subset5 <- mc_kmeans5$suggested_gcms$k5
+tictoc::toc()
+```
+
+```{r kmeans_gcms25}
+tictoc::tic("K-means Clustering subset s25")
+mc_kmeans25 <- montecarlo_gcms(s25, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = study_area_parana, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "kmeans")
+mc_kmeans25
+kmeans_subset25 <- mc_kmeans25$suggested_gcms$k5
+tictoc::toc()
+```
+
+```{r kmeans_gcms30}
+tictoc::tic("K-means Clustering subset s30")
+mc_kmeans30 <- montecarlo_gcms(s30, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = study_area_parana, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "kmeans")
+mc_kmeans30
+kmeans_subset30 <- mc_kmeans30$suggested_gcms$k5
+tictoc::toc()
+```
+
+### Closestdist selection
+
+```{r closestdist_gcms10}
+tictoc::tic("Closestdist subset s10")
+mc_closestdist10 <- closestdist_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = study_area_parana, 
+                             method = "euclidean")
+mc_closestdist10
+closestdist_subset10 <- mc_closestdist10$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist_gcms5}
+tictoc::tic("Closestdist subset s5")
+mc_closestdist5 <- closestdist_gcms(s5, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = study_area_parana, 
+                             method = "euclidean")
+mc_closestdist5
+closestdist_subset5 <- mc_closestdist5$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist_gcms25}
+tictoc::tic("Closestdist subset s25")
+mc_closestdist25 <- closestdist_gcms(s25, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = study_area_parana, 
+                             method = "euclidean")
+mc_closestdist25
+closestdist_subset25 <- mc_closestdist25$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist_gcms30}
+tictoc::tic("Closestdist subset s30")
+mc_closestdist30 <- closestdist_gcms(s30, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = study_area_parana, 
+                             method = "euclidean")
+mc_closestdist30
+closestdist_subset30 <- mc_closestdist30$suggested_gcms
+tictoc::toc()
+```
+
+### Closestdist selection with fixed k
+
+```{r closestdist3_gcms10}
+tictoc::tic("Closestdist3 subset s10")
+mc_closestdist310 <- closestdist_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = study_area_parana, 
+                             method = "euclidean",
+                             k = 3)
+mc_closestdist310
+closestdist3_subset10 <- mc_closestdist310$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist3_gcms5}
+tictoc::tic("Closestdist3 subset s5")
+mc_closestdist35 <- closestdist_gcms(s5, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = study_area_parana, 
+                             method = "euclidean",
+                             k = 3)
+mc_closestdist35
+closestdist3_subset5 <- mc_closestdist35$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist3_gcms25}
+tictoc::tic("Closestdist3 subset s25")
+mc_closestdist325 <- closestdist_gcms(s25, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = study_area_parana, 
+                             method = "euclidean",
+                             k = 3)
+mc_closestdist325
+closestdist3_subset25 <- mc_closestdist325$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist3_gcms30}
+tictoc::tic("Closestdist3 subset s30")
+mc_closestdist330 <- closestdist_gcms(s30, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = study_area_parana, 
+                             method = "euclidean",
+                             k = 3)
+mc_closestdist330
+closestdist3_subset30 <- mc_closestdist330$suggested_gcms
+tictoc::toc()
+```
+
+## Results
+
+Contrary to our expectations, the change in resolution affected the outputs in every algorithm implemented. The only algorithm with a more stable result was the Kmeans Clustering.
+
+```{r result_hclust}
+table(c(hclust_subset10, hclust_subset5, hclust_subset25, hclust_subset30))
+```
+
+```{r result_kmeans}
+table(c(kmeans_subset10, kmeans_subset5, kmeans_subset25, kmeans_subset30))
+```
+
+```{r result_closestdist}
+table(c(closestdist_subset10, closestdist_subset5, closestdist_subset25, closestdist_subset30))
+```
+
+```{r result_closestdist3}
+table(c(closestdist3_subset10, closestdist3_subset5, closestdist3_subset25, closestdist3_subset30))
+```

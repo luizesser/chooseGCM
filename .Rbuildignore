@@ -9,3 +9,11 @@
 ^\.github$
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$
+^supplementary/chooseGCM_SDM\.html$
+^supplementary/chooseGCM_SDM\.Rmd$
+^supplementary/incresing_area\.html$
+^supplementary/incresing_area\.Rmd$
+^supplementary/resolution\.html$
+^supplementary/resolution\.Rmd$
+^supplementary/variable_selection\.html$
+^supplementary/variable_selection\.Rmd$

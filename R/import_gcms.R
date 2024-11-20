@@ -27,15 +27,15 @@ import_gcms <- function(path = "input_data/WorldClim_data_gcms", extension = ".t
   checkmate::assertCharacter(path, len = 1)
   checkmate::assertCharacter(extension, len = 1)
   checkmate::assertLogical(recursive)
-  checkmate::assertCharacter(gcm_names, null.ok = T)
+  checkmate::assertCharacter(gcm_names, null.ok = TRUE)
   checkmate::assertDirectoryExists(path)
-  checkmate::assertCharacter(var_names, null.ok = T)
+  checkmate::assertCharacter(var_names, null.ok = TRUE)
 
   if (is.null(var_names)) {
     var_names <- paste0("bio", 1:19)
   }
 
-  l <- list.files(path, pattern = extension, full.names = T, recursive = recursive)
+  l <- list.files(path, pattern = extension, full.names = TRUE, recursive = recursive)
   if (length(l) == 0) {
     stop("Could not find any file matching the parameters!")
   }
@@ -46,7 +46,7 @@ import_gcms <- function(path = "input_data/WorldClim_data_gcms", extension = ".t
     return(s)
   })
   if (is.null(gcm_names)) {
-    gcm_names <- gsub(extension, "", list.files(path, pattern = extension, full.names = F, recursive = recursive))
+    gcm_names <- gsub(extension, "", list.files(path, pattern = extension, full.names = FALSE, recursive = recursive))
   }
   names(s) <- sort(gcm_names)
   return(s)

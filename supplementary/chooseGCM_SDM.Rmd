@@ -1,0 +1,472 @@
+---
+author: "Luíz Fernando Esser"
+date: "2024-10-25"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# The chooseGCM contribution for Species Distribution Modeling
+
+This Rmarkdown is part of the following article:
+
+Esser, L.F., Bailly, D., Lima, M.R., Ré, R. 2024. chooseGCM: a toolkit to select General Circulation Models in R. *In prep*.
+
+## Introduction
+
+One source of variability in climate change assessments is the choice of General Circulation Models (GCMs). There is a lack of consensus on how to properly choose GCMs for a given study. An ideal approach would be to encompass all GCMs, but this is exceedingly costly in terms of computational requirements. `chooseGCM` is a solution for GCMs selection in climate change research. It proposes a solution by supplying different algorithms, metrics and functions to deal with GCMs. We built this Rmarkdown to showcase the impact of the package on Species Distribution Modeling (SDMs), a field largely affected by GCM selection. Here we use the [`caretSDM`](https://github.com/luizesser/caretSDM) package to build SDMs. At the end, we present the processing time to achieve each result and their correlation.
+
+```{r libs, message=F, warning=F}
+# Install and open CRAN libraries
+for(x in c("devtools", "geodata", "terra", "tictoc") ){
+  if (!require(x, character.only = TRUE)) {
+      install.packages(x, dependencies = TRUE)
+      library(x, character.only = TRUE)
+  }
+}
+
+# Install and open chooseGCM
+if (!require("chooseGCM", character.only = TRUE)) {
+    devtools::install_github("luizesser/chooseGCM")
+    library("chooseGCM", character.only = TRUE)
+}
+
+# Install and open caretSDM
+if (!require("caretSDM", character.only = TRUE)) {
+    devtools::install_github("luizesser/caretSDM")
+    library("caretSDM", character.only = TRUE)
+}
+```
+
+## Methods
+
+To make methods more reproducible, we set a seed, avoiding any random effect that can arise in the modeling process.
+
+```{r seed}
+set.seed(1)
+```
+
+### GCMs data
+
+To predict the impact of climate change, we first downloaded the WorldClim 2.1 [(Fick & Hijmans, 2017)](https://www.zotero.org/google-docs/?tDbuZx) data to current scenario and all available GCMs, reducing all other sources of variation by obtaining raster stacks only relative to the SSP5-8.5/2090 (10 arcmin resolution). This SSP is especially useful because it presents extreme scenarios, where variation between GCMs is higher [(IPCC, 2022)](https://www.zotero.org/google-docs/?Qtn0z9). Then, we imported GCM data to R by applying the function `import_gcms`, which returns a `list` of `SpatRaster`s, each `SpatRaster` being a GCM. This structure will be used as input to all the other functions in the `chooseGCM` package.
+
+```{r download_data, eval=F}
+# Download current data
+geodata::worldclim_global("bio", 10, path="~/storage/WC_data/current")
+
+# Download GCMs data
+gcms <- c("ACCESS-CM2", "ACCESS-ESM1-5", "CanESM5-CanOE", "CMCC-ESM2", 
+          "CNRM-CM6-1", "CNRM-CM6-1-HR", "CNRM-ESM2-1", "EC-Earth3-Veg", 
+          "EC-Earth3-Veg-LR", "FIO-ESM-2-0", "GISS-E2-1-G", "GISS-E2-1-H", 
+          "HadGEM3-GC31-LL", "INM-CM4-8", "INM-CM5-0", "IPSL-CM6A-LR", 
+          "MIROC-ES2L", "MIROC6", "MPI-ESM1-2-HR", "MPI-ESM1-2-LR", 
+          "MRI-ESM2-0", "UKESM1-0-LL")
+
+for ( g in gcms ) {
+  geodata::cmip6_world(model = g,
+                       ssp = "585",
+                       time = "2081-2100",
+                       var = "bioc",
+                       res = 10,
+                       path = "~/storage/WC_data/future"
+  )
+}
+```
+
+```{r import_gcms}
+# Import GCMs
+s <- chooseGCM::import_gcms(path = "~/storage/WC_data/future/climate/wc2.1_10m", 
+                            gcm_names = c("ACCESS-CM2", "ACCESS-ESM1-5", "CanESM5-CanOE",
+                                          "CMCC-ESM2", "CNRM-CM6-1", "CNRM-CM6-1-HR", 
+                                          "CNRM-ESM2-1", "EC-Earth3-Veg", "EC-Earth3-Veg-LR",
+                                          "FIO-ESM-2-0", "GISS-E2-1-G", "GISS-E2-1-H",
+                                          "HadGEM3-GC31-LL", "INM-CM4-8", "INM-CM5-0", 
+                                          "IPSL-CM6A-LR", "MIROC-ES2L", "MIROC6", 
+                                          "MPI-ESM1-2-HR", "MPI-ESM1-2-LR", "MRI-ESM2-0",
+                                          "UKESM1-0-LL"))
+```
+
+### Species data and study area
+
+For this demonstration, we will use *Araucaria angustifolia*, the brazilian pine, as a study case. This flagship species is widely modeled and know, and is a key species for the Atlantic Rainforest biodiversity hotspot. Species records were obtained from GBIF and cleaned by excluding records from outside the native region and NAs. This set of records was then used to build a shape of accessible area by merging buffers of 500 km around each record.
+
+```{r GBIF_data, message=F, warning=F}
+occ_data <- geodata::sp_occurrence("Araucaria", "angustifolia")
+occ_data <- occ_data |>
+  dplyr::filter(lon >= -64) |> 
+  dplyr::filter(lon <= -33) |> 
+  dplyr::filter(lat <= -19.5) |> 
+  dplyr::filter(lat >= -33)
+
+study_area_Araucaria <- na.omit(occ_data[,c("lon", "lat")]) |>
+  sf::st_as_sf(coords= c(1,2), crs = 4326) |> 
+  sf::st_buffer(dist = 500000) |> 
+  sf::st_union()
+plot(study_area_Araucaria, axes=T)
+```
+
+Using the `caretSDM` package, we transformed the accessible area shape into a 20 km regular grid projected in the coordinate reference system (CRS) 6933, which is the most suitable metric CRS for Brazil. This CRS keeps the area of each cell equal all along the study area, avoiding meridian convergence that could influence area results. We then added predictors data (WorldClim's current data previously downloaded) to the grid by averaging the values falling in the same cell. Finally, we excluded "quarter" variables to avoid statistical biases.
+
+```{r sdm_area}
+tictoc::tic("Building sdm_area object")
+sa <- caretSDM::sdm_area(sf::st_as_sf(study_area_Araucaria), 
+                            cell_size = 20000, 
+                            crs = 6933, 
+                            gdal = T) |> 
+  caretSDM::add_predictors(stars::read_stars(list.files("~/storage/WC_data/current/climate/wc2.1_10m/", 
+                                              full.names = T), 
+                                   along = "band", 
+                                   normalize_path = F)) |> 
+  caretSDM::set_predictor_names(c("bio1",  "bio2",  "bio3",  "bio4",  "bio5", 
+                                  "bio6",  "bio7",  "bio8",  "bio9",  "bio10", 
+                                  "bio11", "bio12", "bio13", "bio14", "bio15",
+                                  "bio16", "bio17", "bio18", "bio19"))  |>
+  caretSDM::select_predictors(c("bio1", "bio2",  "bio3",  "bio4",  "bio5", "bio6", 
+                                "bio7", "bio12", "bio13", "bio14", "bio15"))
+sa
+tictoc::toc()
+```
+
+To avoid the use of multiple records with the same environmental information, we included species records in the grid, filtering one record per cell. When using `caretSDM`, we inform the CRS of coordinates and it transforms internally the records to the grid's CRS.
+
+```{r occurrences_sdm}
+# Merge the grid data with occurrences data
+tictoc::tic("Building occurrences_sdm object")
+oc <- caretSDM::occurrences_sdm(na.omit(occ_data[c("species", "lon", "lat")]), crs = 4326) |> 
+  caretSDM::join_area(sa)
+oc
+tictoc::toc()
+```
+
+Data cleaning routine excluded records from NAs, coordinates in capitals, countries' centroids, duplicated coordinates, identical latitude/longitude, invalid coordinates, non-terrestrial coordinates, and records falling within the same grid cell. Coordinates from scientific institutions were kept since there are multiple important institutions in the species native region and accessible area.
+
+```{r data_clean}
+# Data cleaning routine
+tictoc::tic("Data cleaning")
+i <- caretSDM::input_sdm(oc, sa) |> 
+     caretSDM::data_clean(institutions = FALSE)
+i
+tictoc::toc()
+```
+
+The final number of records for the species was `r as.numeric(caretSDM::n_records(i))`.
+
+### Variable selection routine
+
+Variable selection was performed in WorldClim 2.1 bioclimatic variables by previously excluding 'quarter' variables to avoid statistical biases ([Booth, 2022](https://onlinelibrary.wiley.com/doi/pdfdirect/10.1111/aec.13234)). We also performed a variance inflation factor (VIF) selection routine where the variable with higher VIF in the variable pair with the highest Pearson correlation is excluded until all correlations are lower than 0.5.
+
+```{r vif_predictors}
+# Variable selection routine
+tictoc::tic("Variable selection")
+i <- caretSDM::vif_predictors(i, th = 0.5)
+i
+tictoc::toc()
+```
+
+Variables remaining were bio3 (isothermality), bio4 (temperature seasonality), bio5 (max temperature of warmest month), bio12 (annual precipitation) and bio15 (precipitation seasonality).
+
+### Pseudoabsence selection
+
+We obtained 10 sets of pseudoabsences from outside a bioclimatic envelope built with the selected variables and projected in the accessible area. The number of pseudoabsences was always equal to the number of presences to avoid imbalance problems ([Japkowicz & Stephen, 2002](https://www.researchgate.net/publication/220571380_The_Class_Imbalance_Problem_A_Systematic_Study)).
+
+```{r pseudoabsences}
+# Pseudoabsences selection
+tictoc::tic("Pseudoabsence selection")
+i <- caretSDM::pseudoabsences(i, n_set = 10, method = "bioclim", variables_selected = "vif")
+i
+tictoc::toc()
+```
+
+### Modeling framework
+
+As the aim of this modeling is to highlight the effect of GCMs and the GCMs selection, we used only one machine learning algorithm to build models: the naive bayes, which is a simple and quick algorithm. If we had a proper modeling hypothesis to test we should probably use more algorithms covering a variety of modeling approaches. We searched for optimal hyperparameters using a grid-based approach with 10 different combinations. To validate models, we used a cross-validation approach with 4-folds. In each fold, the area under the receiver operating characteristic curve was calculated (AUC).
+
+```{r train_sdm1, include=F}
+# Modeling framework
+tictoc::tic("Modeling framework")
+suppressWarnings(
+  i <- caretSDM::train_sdm(i, 
+                           algo = c("naive_bayes"), 
+                           crtl = caret::trainControl(method = "repeatedcv", 
+                                          number = 4, 
+                                          repeats = 10, 
+                                          search = "grid",
+                                          classProbs = TRUE, 
+                                          returnResamp = "all", 
+                                          summaryFunction = caretSDM::summary_sdm, 
+                                          savePredictions = "all"),
+                            variables_selected = "vif")
+)
+i
+x <- tictoc::toc()
+```
+
+```{r train_sdm2, eval=F}
+# Modeling framework
+tictoc::tic("Modeling framework")
+suppressWarnings(
+  i <- caretSDM::train_sdm(i, 
+                           algo = c("naive_bayes"), 
+                           crtl = caret::trainControl(method = "repeatedcv", 
+                                          number = 4, 
+                                          repeats = 10, 
+                                          search = "grid",
+                                          classProbs = TRUE, 
+                                          returnResamp = "all", 
+                                          summaryFunction = caretSDM::summary_sdm, 
+                                          savePredictions = "all"),
+                            variables_selected = "vif")
+)
+i
+tictoc::toc()
+```
+
+```{r, echo=F}
+i
+x$callback_msg
+```
+
+### GCMs selection
+
+We selected four sets of GCMs through `chooseGCM`: (1) the baseline, which is a global set including all GCMs; (2) the smallest subset of GCMs selected using a hierarchical clustering with mean distance closer to the global mean distance; (3) the smallest subset of GCMs selected using the K-means clustering algorithm with mean distance closer to the global mean distance; (4) the subset of GCMs automatically provided by Closestdist algorithm. After some pre-analysis, both subsets generated by the hierarchical and K-means clustering returned a subset of size three. In this sense, we also considered important to analize two more sets: (5) a random set, which includes three randomly selected GCMs; (6) the subset of GCMs selected using the Closestdist algorithm with size equals three.
+
+#### Global set
+
+```{r all_gcms}
+# All GCMs - the baseline we are trying to replicate
+tictoc::tic("All GCMs")
+all_gcms <- c("ACCESS-CM2", "ACCESS-ESM1-5", "CanESM5-CanOE", "CMCC-ESM2", 
+              "CNRM-CM6-1", "CNRM-CM6-1-HR", "CNRM-ESM2-1", 
+              "EC-Earth3-Veg", "EC-Earth3-Veg-LR", "FIO-ESM-2-0",
+              "GISS-E2-1-G", "GISS-E2-1-H", "HadGEM3-GC31-LL",
+              "INM-CM4-8", "INM-CM5-0", "IPSL-CM6A-LR", 
+              "MIROC-ES2L", "MIROC6", "MPI-ESM1-2-HR", 
+              "MPI-ESM1-2-LR", "MRI-ESM2-0", "UKESM1-0-LL")
+tictoc::toc()
+```
+
+#### Random set
+
+```{r random_subset}
+# Random subset
+tictoc::tic("Random subset")
+random_subset <- sample(all_gcms, 3)
+random_subset
+tictoc::toc()
+```
+
+#### Hclust set
+
+```{r hclust_gcms}
+# Hierarchical Clustering subset
+tictoc::tic("Hierarchical Clustering subset")
+mc_hclust <- montecarlo_gcms(s, 
+                             var_names = caretSDM::selected_variables(i), 
+                             study_area = study_area_Araucaria, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "hclust")
+mc_hclust
+hclust_subset <- mc_hclust$suggested_gcms$k3
+tictoc::toc()
+```
+
+#### Kmeans set
+
+```{r kmeans_subset}
+# K-means Clustering subset
+tictoc::tic("K-means Clustering subset")
+mc_kmeans <- montecarlo_gcms(s, 
+                             var_names = caretSDM::selected_variables(i), 
+                             study_area = study_area_Araucaria, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "kmeans")
+mc_kmeans 
+kmeans_subset <- mc_kmeans$suggested_gcms$k3
+tictoc::toc()
+```
+
+#### Closestdist set
+
+```{r closestdist_subset}
+# Closestdist algorithm subset
+tictoc::tic("Closestdist algorithm subset")
+mc_close <- closestdist_gcms(s, 
+                             var_names = caretSDM::selected_variables(i), 
+                             study_area = study_area_Araucaria, 
+                             method = "euclidean")
+mc_close
+closestdist_subset <- mc_close$suggested_gcms
+tictoc::toc()
+```
+
+#### Closestdist3 set
+
+```{r closestdist_subset3}
+# Closestdist algorithm subset
+tictoc::tic("Closestdist algorithm subset")
+mc_close3 <- montecarlo_gcms(s, 
+                             var_names = caretSDM::selected_variables(i), 
+                             study_area = study_area_Araucaria, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "closestdist")
+mc_close3
+closestdist_subset3 <- mc_close3$suggested_gcms$k3
+tictoc::toc()
+```
+
+```{r mean_gcm}
+# Initialize an empty list to store the mean layers
+mean_layers <- list()
+
+# Loop through each layer index
+for (j in caretSDM::get_predictor_names(i)) {
+  # Extract the i-th layer from each SpatRaster in the list
+  layer_stack <- lapply(s, function(x) x[[j]])
+  
+  # Calculate the mean of the extracted layers
+  mean_layers[[j]] <- mean(rast(layer_stack))
+}
+
+# Combine the mean layers into a single SpatRaster object
+mean_gcm <- rast(mean_layers)
+
+# Transform to stars to use in caretSDM
+mean_gcm <- stars::st_as_stars(mean_gcm)
+names(mean_gcm) <- "mean_gcm"
+```
+
+### Building Projections
+
+Model projections were performed to each GCM set built in the previous section. We projected models to future scenarios of climate change, encompassing an extreme shared socioeconomic pathway (SSP5-8.5) to the year 2090 to the given subsets of GCMs selected using `chooseGCM`. We calculated the mean of the GCM projections (probability of occurrence) to obtain a final projection for each subset (mean probability of occurrence). We also stored the time taken to perform each projection. The ensemble of GCM projections was calculated using the average.
+
+```{r project_data, eval=T, message=FALSE}
+scen <- stars::read_stars(
+        list.files("~/storage/WC_data/future/climate/wc2.1_10m",
+                   full.names = T))[,,,c("bio01","bio02", "bio03","bio04", "bio05", 
+                                         "bio06", "bio07", "bio12", "bio13", "bio14", "bio15")]
+tictoc::tic("Projecting to all scenarios")
+i_all <- i |>
+      caretSDM::add_scenarios() |>
+      caretSDM::add_scenarios(scen) |> 
+      caretSDM::predict_sdm() |>
+      caretSDM::gcms_ensembles(gcms = all_gcms)
+time_all <- tictoc::toc()
+
+tictoc::tic("Projecting to random_subset")
+i_random <- i |>
+      caretSDM::add_scenarios() |>
+      caretSDM::add_scenarios(scen[paste0(random_subset, "_ssp585_2081-2100.tif")]) |> 
+      caretSDM::predict_sdm() |>
+      caretSDM::gcms_ensembles(gcms = random_subset)
+time_random <- tictoc::toc()
+
+tictoc::tic("Projecting to hclust_subset")
+i_hclust <- i |>
+      caretSDM::add_scenarios() |>
+      caretSDM::add_scenarios(scen[paste0(hclust_subset, "_ssp585_2081-2100.tif")]) |> 
+      caretSDM::predict_sdm() |>
+      caretSDM::gcms_ensembles(gcms = hclust_subset)
+time_hclust <- tictoc::toc()
+
+tictoc::tic("Projecting to kmeans_subset")
+i_kmeans <- i |>
+      caretSDM::add_scenarios() |>
+      caretSDM::add_scenarios(scen[paste0(kmeans_subset, "_ssp585_2081-2100.tif")]) |> 
+      caretSDM::predict_sdm() |>
+      caretSDM::gcms_ensembles(gcms = kmeans_subset)
+time_kmeans <- tictoc::toc()
+
+tictoc::tic("Projecting to closestdist_subset")
+i_closest <- i |>
+      caretSDM::add_scenarios() |>
+      caretSDM::add_scenarios(scen[paste0(closestdist_subset, "_ssp585_2081-2100.tif")]) |> 
+      caretSDM::predict_sdm() |>
+      caretSDM::gcms_ensembles(gcms = closestdist_subset)
+time_closest <- tictoc::toc()
+
+tictoc::tic("Projecting to closestdist_subset3")
+i_closest3 <- i |>
+      caretSDM::add_scenarios() |>
+      caretSDM::add_scenarios(scen[paste0(closestdist_subset3, "_ssp585_2081-2100.tif")]) |> 
+      caretSDM::predict_sdm() |>
+      caretSDM::gcms_ensembles(gcms = closestdist_subset3)
+time_closest3 <- tictoc::toc()
+
+tictoc::tic("Projecting to mean_gcm")
+i_mean_gcm <- i |>
+      caretSDM::add_scenarios() |>
+      caretSDM::add_scenarios(mean_gcm) |> 
+      caretSDM::predict_sdm()
+time_mean_gcm <- tictoc::toc()
+```
+
+### Comparing Projections
+
+To compare whether `chooseGCM` performed better than alternative selection methods, we built a Pearson's correlation matrix between the six sets of GCMs and built an Euclidean distance matrix. Numeric results were compiled into a table for better comparison and visualization.
+
+```{r pearson_correlation}
+df <- data.frame(
+  all      = i_all$predictions$ensembles[,"_ssp585_2081-2100.tif"][[1]]$mean_occ_prob,
+  random   = i_random$predictions$ensembles[,"_ssp585_2081-2100.tif"][[1]]$mean_occ_prob,
+  hclust   = i_hclust$predictions$ensembles[,"_ssp585_2081-2100.tif"][[1]]$mean_occ_prob,
+  kmeans   = i_kmeans$predictions$ensembles[,"_ssp585_2081-2100.tif"][[1]]$mean_occ_prob,
+  closest  = i_closest$predictions$ensembles[,"_ssp585_2081-2100.tif"][[1]]$mean_occ_prob,
+  closest3 = i_closest3$predictions$ensembles[,"_ssp585_2081-2100.tif"][[1]]$mean_occ_prob,
+  mean_GCM = i_mean_gcm$predictions$ensembles[,"mean_gcm"][[1]]$mean_occ_prob
+)
+s_cor <- cor(df)
+s_cor
+```
+
+```{r euclidean_distance}
+s_dist <- dist(t(df))
+s_dist
+```
+
+```{r table_results}
+df <- data.frame(Subset = c("Global", 
+                            "Random", 
+                            "Hclust", 
+                            "Kmeans", 
+                            "Closedist", 
+                            "Closedist3", 
+                            "MeanGCM"
+                            ),
+                 Projection_Time = c(
+                   as.numeric(time_all$toc - time_all$tic),
+                   as.numeric(time_random$toc - time_random$tic),
+                   as.numeric(time_hclust$toc - time_hclust$tic),
+                   as.numeric(time_kmeans$toc - time_kmeans$tic),
+                   as.numeric(time_closest$toc - time_closest$tic),
+                   as.numeric(time_closest3$toc - time_closest3$tic),
+                   as.numeric(time_mean_gcm$toc - time_mean_gcm$tic)
+                   ),
+                 Time_saving = c(
+                   100-as.numeric(time_all$toc - time_all$tic)*100/as.numeric(time_all$toc - time_all$tic),
+                   100-as.numeric(time_random$toc - time_random$tic)*100/as.numeric(time_all$toc - time_all$tic),
+                   100-as.numeric(time_hclust$toc - time_hclust$tic)*100/as.numeric(time_all$toc - time_all$tic),
+                   100-as.numeric(time_kmeans$toc - time_kmeans$tic)*100/as.numeric(time_all$toc - time_all$tic),
+                   100-as.numeric(time_closest$toc - time_closest$tic)*100/as.numeric(time_all$toc - time_all$tic),
+                   100-as.numeric(time_closest3$toc - time_closest3$tic)*100/as.numeric(time_all$toc - time_all$tic),
+                   100-as.numeric(time_mean_gcm$toc - time_mean_gcm$tic)*100/as.numeric(time_all$toc - time_all$tic)
+                   ),
+                 Distance_from_Global = as.numeric(as.matrix(s_dist)["all",]),
+                 SDMs_Correlation = as.numeric(as.matrix(s_cor)["all",])
+                 )
+```
+
+## Results
+
+The final result of this analysis is summarized in the `df` object. In this table we show how optimized our method is to reach a high correlation with the baseline, saving computational time.
+
+```{r}
+df
+```

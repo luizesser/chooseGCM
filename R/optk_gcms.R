@@ -37,13 +37,13 @@ optk_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, cl
       checkmate::assertList(s, types = "SpatRaster")
     }
   }
-  checkmate::assertCharacter(var_names, unique = T, any.missing = F)
+  checkmate::assertCharacter(var_names, unique = TRUE, any.missing = FALSE)
   checkmate::assertChoice(cluster, c("kmeans", "hclust"))
   checkmate::assertChoice(method, c("silhouette", "wss", "gap_stat"))
-  checkmate::assertCount(n, positive = T, null.ok = T)
-  checkmate::assertCount(nstart, positive = T)
-  checkmate::assertCount(K.max, positive = T)
-  checkmate::assertCount(B, positive = T)
+  checkmate::assertCount(n, positive = TRUE, null.ok = TRUE)
+  checkmate::assertCount(nstart, positive = TRUE)
+  checkmate::assertCount(K.max, positive = TRUE)
+  checkmate::assertCount(B, positive = TRUE)
 
   if ("all" %in% var_names) {
     var_names <- names(s[[1]])

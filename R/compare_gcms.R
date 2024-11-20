@@ -27,10 +27,10 @@
 #' @importFrom stats dist
 #'
 #' @export
-compare_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, scale=TRUE, k = 3, clustering_method = "closestdist") {
+compare_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, scale = TRUE, k = 3, clustering_method = "closestdist") {
   checkmate::assertList(s, types = "SpatRaster")
-  checkmate::assertCharacter(var_names, unique = T, any.missing = F)
-  checkmate::assertCount(k, positive = T)
+  checkmate::assertCharacter(var_names, unique = TRUE, any.missing = FALSE)
+  checkmate::assertCount(k, positive = TRUE)
   checkmate::assertChoice(clustering_method, c("kmeans", "hclust", "closestdist"))
 
   if ("all" %in% var_names) {
@@ -68,7 +68,7 @@ compare_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL,
                            data = dist_matrix,
                            palette = "jco",
                            ggtheme = ggplot2::theme_minimal(),
-                           check_overlap = T,
+                           check_overlap = TRUE,
                            main = "K-means Clustering Plot",
                            legend = "none",
                            repel = TRUE,
@@ -101,19 +101,19 @@ compare_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL,
   # Compute hierarchical clustering and cut into k clusters
   res <- factoextra::hcut(t(flatten_subset), k = k)
   mean_all <- sapply(x, function(y) {
-    y <- colMeans(y, na.rm = T)
+    y <- colMeans(y, na.rm = TRUE)
   })
   mean_all <- rowMeans(mean_all)
   res2 <- vector()
   for (i in 1:k) {
     mean_cluster <- sapply(x[res$cluster==i], function(y) {
-      y <- colMeans(y, na.rm = T)
+      y <- colMeans(y, na.rm = TRUE)
     })
     vals <- as.matrix(stats::dist(t(cbind(mean_cluster, mean_all))))[,"mean_all"]
     res2[i] <- names(which.min(vals[vals > 0]))
   }
   dend <- factoextra::fviz_dend(res,
-                                horiz=T,
+                                horiz = TRUE,
                                 cex = 0.8,
                                 palette = "jco",
                                 main = "Hierarchical Clustering",

@@ -32,7 +32,7 @@ cor_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, sca
       checkmate::assertList(s, types = "SpatRaster")
     }
   }
-  checkmate::assertCharacter(var_names, unique = T, any.missing = F)
+  checkmate::assertCharacter(var_names, unique = TRUE, any.missing = FALSE)
   checkmate::assertChoice(method, c("pearson", "kendall", "spearman"))
 
   if ("all" %in% var_names) {
@@ -48,11 +48,11 @@ cor_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL, sca
   substr(title, 1, 1) <- toupper(substr(title, 1, 1))
   cor_plot <- ggcorrplot::ggcorrplot(cor_matrix,
                          type = "lower",
-                         lab = T,
+                         lab = TRUE,
                          lab_size = 3,
-                         hc.order = T,
+                         hc.order = TRUE,
                          hc.method = "ward.D2",
-                         show.legend = F,
+                         show.legend = FALSE,
                          title = title
   ) + ggplot2::scale_fill_viridis_c(limit = c(NA,NA))
 

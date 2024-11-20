@@ -15,3 +15,7 @@ the dontrun and included the tempdir() as a path. This seems necessary, once the
 and will take a long time. Also, the function now does not write automatically on the user's filespace. The
 user now must provide a path to save the downloaded files. I included low-resolution raw data on inst/extdata 
 folder to make examples work. This lead me to unwrap them form dontrun as before.
+
+Nov 20th, 2024. Beni Altmann pointed out that we used T and F instead of TRUE and FALSE. We corrected
+the issue. Other considerations that we addressed was a vector named "t" and the dontrun issue previously
+mentioned that was changed to donttest.

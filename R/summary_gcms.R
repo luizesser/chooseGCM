@@ -30,7 +30,7 @@ summary_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL)
       checkmate::assertList(s, types = "SpatRaster")
     }
   }
-  checkmate::assertCharacter(var_names, unique = T, any.missing = F)
+  checkmate::assertCharacter(var_names, unique = TRUE, any.missing = FALSE)
 
   if ("all" %in% var_names) {
     var_names <- names(s[[1]])
@@ -41,19 +41,19 @@ summary_gcms <- function(s, var_names = c("bio_1", "bio_12"), study_area = NULL)
   m <- sapply(s2, function(y) {
     df_m <- apply(y, 2, function(x) {
       data.frame(
-        min = min(x, na.rm = T),
-        quantile_0.25 = stats::quantile(x, 0.25, na.rm = T),
-        median = median(x, na.rm = T),
-        mean = mean(x, na.rm = T),
-        quantile_0.75 = stats::quantile(x, 0.75, na.rm = T),
-        max = max(x, na.rm = T),
-        sd = stats::sd(x, na.rm = T),
+        min = min(x, na.rm = TRUE),
+        quantile_0.25 = stats::quantile(x, 0.25, na.rm = TRUE),
+        median = median(x, na.rm = TRUE),
+        mean = mean(x, na.rm = TRUE),
+        quantile_0.75 = stats::quantile(x, 0.75, na.rm = TRUE),
+        max = max(x, na.rm = TRUE),
+        sd = stats::sd(x, na.rm = TRUE),
         NAs = sum(is.na(x)),
         n_cells = length(x)
       )
     })
   },
-  USE.NAMES = T, simplify = F
+  USE.NAMES = TRUE, simplify = FALSE
   )
   # m <- m %>% as.data.frame() %>% t()
   m <- lapply(m, function(x) {
