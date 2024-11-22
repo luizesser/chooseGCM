@@ -8,7 +8,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# How chooseGCM changes with increasing area?
+# How chooseGCM selection changes with increasing area?
 
 This Rmarkdown is part of the following article:
 
@@ -171,7 +171,7 @@ mc_hclust_50 <- montecarlo_gcms(s10,
                              dist_method = "euclidean", 
                              clustering_method = "hclust")
 mc_hclust_50
-hclust_50 <- mc_hclust_50$suggested_gcms$k5
+hclust_50 <- mc_hclust_50$suggested_gcms$k3
 tictoc::toc()
 ```
 
@@ -185,7 +185,7 @@ mc_hclust_100 <- montecarlo_gcms(s10,
                              dist_method = "euclidean", 
                              clustering_method = "hclust")
 mc_hclust_100
-hclust_100 <- mc_hclust_100$suggested_gcms$k5
+hclust_100 <- mc_hclust_100$suggested_gcms$k3
 tictoc::toc()
 ```
 
@@ -199,7 +199,7 @@ mc_hclust_150 <- montecarlo_gcms(s10,
                              dist_method = "euclidean", 
                              clustering_method = "hclust")
 mc_hclust_150
-hclust_150 <- mc_hclust_150$suggested_gcms$k5
+hclust_150 <- mc_hclust_150$suggested_gcms$k3
 tictoc::toc()
 ```
 
@@ -213,7 +213,7 @@ mc_hclust_200 <- montecarlo_gcms(s10,
                              dist_method = "euclidean", 
                              clustering_method = "hclust")
 mc_hclust_200
-hclust_200 <- mc_hclust_200$suggested_gcms$k5
+hclust_200 <- mc_hclust_200$suggested_gcms$k3
 tictoc::toc()
 ```
 
@@ -227,7 +227,7 @@ mc_hclust_250 <- montecarlo_gcms(s10,
                              dist_method = "euclidean", 
                              clustering_method = "hclust")
 mc_hclust_250
-hclust_250 <- mc_hclust_250$suggested_gcms$k5
+hclust_250 <- mc_hclust_250$suggested_gcms$k3
 tictoc::toc()
 ```
 
@@ -241,7 +241,7 @@ mc_hclust_300 <- montecarlo_gcms(s10,
                              dist_method = "euclidean", 
                              clustering_method = "hclust")
 mc_hclust_300
-hclust_300 <- mc_hclust_300$suggested_gcms$k5
+hclust_300 <- mc_hclust_300$suggested_gcms$k3
 tictoc::toc()
 ```
 
@@ -255,7 +255,7 @@ mc_hclust_350 <- montecarlo_gcms(s10,
                              dist_method = "euclidean", 
                              clustering_method = "hclust")
 mc_hclust_350
-hclust_350 <- mc_hclust_350$suggested_gcms$k5
+hclust_350 <- mc_hclust_350$suggested_gcms$k3
 tictoc::toc()
 ```
 
@@ -269,7 +269,7 @@ mc_hclust_400 <- montecarlo_gcms(s10,
                              dist_method = "euclidean", 
                              clustering_method = "hclust")
 mc_hclust_400
-hclust_400 <- mc_hclust_400$suggested_gcms$k5
+hclust_400 <- mc_hclust_400$suggested_gcms$k3
 tictoc::toc()
 ```
 
@@ -283,7 +283,7 @@ mc_hclust_450 <- montecarlo_gcms(s10,
                              dist_method = "euclidean", 
                              clustering_method = "hclust")
 mc_hclust_450
-hclust_450 <- mc_hclust_450$suggested_gcms$k5
+hclust_450 <- mc_hclust_450$suggested_gcms$k3
 tictoc::toc()
 ```
 
@@ -297,7 +297,7 @@ mc_hclust_500 <- montecarlo_gcms(s10,
                              dist_method = "euclidean", 
                              clustering_method = "hclust")
 mc_hclust_500
-hclust_500 <- mc_hclust_500$suggested_gcms$k5
+hclust_500 <- mc_hclust_500$suggested_gcms$k3
 tictoc::toc()
 ```
 
@@ -314,7 +314,7 @@ mc_kmeans_50 <- montecarlo_gcms(s10,
                              dist_method = "euclidean", 
                              clustering_method = "kmeans")
 mc_kmeans_50
-kmeans_50 <- mc_kmeans_50$suggested_gcms$k5
+kmeans_50 <- mc_kmeans_50$suggested_gcms$k3
 tictoc::toc()
 ```
 
@@ -328,7 +328,7 @@ mc_kmeans_100 <- montecarlo_gcms(s10,
                              dist_method = "euclidean", 
                              clustering_method = "kmeans")
 mc_kmeans_100
-kmeans_100 <- mc_kmeans_100$suggested_gcms$k5
+kmeans_100 <- mc_kmeans_100$suggested_gcms$k3
 tictoc::toc()
 ```
 
@@ -342,7 +342,7 @@ mc_kmeans_150 <- montecarlo_gcms(s10,
                              dist_method = "euclidean", 
                              clustering_method = "kmeans")
 mc_kmeans_150
-kmeans_150 <- mc_kmeans_150$suggested_gcms$k5
+kmeans_150 <- mc_kmeans_150$suggested_gcms$k3
 tictoc::toc()
 ```
 
@@ -356,7 +356,7 @@ mc_kmeans_200 <- montecarlo_gcms(s10,
                              dist_method = "euclidean", 
                              clustering_method = "kmeans")
 mc_kmeans_200
-kmeans_200 <- mc_kmeans_200$suggested_gcms$k5
+kmeans_200 <- mc_kmeans_200$suggested_gcms$k3
 tictoc::toc()
 ```
 
@@ -370,7 +370,7 @@ mc_kmeans_250 <- montecarlo_gcms(s10,
                              dist_method = "euclidean", 
                              clustering_method = "kmeans")
 mc_kmeans_250
-kmeans_250 <- mc_kmeans_250$suggested_gcms$k5
+kmeans_250 <- mc_kmeans_250$suggested_gcms$k3
 tictoc::toc()
 ```
 
@@ -384,7 +384,7 @@ mc_kmeans_300 <- montecarlo_gcms(s10,
                              dist_method = "euclidean", 
                              clustering_method = "kmeans")
 mc_kmeans_300
-kmeans_300 <- mc_kmeans_300$suggested_gcms$k5
+kmeans_300 <- mc_kmeans_300$suggested_gcms$k3
 tictoc::toc()
 ```
 
@@ -398,7 +398,7 @@ mc_kmeans_350 <- montecarlo_gcms(s10,
                              dist_method = "euclidean", 
                              clustering_method = "kmeans")
 mc_kmeans_350
-kmeans_350 <- mc_kmeans_350$suggested_gcms$k5
+kmeans_350 <- mc_kmeans_350$suggested_gcms$k3
 tictoc::toc()
 ```
 
@@ -412,7 +412,7 @@ mc_kmeans_400 <- montecarlo_gcms(s10,
                              dist_method = "euclidean", 
                              clustering_method = "kmeans")
 mc_kmeans_400
-kmeans_400 <- mc_kmeans_400$suggested_gcms$k5
+kmeans_400 <- mc_kmeans_400$suggested_gcms$k3
 tictoc::toc()
 ```
 
@@ -426,7 +426,7 @@ mc_kmeans_450 <- montecarlo_gcms(s10,
                              dist_method = "euclidean", 
                              clustering_method = "kmeans")
 mc_kmeans_450
-kmeans_450 <- mc_kmeans_450$suggested_gcms$k5
+kmeans_450 <- mc_kmeans_450$suggested_gcms$k3
 tictoc::toc()
 ```
 
@@ -440,7 +440,7 @@ mc_kmeans_500 <- montecarlo_gcms(s10,
                              dist_method = "euclidean", 
                              clustering_method = "kmeans")
 mc_kmeans_500
-kmeans_500 <- mc_kmeans_500$suggested_gcms$k5
+kmeans_500 <- mc_kmeans_500$suggested_gcms$k3
 tictoc::toc()
 ```
 
@@ -710,7 +710,7 @@ rbind(sort(kmeans_50 ),
       sort(kmeans_500))
 ```
 
-```{r result_closestdist, eval=F}
+```{r result_closestdist}
 list(sort(closestdist_50 ), 
      sort(closestdist_100),
      sort(closestdist_150), 

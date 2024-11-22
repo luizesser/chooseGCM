@@ -46,12 +46,21 @@ if (!require("caretSDM", character.only = TRUE)) {
 
 ### Import study_area
 
-For the first part of this Rmarkdown, we will import data from study area.
+For this demonstration, we will use Araucaria angustifolia, the brazilian pine, as a study case. This flagship species is a key species for the Atlantic Rainforest biodiversity hotspot. Species records were obtained from GBIF and cleaned by excluding records from outside the native region and NAs. This set of records was then used to build a shape of accessible area by merging buffers of 500 km around each record.
 
-```{r study_area_parana}
-study_area_parana <- geodata::gadm(country = "Brazil", returnclass = "sv", path="input_data/")
-study_area_parana <- subset(study_area_parana, study_area_parana$NAME_1 == "Paraná")
-study_area_parana |> plot()
+```{r study_area}
+occ_data <- geodata::sp_occurrence("Araucaria", "angustifolia")
+occ_data <- occ_data |>
+  dplyr::filter(lon >= -64) |> 
+  dplyr::filter(lon <= -33) |> 
+  dplyr::filter(lat <= -19.5) |> 
+  dplyr::filter(lat >= -33)
+
+study_area <- na.omit(occ_data[,c("lon", "lat")]) |>
+  sf::st_as_sf(coords= c(1,2), crs = 4326) |> 
+  sf::st_transform(crs=sf::st_crs(6933)) |>
+  sf::st_buffer(dist = 500000) |> 
+  sf::st_union()
 ```
 
 ### Download GCMs
@@ -155,7 +164,7 @@ Importing GCMs data into R had an marginal difference in time, despite the big d
 tictoc::tic("Hierarchical Clustering subset s10")
 mc_hclust10 <- montecarlo_gcms(s10, 
                              var_names = c("bio1", "bio12"), 
-                             study_area = study_area_parana, 
+                             study_area = study_area, 
                              scale = TRUE,
                              perm = 10000, 
                              dist_method = "euclidean", 
@@ -169,7 +178,7 @@ tictoc::toc()
 tictoc::tic("Hierarchical Clustering subset s5")
 mc_hclust5 <- montecarlo_gcms(s5, 
                              var_names = c("bio1", "bio12"), 
-                             study_area = study_area_parana, 
+                             study_area = study_area, 
                              scale = TRUE,
                              perm = 10000, 
                              dist_method = "euclidean", 
@@ -183,7 +192,7 @@ tictoc::toc()
 tictoc::tic("Hierarchical Clustering subset s25")
 mc_hclust25 <- montecarlo_gcms(s25, 
                              var_names = c("bio1", "bio12"), 
-                             study_area = study_area_parana, 
+                             study_area = study_area, 
                              scale = TRUE,
                              perm = 10000, 
                              dist_method = "euclidean", 
@@ -197,7 +206,7 @@ tictoc::toc()
 tictoc::tic("Hierarchical Clustering subset s30")
 mc_hclust30 <- montecarlo_gcms(s30, 
                              var_names = c("bio1", "bio12"), 
-                             study_area = study_area_parana, 
+                             study_area = study_area, 
                              scale = TRUE,
                              perm = 10000, 
                              dist_method = "euclidean", 
@@ -213,7 +222,7 @@ tictoc::toc()
 tictoc::tic("K-means Clustering subset s10")
 mc_kmeans10 <- montecarlo_gcms(s10, 
                              var_names = c("bio1", "bio12"), 
-                             study_area = study_area_parana, 
+                             study_area = study_area, 
                              scale = TRUE,
                              perm = 10000, 
                              dist_method = "euclidean", 
@@ -227,7 +236,7 @@ tictoc::toc()
 tictoc::tic("K-means Clustering subset s5")
 mc_kmeans5 <- montecarlo_gcms(s5, 
                              var_names = c("bio1", "bio12"), 
-                             study_area = study_area_parana, 
+                             study_area = study_area, 
                              scale = TRUE,
                              perm = 10000, 
                              dist_method = "euclidean", 
@@ -241,7 +250,7 @@ tictoc::toc()
 tictoc::tic("K-means Clustering subset s25")
 mc_kmeans25 <- montecarlo_gcms(s25, 
                              var_names = c("bio1", "bio12"), 
-                             study_area = study_area_parana, 
+                             study_area = study_area, 
                              scale = TRUE,
                              perm = 10000, 
                              dist_method = "euclidean", 
@@ -255,7 +264,7 @@ tictoc::toc()
 tictoc::tic("K-means Clustering subset s30")
 mc_kmeans30 <- montecarlo_gcms(s30, 
                              var_names = c("bio1", "bio12"), 
-                             study_area = study_area_parana, 
+                             study_area = study_area, 
                              scale = TRUE,
                              perm = 10000, 
                              dist_method = "euclidean", 
@@ -271,7 +280,7 @@ tictoc::toc()
 tictoc::tic("Closestdist subset s10")
 mc_closestdist10 <- closestdist_gcms(s10, 
                              var_names = c("bio1", "bio12"), 
-                             study_area = study_area_parana, 
+                             study_area = study_area, 
                              method = "euclidean")
 mc_closestdist10
 closestdist_subset10 <- mc_closestdist10$suggested_gcms
@@ -282,7 +291,7 @@ tictoc::toc()
 tictoc::tic("Closestdist subset s5")
 mc_closestdist5 <- closestdist_gcms(s5, 
                              var_names = c("bio1", "bio12"), 
-                             study_area = study_area_parana, 
+                             study_area = study_area, 
                              method = "euclidean")
 mc_closestdist5
 closestdist_subset5 <- mc_closestdist5$suggested_gcms
@@ -293,7 +302,7 @@ tictoc::toc()
 tictoc::tic("Closestdist subset s25")
 mc_closestdist25 <- closestdist_gcms(s25, 
                              var_names = c("bio1", "bio12"), 
-                             study_area = study_area_parana, 
+                             study_area = study_area, 
                              method = "euclidean")
 mc_closestdist25
 closestdist_subset25 <- mc_closestdist25$suggested_gcms
@@ -304,7 +313,7 @@ tictoc::toc()
 tictoc::tic("Closestdist subset s30")
 mc_closestdist30 <- closestdist_gcms(s30, 
                              var_names = c("bio1", "bio12"), 
-                             study_area = study_area_parana, 
+                             study_area = study_area, 
                              method = "euclidean")
 mc_closestdist30
 closestdist_subset30 <- mc_closestdist30$suggested_gcms
@@ -317,7 +326,7 @@ tictoc::toc()
 tictoc::tic("Closestdist3 subset s10")
 mc_closestdist310 <- closestdist_gcms(s10, 
                              var_names = c("bio1", "bio12"), 
-                             study_area = study_area_parana, 
+                             study_area = study_area, 
                              method = "euclidean",
                              k = 3)
 mc_closestdist310
@@ -329,7 +338,7 @@ tictoc::toc()
 tictoc::tic("Closestdist3 subset s5")
 mc_closestdist35 <- closestdist_gcms(s5, 
                              var_names = c("bio1", "bio12"), 
-                             study_area = study_area_parana, 
+                             study_area = study_area, 
                              method = "euclidean",
                              k = 3)
 mc_closestdist35
@@ -341,7 +350,7 @@ tictoc::toc()
 tictoc::tic("Closestdist3 subset s25")
 mc_closestdist325 <- closestdist_gcms(s25, 
                              var_names = c("bio1", "bio12"), 
-                             study_area = study_area_parana, 
+                             study_area = study_area, 
                              method = "euclidean",
                              k = 3)
 mc_closestdist325
@@ -353,7 +362,7 @@ tictoc::toc()
 tictoc::tic("Closestdist3 subset s30")
 mc_closestdist330 <- closestdist_gcms(s30, 
                              var_names = c("bio1", "bio12"), 
-                             study_area = study_area_parana, 
+                             study_area = study_area, 
                              method = "euclidean",
                              k = 3)
 mc_closestdist330
