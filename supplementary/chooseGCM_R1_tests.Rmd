@@ -1,0 +1,642 @@
+---
+author: "Luíz Fernando Esser"
+date: "2024-11-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# chooseGCM timespans
+
+This Rmarkdown is part of the following article:
+
+Esser, L.F., Bailly, D., Lima, M.R., Ré, R. 2024. chooseGCM: a toolkit to select General Circulation Models in R. *In prep*.
+
+## Introduction
+
+chooseGCM is a solution for GCMs selection in Climate Change research. We built this Rmarkdown as a way to test the properties of the methods underlying chooseGCM. Results from each function will be presented side by side with changing variables, allowing better comparison.
+
+This RMarkdown was built upon tests made from reviewer 1 to inform regarding timespans to each function. The only function we will not be covering is the \code{worldclim_data}, which takes a lot of time to download data and the timespan depends majorly on the internet connection and not on the coding optimization.
+
+```{r}
+library(tidyverse)
+library(sf)
+library(chooseGCM)
+library(tictoc)
+```
+
+# 10 min  ------------------------------------------------------------------
+
+## import ----
+
+```{r}
+tictoc::tic()
+s <- chooseGCM::import_gcms(path = "~/storage/WC_data/WC_data_all_gcms_10")
+tictoc::toc()
+s
+
+names(s)
+names(s) <- gsub("_ssp585_10_2090", "", names(s))
+names(s)
+```
+
+## variable names and study area  ----
+
+```{r}
+var_names <- c("bio5", "bio13", "bio15")
+
+study_area_parana <- geodata::gadm(country = "Brazil", path = "input_data/") %>% 
+  sf::st_as_sf() %>% 
+  dplyr::filter(NAME_1 == "Paraná")
+study_area_parana
+
+plot(study_area_parana$geometry)
+```
+
+## compare ----
+
+```{r}
+tictoc::tic()
+res10 <- chooseGCM::compare_gcms(s, var_names, study_area_parana, k = 3) 
+tictoc::toc()
+
+res10$statistics_gcms
+```
+
+## summary ----
+
+```{r}
+tictoc::tic()
+s_sum <- chooseGCM::summary_gcms(s, var_names, study_area_parana) 
+tictoc::toc()
+
+s_sum
+```
+
+## correlation ----
+
+```{r}
+tictoc::tic()
+s_cor <- chooseGCM::cor_gcms(s, var_names, study_area_parana, method = "pearson") 
+tictoc::toc()
+
+s_cor
+```
+
+## distance ----
+
+```{r}
+tictoc::tic()
+s_dist <- chooseGCM::dist_gcms(s, var_names, study_area_parana, method = "euclidean")
+tictoc::toc()
+
+s_dist
+```
+
+## k-means ----
+
+```{r}
+tictoc::tic()
+chooseGCM::kmeans_gcms(s, var_names, study_area_parana, k = 3, method = "euclidean") 
+tictoc::toc()
+```
+
+```{r}
+tictoc::tic()
+chooseGCM::kmeans_gcms(s, var_names, study_area_parana, k = 3)
+tictoc::toc()
+```
+
+## hierarchical clustering ----
+
+```{r}
+tictoc::tic()
+chooseGCM::hclust_gcms(s, var_names, study_area_parana, k = 3) 
+tictoc::toc()
+```
+
+```{r}
+tictoc::tic()
+chooseGCM::hclust_gcms(s, var_names, study_area_parana, k = 3, n = 1000) 
+tictoc::toc()
+```
+
+## Closestdist algorithm ----
+
+```{r}
+tictoc::tic()
+chooseGCM::closestdist_gcms(s, var_names, study_area_parana, k = 3) 
+tictoc::toc()
+```
+
+```{r}
+tictoc::tic()
+chooseGCM::closestdist_gcms(s, var_names, study_area_parana) 
+tictoc::toc()
+```
+
+## number of clusters ----
+
+```{r}
+tictoc::tic()
+chooseGCM::optk_gcms(s, var_names, study_area_parana, cluster = "kmeans", method = "wss", n = 1000) 
+tictoc::toc()
+```
+
+```{r}
+tictoc::tic()
+chooseGCM::optk_gcms(s, var_names, study_area_parana, cluster = "kmeans", method = "silhouette", n = 1000) 
+tictoc::toc()
+```
+
+```{r}
+tictoc::tic()
+chooseGCM::optk_gcms(s, var_names, study_area_parana, cluster = "kmeans", method = "gap_stat", n = 1000) 
+tictoc::toc()
+```
+
+## monte carlo permutations ----
+
+```{r}
+tictoc::tic()
+chooseGCM::montecarlo_gcms(s, var_names, study_area_parana, perm = 10000, method = "euclidean") 
+tictoc::toc()
+```
+
+## environment ----
+
+```{r}
+tictoc::tic()
+chooseGCM::env_gcms(s, var_names, study_area_parana, highlight = res10$suggested_gcms$k3) 
+tictoc::toc()
+```
+
+```{r}
+tictoc::tic()
+chooseGCM::env_gcms(s, var_names, study_area_parana, highlight = "sum")
+tictoc::toc()
+```
+
+# 5 min ------------------------------------------------------------------
+
+## import ----
+
+```{r}
+tictoc::tic()
+s <- chooseGCM::import_gcms(path = "~/storage/WC_data/WC_data_all_gcms_5") 
+tictoc::toc()
+
+s
+
+names(s)
+names(s) <- gsub("_ssp585_5_2090", "", names(s))
+names(s)
+```
+
+## variable names and study area  ----
+
+```{r}
+var_names <- c("bio5", "bio13", "bio15")
+
+study_area_parana <- geodata::gadm(country = "Brazil", path = "input_data/") %>% 
+  sf::st_as_sf() %>% 
+  dplyr::filter(NAME_1 == "Paraná")
+study_area_parana
+
+plot(study_area_parana$geometry)
+```
+
+## compare ----
+
+```{r}
+tictoc::tic()
+res5 <- chooseGCM::compare_gcms(s, var_names, study_area_parana, k = 3) 
+tictoc::toc()
+
+res5$statistics_gcms
+```
+
+## summary ----
+
+```{r}
+tictoc::tic()
+s_sum <- chooseGCM::summary_gcms(s, var_names, study_area_parana)
+tictoc::toc()
+
+s_sum
+```
+
+## correlation ----
+
+```{r}
+tictoc::tic()
+s_cor <- chooseGCM::cor_gcms(s, var_names, study_area_parana, method = "pearson") 
+tictoc::toc()
+
+s_cor
+```
+
+## distance ----
+
+```{r}
+tictoc::tic()
+s_dist <- chooseGCM::dist_gcms(s, var_names, study_area_parana, method = "euclidean") 
+tictoc::toc()
+
+s_dist
+```
+
+## k-means ----
+
+```{r}
+tictoc::tic()
+chooseGCM::kmeans_gcms(s, var_names, study_area_parana, k = 3, method = "euclidean") 
+tictoc::toc()
+```
+
+```{r}
+tictoc::tic()
+chooseGCM::kmeans_gcms(s, var_names, study_area_parana, k = 3) 
+tictoc::toc()
+```
+
+## hierarchical clustering ----
+
+```{r}
+tictoc::tic()
+chooseGCM::hclust_gcms(s, var_names, study_area_parana, k = 3) 
+tictoc::toc()
+```
+
+```{r}
+tictoc::tic()
+chooseGCM::hclust_gcms(s, var_names, study_area_parana, k = 3, n = 1000) 
+tictoc::toc()
+```
+
+## Closestdist algorithm ----
+
+```{r}
+tictoc::tic()
+chooseGCM::closestdist_gcms(s, var_names, study_area_parana, k = 3) 
+tictoc::toc()
+```
+
+```{r}
+tictoc::tic()
+chooseGCM::closestdist_gcms(s, var_names, study_area_parana) 
+tictoc::toc()
+```
+
+## number of clusters ----
+
+```{r}
+tictoc::tic()
+chooseGCM::optk_gcms(s, var_names, study_area_parana, cluster = "kmeans", method = "wss", n = 1000)
+tictoc::toc()
+```
+
+```{r}
+tictoc::tic()
+chooseGCM::optk_gcms(s, var_names, study_area_parana, cluster = "kmeans", method = "silhouette", n = 1000)
+tictoc::toc()
+```
+
+```{r}
+tictoc::tic()
+chooseGCM::optk_gcms(s, var_names, study_area_parana, cluster = "kmeans", method = "gap_stat", n = 1000)
+tictoc::toc()
+```
+
+## monte carlo permutations ----
+
+```{r}
+tictoc::tic()
+chooseGCM::montecarlo_gcms(s, var_names, study_area_parana, perm = 10000, method = "euclidean") 
+tictoc::toc()
+```
+
+## environment ----
+
+```{r}
+tictoc::tic()
+chooseGCM::env_gcms(s, var_names, study_area_parana, highlight = res5$suggested_gcms$k3) 
+tictoc::toc()
+```
+
+```{r}
+tictoc::tic()
+chooseGCM::env_gcms(s, var_names, study_area_parana, highlight = "sum") 
+tictoc::toc()
+```
+
+# 2.5 min ------------------------------------------------------------------
+
+## import ----
+
+```{r}
+tictoc::tic()
+s <- chooseGCM::import_gcms(path = "~/storage/WC_data/WC_data_all_gcms_25")
+tictoc::toc()
+
+s
+
+names(s)
+names(s) <- gsub("_ssp585_2.5_2090", "", names(s))
+names(s)
+```
+
+## variable names and study area  ----
+
+```{r}
+var_names <- c("bio5", "bio13", "bio15")
+
+study_area_parana <- geodata::gadm(country = "Brazil", path = "input_data/") %>% 
+  sf::st_as_sf() %>% 
+  dplyr::filter(NAME_1 == "Paraná")
+study_area_parana
+
+plot(study_area_parana$geometry)
+```
+
+## compare ----
+
+```{r}
+tictoc::tic()
+res25 <- chooseGCM::compare_gcms(s, var_names, study_area_parana, k = 3) 
+tictoc::toc()
+
+res25$statistics_gcms
+```
+
+## summary ----
+
+```{r}
+tictoc::tic()
+s_sum <- chooseGCM::summary_gcms(s, var_names, study_area_parana) 
+tictoc::toc()
+
+s_sum
+```
+
+## correlation ----
+
+```{r}
+tictoc::tic()
+s_cor <- chooseGCM::cor_gcms(s, var_names, study_area_parana, method = "pearson")
+tictoc::toc()
+
+s_cor
+```
+
+## distance ----
+
+```{r}
+tictoc::tic()
+s_dist <- chooseGCM::dist_gcms(s, var_names, study_area_parana, method = "euclidean")
+tictoc::toc()
+
+s_dist
+```
+
+## k-means ----
+
+```{r}
+tictoc::tic()
+chooseGCM::kmeans_gcms(s, var_names, study_area_parana, k = 3, method = "euclidean")
+tictoc::toc()
+```
+
+```{r}
+tictoc::tic()
+chooseGCM::kmeans_gcms(s, var_names, study_area_parana, k = 3) 
+tictoc::toc()
+```
+
+## hierarchical clustering ----
+
+```{r}
+tictoc::tic()
+chooseGCM::hclust_gcms(s, var_names, study_area_parana, k = 3) 
+tictoc::toc()
+```
+
+```{r}
+tictoc::tic()
+chooseGCM::hclust_gcms(s, var_names, study_area_parana, k = 3, n = 1000) 
+tictoc::toc()
+```
+
+## Closestdist algorithm ----
+
+```{r}
+tictoc::tic()
+chooseGCM::closestdist_gcms(s, var_names, study_area_parana, k = 3) 
+tictoc::toc()
+```
+
+```{r}
+tictoc::tic()
+chooseGCM::closestdist_gcms(s, var_names, study_area_parana) 
+tictoc::toc()
+```
+
+## number of clusters ----
+
+```{r}
+tictoc::tic()
+chooseGCM::optk_gcms(s, var_names, study_area_parana, cluster = "kmeans", method = "wss", n = 1000) 
+tictoc::toc()
+```
+
+```{r}
+tictoc::tic()
+chooseGCM::optk_gcms(s, var_names, study_area_parana, cluster = "kmeans", method = "silhouette", n = 1000) 
+tictoc::toc()
+```
+
+```{r}
+tictoc::tic()
+chooseGCM::optk_gcms(s, var_names, study_area_parana, cluster = "kmeans", method = "gap_stat", n = 1000) 
+tictoc::toc()
+```
+
+## monte carlo permutations ----
+
+```{r}
+tictoc::tic()
+chooseGCM::montecarlo_gcms(s, var_names, study_area_parana, perm = 10000, method = "euclidean") 
+tictoc::toc()
+```
+
+## environment ----
+
+```{r}
+tictoc::tic()
+chooseGCM::env_gcms(s, var_names, study_area_parana, highlight = res25$suggested_gcms$k3) 
+tictoc::toc()
+```
+
+```{r}
+tictoc::tic()
+chooseGCM::env_gcms(s, var_names, study_area_parana, highlight = "sum")
+tictoc::toc()
+```
+
+# 30 sec ------------------------------------------------------------------
+
+## import ----
+
+```{r}
+tictoc::tic()
+s <- chooseGCM::import_gcms(path = "~/storage/WC_data/WC_data_all_gcms_30") 
+tictoc::toc()
+
+s
+
+names(s)
+names(s) <- gsub("_ssp585_30_2090", "", names(s))
+names(s)
+```
+
+## variable names and study area  ----
+
+```{r}
+var_names <- c("bio5", "bio13", "bio15")
+
+study_area_parana <- geodata::gadm(country = "Brazil", path = "input_data/") %>% 
+  sf::st_as_sf() %>% 
+  dplyr::filter(NAME_1 == "Paraná")
+study_area_parana
+
+plot(study_area_parana$geometry)
+```
+
+## compare ----
+
+```{r}
+tictoc::tic()
+res30 <- chooseGCM::compare_gcms(s, var_names, study_area_parana, k = 3) 
+tictoc::toc()
+
+res30$statistics_gcms
+```
+
+## summary ----
+
+```{r}
+tictoc::tic()
+s_sum <- chooseGCM::summary_gcms(s, var_names, study_area_parana) 
+tictoc::toc()
+
+s_sum
+```
+
+## correlation ----
+
+```{r}
+tictoc::tic()
+s_cor <- chooseGCM::cor_gcms(s, var_names, study_area_parana, method = "pearson") 
+tictoc::toc()
+
+s_cor
+```
+
+## distance ----
+
+```{r}
+tictoc::tic()
+s_dist <- chooseGCM::dist_gcms(s, var_names, study_area_parana, method = "euclidean") 
+tictoc::toc()
+
+s_dist
+```
+
+## k-means ----
+
+```{r}
+tictoc::tic()
+chooseGCM::kmeans_gcms(s, var_names, study_area_parana, k = 3, method = "euclidean") 
+tictoc::toc()
+```
+
+```{r}
+tictoc::tic()
+chooseGCM::kmeans_gcms(s, var_names, study_area_parana, k = 3) 
+tictoc::toc()
+```
+
+## hierarchical clustering ----
+
+```{r}
+tictoc::tic()
+chooseGCM::hclust_gcms(s, var_names, study_area_parana, k = 3) 
+tictoc::toc()
+```
+
+```{r}
+tictoc::tic()
+chooseGCM::hclust_gcms(s, var_names, study_area_parana, k = 3, n = 1000) 
+tictoc::toc()
+```
+
+## Closestdist algorithm ----
+
+```{r}
+tictoc::tic()
+chooseGCM::closestdist_gcms(s, var_names, study_area_parana, k = 3) 
+tictoc::toc()
+```
+
+```{r}
+tictoc::tic()
+chooseGCM::closestdist_gcms(s, var_names, study_area_parana) 
+tictoc::toc()
+```
+
+## number of clusters ----
+
+```{r}
+tictoc::tic()
+chooseGCM::optk_gcms(s, var_names, study_area_parana, cluster = "kmeans", method = "wss", n = 1000) 
+tictoc::toc()
+```
+
+```{r}
+tictoc::tic()
+chooseGCM::optk_gcms(s, var_names, study_area_parana, cluster = "kmeans", method = "silhouette", n = 1000) 
+tictoc::toc()
+```
+
+```{r}
+tictoc::tic()
+chooseGCM::optk_gcms(s, var_names, study_area_parana, cluster = "kmeans", method = "gap_stat", n = 1000) 
+tictoc::toc()
+```
+
+## monte carlo permutations ----
+
+```{r}
+tictoc::tic()
+chooseGCM::montecarlo_gcms(s, var_names, study_area_parana, perm = 10000, method = "euclidean") 
+tictoc::toc()
+```
+
+## environment ----
+
+```{r}
+
+tictoc::tic()
+chooseGCM::env_gcms(s, var_names, study_area_parana, highlight = res30$suggested_gcms$k3) 
+tictoc::toc()
+```
+
+```{r}
+tictoc::tic()
+chooseGCM::env_gcms(s, var_names, study_area_parana, highlight = "sum") 
+tictoc::toc()
+```
+
+# end ---------------------------------------------------------------------

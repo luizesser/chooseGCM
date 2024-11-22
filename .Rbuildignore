@@ -17,3 +17,5 @@
 ^supplementary/resolution\.Rmd$
 ^supplementary/variable_selection\.html$
 ^supplementary/variable_selection\.Rmd$
+^supplementary/chooseGCM_R1_tests\.html$
+^supplementary/chooseGCM_R1_tests\.Rmd$
