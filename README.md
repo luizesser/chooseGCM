@@ -17,15 +17,15 @@ applying a selection routine to the General Circulation Models.
 ## Installation
 
 You can install the development version of chooseGCM from
-[GitHub](https://github.com/) with:
+[GitHub](https://github.com/luizesser/chooseGCM) with:
 
 ``` r
 install.packages("devtools")
 devtools::install_github("luizesser/chooseGCM")
 ```
 
-The package is being submited to CRAN, where users will be able to
-install it using the following code:
+The package is also available on CRAN. Users are able to install it
+using the following code:
 
 ``` r
 install.packages("chooseGCM")
@@ -38,6 +38,7 @@ chooseGCM. After installing the package, we need to open it:
 
 ``` r
 library(chooseGCM)
+#> Warning: package 'chooseGCM' was built under R version 4.3.3
 tictoc::tic()
 set.seed(1)
 ```
@@ -55,7 +56,7 @@ where 600 is the value in seconds that will be enough to download the
 data.
 
 ``` r
-worldclim_data(period = "future", variable = "bioc", year = "2090", gcm = "all", ssp = "585", resolution = 10)
+worldclim_data(path = "input_data/WorldClim_data_gcms_all", period = "future", variable = "bioc", year = "2090", gcm = "all", ssp = "585", resolution = 10)
 ```
 
 ### Importing and Transforming Data
@@ -947,5 +948,5 @@ would be able to inform a decent variation in our projections.
 
 ``` r
 tictoc::toc()
-#> 46.061 sec elapsed
+#> 46.823 sec elapsed
 ```

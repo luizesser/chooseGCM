@@ -1,15 +1,16 @@
 ---
-output: github_document
+title: "README"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{README}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
-
-<!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/README-",
-  out.width = "100%"
+  comment = "#>"
 )
 ```
 
@@ -63,26 +64,15 @@ worldclim_data(path = "input_data/WorldClim_data_gcms_all", period = "future", v
 
 Now let's import GCMs to R in a list of stacks and name the list with the names of the GCMs.
 
-```{r, include=FALSE}
-s <- import_gcms("/Users/luizesser/Documents/GitHub/input_data/WorldClim_data_gcms_all")
-names(s) <- gsub("_ssp585_10_2090", "", names(s))
-```
-
-```{r, eval=FALSE}
-s <- import_gcms()
-names(s) <- gsub("_ssp585_10_2090", "", names(s))
+```{r}
+var_names <- c("bio_1", "bio_12")
+s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_names)
 ```
 
 In each function, data will be transformed. To do that you will always need to provide at least: (1) the list of stacks, (2) the variables you want to use in analysis and (3) the shapefile of your study area. You don't need to previously mask and subset your data, once the functions will perform this task internally for you. Note that the results from these functions are highly sensitive to variables and to study area. In this sense, the decision on what variables should be considered and what is the study area must be carefully made considering biological aspects of the studied group.
 
-```{r, include=FALSE}
-var_names <- c("bio5", "bio13", "bio15")
-study_area_parana <- terra::vect("/Users/luizesser/Documents/GitHub/input_data/PR_UF_2022.shp")
-```
-
-```{r, eval=FALSE}
-var_names <- c("bio5", "bio13", "bio15")
-study_area_parana <- terra::vect("input_data/PR_UF_2022.shp")
+```{r}
+study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:4326")
 ```
 
 ### Straigthforward Approach
@@ -90,11 +80,11 @@ study_area_parana <- terra::vect("input_data/PR_UF_2022.shp")
 There is the option to run each function in separate to better understand what is happening and to better parameterize each step. However there is a wrapper to help run everything at once and could be an alternative to have a broad perspective. `compare_gcms()` will return a list with a vector called `suggested_gcms` and a Figure called `statistics_gcms`. We suggest that this Figure could also be included as it is in supplementary data from studies using this package.
 
 ```{r}
-res <- compare_gcms(s, var_names, study_area_parana, k = 3)
+res <- compare_gcms(s, var_names, study_area, k = 3)
 res$statistics_gcms
 ```
 
-The aim of this function is to inform the minimum required so users can follow with their workflow in a more straightforward fashion (more on each plot further). If we see the D plot in the Figure, we can infer if the selected GCMs encompass the environmental variety of all GCMs. The focus should be to cover the core environment and not outlier regions on the environmental space. Above that, in plot B, the Monte Carlo permutation between GCMs is presented as a violin plot. Plots A and C are both clusterization methods that can be used to select GCMs. Clusterization will be adapted to the number of clusters `k` designated in the function. Lastly, suggested GCMs were "uk", "ml" and "ac". Those suggestions are the gcms that are closer to the centroid of each K-means cluster, thus they better represent the variation within each cluster.
+The aim of this function is to inform the minimum required so users can follow with their workflow in a more straightforward fashion (more on each plot further). If we see the D plot in the Figure, we can infer if the selected GCMs reasonably encompass the environmental variety of all GCMs. The focus should be to cover the core environment and not outlier regions on the environmental space. In plot C, the Monte Carlo permutation between GCMs is presented as a violin plot. Plots A and B are both clusterization methods that can be used to select GCMs. Clusterization will be adapted to the number of clusters `k` designated in the function. Lastly, suggested GCMs were "ae", "ch" and "cr". Those suggestions are the gcms that are closer to the mean absolute distance from global, thus they better represent the variation within the environmental space.
 
 ### Deep-dive Approach
 
@@ -106,7 +96,7 @@ In chooseGCM we implemented functions to analyze GCMs attributes. `summary_gcms`
 
 ```{r}
 # Summary of GCMs
-s_sum <- summary_gcms(s, var_names, study_area_parana)
+s_sum <- summary_gcms(s, var_names, study_area)
 s_sum
 ```
 
@@ -114,7 +104,7 @@ Regarding the exploratory comparison between GCMs, two functions are available: 
 
 ```{r}
 # Pearson Correlation between GCMs
-s_cor <- cor_gcms(s, var_names, study_area_parana, scale = TRUE, method = "pearson")
+s_cor <- cor_gcms(s, var_names, study_area, scale = TRUE, method = "pearson")
 s_cor
 ```
 
@@ -122,7 +112,7 @@ The function `dist_gcms` is very similar to the previous `cor_gcms`, but now for
 
 ```{r}
 # Euclidean Distance between GCMs
-s_dist <- dist_gcms(s, var_names, study_area_parana, method = "euclidean")
+s_dist <- dist_gcms(s, var_names, study_area, method = "euclidean")
 s_dist
 ```
 
@@ -131,25 +121,25 @@ s_dist
 Clusters in chooseGCM are obtained through K-means, a unsupervised machine learning algorithm. K in this case is the number of GCMs the modeler wants to use in projections. As in the previous `dist_gcms` function, we can address different methods to obtain the distance matrix by changing the `method` argument. The K-means algorithm uses the distance matrix to obtain clusters, thus a deep analysis of distances using `dist_gcms` function could prove to be useful. As in `compare_gcms` function, this function returns the K-means plot and a set of suggested GCMs, i.e. the GCMs closer to the centroid of each clusters.
 
 ```{r}
-kmeans_gcms(s, var_names, study_area_parana, k = 3, method = "euclidean")
+kmeans_gcms(s, var_names, study_area, k = 3, method = "euclidean")
 ```
 
 Alternatively, instead of using distances, one could run the analysis with raw environmental data by not setting any value to method (note how axis change). As in the previous case, the function also returns GCMs that are closer to the centroids. Note however that the plot below has a cluster with two GCMs, thus both have the same distance from the centroid. In this case, the function randomly suggests one of them. To perform this analysis without a distance matrix, we use only the mean values of each variable selected. In this way, the variability within variables is not considered, as in the above solution. But we recognize that for some purpose it could be useful to have a plot with raw variables as axis as provided here.
 
 ```{r}
-kmeans_gcms(s, var_names, study_area_parana, k = 3)
+kmeans_gcms(s, var_names, study_area, k = 3)
 ```
 
 We can also obtain clusters through hierarchical clustering. In this case, however, the function doesn't suggest any GCM. It is up to the user to define which GCMs are most suitable in this case. Hierarchical clustering is useful to visually inform the relationship between groups and could also be used to choose a number of clusters to build (together with metrics in the next section).
 
 ```{r}
-hclust_gcms(s, var_names, study_area_parana, k = 3)
+hclust_gcms(s, var_names, study_area, k = 3)
 ```
 
 In this function we also provide a `n` argument to inform the amount of data to be used in the clustering. This proved valuable when using high resolution data.
 
 ```{r}
-hclust_gcms(s, var_names, study_area_parana, k = 3, n = 1000)
+hclust_gcms(s, var_names, study_area, k = 3, n = 1000)
 ```
 
 #### Number of Clusters
@@ -157,19 +147,19 @@ hclust_gcms(s, var_names, study_area_parana, k = 3, n = 1000)
 But how many clusters are good? There is three metrics implemented to understand that. All of them are a way to see the minimum amount of GCMs that are needed to encompass the variability in the whole set of GCMs. The three methods are implemented in the same function by adjusting the `method` argument. Within-cluster sum of squares (wss) calculates the internal variability within clusters. Our goal here is to search for the minimum amount of clusters that has the minimum amount of variability. This is shown in the graph were the line changes abruptly its direction (Number of clusters k = 3). As in the previous function, this function provides a `n` argument to inform the amount of data to be used in the clustering. Finally, one can also indicate the method to build clusters with the argument `clusters`. Available methods are 'kmeans' (standard) and 'hclust'.
 
 ```{r}
-optk_gcms(s, var_names, study_area_parana, cluster = "kmeans", method = "wss", n = 1000)
+optk_gcms(s, var_names, study_area, cluster = "kmeans", method = "wss", n = 1000)
 ```
 
 The Average Silhouette Width method, measures the mean distance from all individuals to the centroid of their own clusters, while comparing to other clusters. This is sometimes also referred as a metric of cluster quality (the higher the better). A number of clusters is the best when the distance from individuals within the cluster to its centroid is lower than the distance from individuals to other clusters centroid (maximizing the average silhouette width). In this method, the best number of clusters is marked with a dashed line (2 clusters).
 
 ```{r}
-optk_gcms(s, var_names, study_area_parana, cluster = "kmeans", method = "silhouette", n = 1000)
+optk_gcms(s, var_names, study_area, cluster = "kmeans", method = "silhouette", n = 1000)
 ```
 
 Our last method is the Gap Statistics. As in the previous method, here the optimum number of clusters is showed with a dashed line (1 cluster). This method compares the variation within clusters with a set of null clusters build through Monte Carlo ("bootstrap") sampling. Because of that, the gap statistics can take a longer time to run when compared to previous methods described here. Moreover, some parameters can be changed to improve the Monte Carlo process, such as: `nstart`, `K.max` and `B`, where `nstart` is the initial number of arrangements to be compared, `K.max` is the maximum number of clusters to be created and B is the number of bootstrap permutations.
 
 ```{r}
-optk_gcms(s, var_names, study_area_parana, cluster = "kmeans", method = "gap_stat", n = 1000)
+optk_gcms(s, var_names, study_area, cluster = "kmeans", method = "gap_stat", n = 1000)
 ```
 
 #### Monte Carlo permutations
@@ -177,19 +167,27 @@ optk_gcms(s, var_names, study_area_parana, cluster = "kmeans", method = "gap_sta
 An alternative way to analyse if the mean distance between GCMs is similar to the mean distance between all GCMs is to use the `montecarlo_gcms` function. This function will build a distance matrix (using `method` argument) and plot the mean distance between all GCMs as a blue line. Afterwards, it will run a Monte Carlo permutation to randomly choose a group size ranging from [2] and [total number of GCMs - 1] and randomly choose a subset of GCMs with that group size. The mean distance between the random set is obtained and ploted in a violin plot. Finally, the function accesses the mean distance between selected GCMs using the kmeans function in all possible values of `k` and plots it in red.
 
 ```{r}
-montecarlo_gcms(s, var_names, study_area_parana, perm = 10000, dist_method = "euclidean", clustering_method = "kmeans")
+montecarlo_gcms(s, var_names, study_area, perm = 10000, dist_method = "euclidean", clustering_method = "kmeans")
 ```
+
+An alternative is to use the `montecarlo_gcms` function with the `clustering_method` argument set to `closestdist`. This method will use a greedy algorithm to select the GCMs that are closer to the global mean distance. The algorithm stops when adding a new GCM does not return a mean distance closer to the global mean or when the distance reaches a minimum value (standard = 0.0000001).
+
+```{r}
+montecarlo_gcms(s, var_names, study_area, perm = 10000, dist_method = "euclidean", clustering_method = "closestdist")
+```
+
+The plot shows the mean distance between all GCMs as a blue line, the mean distance between selected GCMs using the Closestdist algorithm in all possible values of `k` as a red line and the mean distance between random GCMs as a violin plot.
 
 #### The environment covered by GCMs selection
 
 We also included in this package a function called `env_gcms`, which is able to project GCMs in the environmental space. With that, researchers are able to see the coverage of GCMs when comparing to all GCMs. It is also possible to see the density of GCMs using the `highlight=sum` as argument.
 
 ```{r}
-env_gcms(s, var_names, study_area_parana, highlight = res$suggested_gcms$k3)
+env_gcms(s, var_names, study_area, highlight = res$suggested_gcms$k3)
 ```
 
 ```{r}
-env_gcms(s, var_names, study_area_parana, highlight = "sum")
+env_gcms(s, var_names, study_area, highlight = "sum")
 ```
 
 #### A greedy algorithm for GCMs selection
@@ -197,18 +195,18 @@ env_gcms(s, var_names, study_area_parana, highlight = "sum")
 As a way to optimize GCMs selection, we implemented a greedy algorithm, which calculates the distance matrix between all GCMs and calculates the mean distance in the matrix (global mean distance). The algorithm selects a random pair of GCMs and test if adding any other GCM to that pair will drive the mean distance closer to the global mean. The algorithm stops when adding a new GCM does not return a mean distance closer to the global mean or when the distance reaches a minimum value (standard = 0.0000001).
 
 ```{r}
-closestdist_gcms(s, var_names, study_area_parana)
+closestdist_gcms(s, var_names, study_area)
 ```
 
 We can also provide the value of k we want to use:
 
 ```{r}
-closestdist_gcms(s, var_names, study_area_parana, k=3)
+closestdist_gcms(s, var_names, study_area, k=3)
 ```
 
 #### Wrapping Up
 
-From our analysis, we can infer that something between two and three clusters is enough to inform regarding the environmental variation from given GCMs. In this way, if we use GCMs CNRM-ESM2-1 (cr), MPI-ESM1-2-LR (ml) and UKESM1-0-LL (uk) to project our models into future scenarios we would be able to inform a decent variation in our projections.
+From our analysis, we can infer that something between two and three clusters is enough to inform regarding the environmental variation from given GCMs. In this way, if we use GCMs ACCESS-ESM1-5 (ae), CNRM-CM6-1-HR (ch) and CNRM-ESM2-1 (cr) to project our models into future scenarios we would be able to inform a decent variation in our projections.
 
 ```{r}
 tictoc::toc()

@@ -16,35 +16,7 @@ gcm = 'mi', ssp = '126', resolution = 10, path = NULL)
 \item{year}{Character or vector. Specifies the year(s) to retrieve data for. Possible entries are:
 '2030', '2050', '2070', and/or '2090'.}
 
-\item{gcm}{Character or vector. Specifies the GCM(s) to consider for future scenarios. See the table below for available options:
-
-| **CODE** | **GCM**              |
-|----------|----------------------|
-| ac       | ACCESS-CM2           |
-| ae       | ACCESS-ESM1-5        |
-| bc       | BCC-CSM2-MR          |
-| ca       | CanESM5              |
-| cc       | CanESM5-CanOE        |
-| ce       | CMCC-ESM2            |
-| cn       | CNRM-CM6-1           |
-| ch       | CNRM-CM6-1-HR        |
-| cr       | CNRM-ESM2-1          |
-| ec       | EC-Earth3-Veg        |
-| ev       | EC-Earth3-Veg-LR     |
-| fi       | FIO-ESM-2-0          |
-| gf       | GFDL-ESM4            |
-| gg       | GISS-E2-1-G          |
-| gh       | GISS-E2-1-H          |
-| hg       | HadGEM3-GC31-LL      |
-| in       | INM-CM4-8            |
-| ic       | INM-CM5-0            |
-| ip       | IPSL-CM6A-LR         |
-| me       | MIROC-ES2L           |
-| mi       | MIROC6               |
-| mp       | MPI-ESM1-2-HR        |
-| ml       | MPI-ESM1-2-LR        |
-| mr       | MRI-ESM2-0           |
-| uk       | UKESM1-0-LL          |}
+\item{gcm}{Character or vector. Specifies the GCM(s) to consider for future scenarios. See the table below for available options.}
 
 \item{ssp}{Character or vector. SSP(s) for future data. Possible entries are: '126', '245', '370', and/or '585'.}
 
@@ -63,7 +35,36 @@ This function creates a folder in \code{path}.
 All downloaded data will be stored in this folder.
 Note: While it is possible to retrieve a large volume of data, it is not recommended to do so due to the large file sizes.
 For example, datasets at 30 arcseconds resolution can exceed 4 GB. If the function fails to retrieve large datasets,
-consider increasing the timeout by setting \code{options(timeout = 600)}.
+consider increasing the timeout by setting \code{options(timeout = 600)}. This will increase the timeout to 10 minutes.
+
+Available GCMs to be used in the \code{gcm} argument:\tabular{lr}{
+   \strong{CODE} \tab \strong{GCM} \cr
+   ac \tab ACCESS-CM2 \cr
+   ae \tab ACCESS-ESM1-5 \cr
+   bc \tab BCC-CSM2-MR \cr
+   ca \tab CanESM5 \cr
+   cc \tab CanESM5-CanOE \cr
+   ce \tab CMCC-ESM2 \cr
+   cn \tab CNRM-CM6-1 \cr
+   ch \tab CNRM-CM6-1-HR \cr
+   cr \tab CNRM-ESM2-1 \cr
+   ec \tab EC-Earth3-Veg \cr
+   ev \tab EC-Earth3-Veg-LR \cr
+   fi \tab FIO-ESM-2-0 \cr
+   gf \tab GFDL-ESM4 \cr
+   gg \tab GISS-E2-1-G \cr
+   gh \tab GISS-E2-1-H \cr
+   hg \tab HadGEM3-GC31-LL \cr
+   in \tab INM-CM4-8 \cr
+   ic \tab INM-CM5-0 \cr
+   ip \tab IPSL-CM6A-LR \cr
+   me \tab MIROC-ES2L \cr
+   mi \tab MIROC6 \cr
+   mp \tab MPI-ESM1-2-HR \cr
+   ml \tab MPI-ESM1-2-LR \cr
+   mr \tab MRI-ESM2-0 \cr
+   uk \tab UKESM1-0-LL \cr
+}
 }
 \examples{
 \donttest{

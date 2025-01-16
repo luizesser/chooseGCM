@@ -1,13 +1,13 @@
 Type: Package
 Package: chooseGCM
 Title: Selecting General Circulation Models for Species Distribution Modeling
-Version: 1.0.1
+Version: 1.0.2
 Authors@R: c(
-    person("Dayani", "Baili", role = "aut",
+    person("Dayani", "Bailly", role = "aut",
            comment = c(ORCID = "0000-0002-6954-9902")),
     person("Reginaldo", "Ré", role = "aut",
            comment = c(ORCID = "0000-0001-6452-3466")),
-    person("Marcos", "Lima", role = "aut",
+    person("Marcos", "R. Lima", role = "aut",
            comment = c(ORCID = "0000-0002-5901-0911")),
     person("Luíz", "Esser", , "luizesser@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0003-2982-7223")))
@@ -16,7 +16,7 @@ Description: Methods to help selecting General Circulation Models (GCMs)
     in the context of projecting models to future scenarios. It is provided
     clusterization algorithms, distance and correlation metrics, as well as
     a tailor-made algorithm to detect the optimum subset of GCMs that recreate
-    the environment of all GCMs.
+    the environment of all GCMs as proposed in Esser et al. (2025) <doi:10.1111/gcb.70008>.
 License: MIT + file LICENSE
 Imports:
     checkmate, 

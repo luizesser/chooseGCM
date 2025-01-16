@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 This Rmarkdown is part of the following article:
 
-Esser, L.F., Bailly, D., Lima, M.R., Ré, R. 2024. chooseGCM: a toolkit to select General Circulation Models in R. *In prep*.
+Esser, L.F., Bailly, D., Lima, M.R., Ré, R. 2025. chooseGCM: A Toolkit to Select General Circulation Models in R. Global Change Biology , 31(1), e70008. Available at: https://doi.org/10.1111/gcb.70008.
 
 ## Introduction
 
