@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">chooseGCM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -16,6 +16,10 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/README.html">README</a></li>
+  </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -28,7 +32,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Download WorldClim v2.1 Bioclimatic Data</h1>
-      <small class="dont-index">Source: <a href="https://github.com/luizesser/chooseGCM/blob/v1.0.1/R/WorldClim_data.R" class="external-link"><code>R/WorldClim_data.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/luizesser/chooseGCM/blob/main/R/WorldClim_data.R" class="external-link"><code>R/WorldClim_data.R</code></a></small>
       <div class="d-none name"><code>WorldClim_data.Rd</code></div>
     </div>
 
@@ -61,34 +65,7 @@
 
 
 <dt id="arg-gcm">gcm<a class="anchor" aria-label="anchor" href="#arg-gcm"></a></dt>
-<dd><p>Character or vector. Specifies the GCM(s) to consider for future scenarios. See the table below for available options:</p>
-<p>| **CODE** | **GCM**              |
-|———-|———————-|
-| ac       | ACCESS-CM2           |
-| ae       | ACCESS-ESM1-5        |
-| bc       | BCC-CSM2-MR          |
-| ca       | CanESM5              |
-| cc       | CanESM5-CanOE        |
-| ce       | CMCC-ESM2            |
-| cn       | CNRM-CM6-1           |
-| ch       | CNRM-CM6-1-HR        |
-| cr       | CNRM-ESM2-1          |
-| ec       | EC-Earth3-Veg        |
-| ev       | EC-Earth3-Veg-LR     |
-| fi       | FIO-ESM-2-0          |
-| gf       | GFDL-ESM4            |
-| gg       | GISS-E2-1-G          |
-| gh       | GISS-E2-1-H          |
-| hg       | HadGEM3-GC31-LL      |
-| in       | INM-CM4-8            |
-| ic       | INM-CM5-0            |
-| ip       | IPSL-CM6A-LR         |
-| me       | MIROC-ES2L           |
-| mi       | MIROC6               |
-| mp       | MPI-ESM1-2-HR        |
-| ml       | MPI-ESM1-2-LR        |
-| mr       | MRI-ESM2-0           |
-| uk       | UKESM1-0-LL          |</p></dd>
+<dd><p>Character or vector. Specifies the GCM(s) to consider for future scenarios. See the table below for available options.</p></dd>
 
 
 <dt id="arg-ssp">ssp<a class="anchor" aria-label="anchor" href="#arg-ssp"></a></dt>
@@ -113,8 +90,8 @@
 All downloaded data will be stored in this folder.
 Note: While it is possible to retrieve a large volume of data, it is not recommended to do so due to the large file sizes.
 For example, datasets at 30 arcseconds resolution can exceed 4 GB. If the function fails to retrieve large datasets,
-consider increasing the timeout by setting <code>options(timeout = 600)</code>.</p>
-    </div>
+consider increasing the timeout by setting <code>options(timeout = 600)</code>. This will increase the timeout to 10 minutes.</p>
+<p>Available GCMs to be used in the <code>gcm</code> argument:</p><table class="table table"><tr><td><strong>CODE</strong></td><td><strong>GCM</strong></td></tr><tr><td>ac</td><td>ACCESS-CM2</td></tr><tr><td>ae</td><td>ACCESS-ESM1-5</td></tr><tr><td>bc</td><td>BCC-CSM2-MR</td></tr><tr><td>ca</td><td>CanESM5</td></tr><tr><td>cc</td><td>CanESM5-CanOE</td></tr><tr><td>ce</td><td>CMCC-ESM2</td></tr><tr><td>cn</td><td>CNRM-CM6-1</td></tr><tr><td>ch</td><td>CNRM-CM6-1-HR</td></tr><tr><td>cr</td><td>CNRM-ESM2-1</td></tr><tr><td>ec</td><td>EC-Earth3-Veg</td></tr><tr><td>ev</td><td>EC-Earth3-Veg-LR</td></tr><tr><td>fi</td><td>FIO-ESM-2-0</td></tr><tr><td>gf</td><td>GFDL-ESM4</td></tr><tr><td>gg</td><td>GISS-E2-1-G</td></tr><tr><td>gh</td><td>GISS-E2-1-H</td></tr><tr><td>hg</td><td>HadGEM3-GC31-LL</td></tr><tr><td>in</td><td>INM-CM4-8</td></tr><tr><td>ic</td><td>INM-CM5-0</td></tr><tr><td>ip</td><td>IPSL-CM6A-LR</td></tr><tr><td>me</td><td>MIROC-ES2L</td></tr><tr><td>mi</td><td>MIROC6</td></tr><tr><td>mp</td><td>MPI-ESM1-2-HR</td></tr><tr><td>ml</td><td>MPI-ESM1-2-LR</td></tr><tr><td>mr</td><td>MRI-ESM2-0</td></tr><tr><td>uk</td><td>UKESM1-0-LL</td></tr></table></div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>https://www.worldclim.org/data/index.html</p>
@@ -146,7 +123,7 @@ https://luizfesser.wordpress.com</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Dayani Baili, Reginaldo Ré, Marcos Lima, Luíz Esser.</p>
+  <p>Developed by Dayani Bailly, Reginaldo Ré, Marcos R. Lima, Luíz Esser.</p>
 </div>
 
 <div class="pkgdown-footer-right">
