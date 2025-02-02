@@ -40,3 +40,18 @@ test_that("flatten_gcms input error (list of one stack)", {
   names(s) <- c("ab")
   expect_error(flatten_gcms(s))
 })
+
+test_that("flatten_gcms works correctly with real data", {
+  var_names <- c("bio_1", "bio_12")
+  s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_names)
+  study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:4326")
+  s_trans <- transform_gcms(s, var_names, study_area)
+  expect_no_error(result <- flatten_gcms(s_trans))
+  expect_true(length(result) == 10340)
+  expect_true(all(colnames(result[[1]]) == var_names))
+})
+
+test_that("flatten_gcms handles empty input gracefully", {
+  s <- list()
+  expect_no_error(flatten_gcms(s))
+})
