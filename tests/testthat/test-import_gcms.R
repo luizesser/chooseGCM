@@ -29,3 +29,54 @@ test_that("import_gcms wrong extension (numeric)", {
 test_that("import_gcms wrong recursive (character)", {
   expect_error(import_gcms(path = "input_data/WorldClim_data_future", extension = ".tif", recursive = "A", gcm_names = NULL))
 })
+
+test_that("import_gcms imports files correctly", {
+  path <- system.file("extdata", package = "chooseGCM")
+  var_names <- c("bio1", "bio12")
+  
+  result <- import_gcms(path = path, var_names = var_names)
+  
+  expect_type(result, "list")
+  expect_true(length(result) > 0)
+  expect_true(all(sapply(result, inherits, "SpatRaster")))
+})
+
+test_that("import_gcms assigns correct variable names", {
+  path <- system.file("extdata", package = "chooseGCM")
+  var_names <- c("bio1", "bio12")
+  
+  result <- import_gcms(path = path, var_names = var_names)
+  
+  expect_true(all(sapply(result, function(x) all(names(x) == var_names))))
+})
+
+test_that("import_gcms handles missing variable names", {
+  path <- system.file("extdata", package = "chooseGCM")
+  var_names <- c("bio1", "bio12")
+  
+  result <- import_gcms(path = path, var_names = var_names)
+  
+  first_stack <- result[[1]]
+  expected_var_names <- var_names
+  expect_equal(names(first_stack), expected_var_names)
+})
+
+test_that("import_gcms imports files correctly", {
+  path <- system.file("extdata", package = "chooseGCM")
+  var_names <- c("bio1", "bio12")
+  
+  result <- import_gcms(path = path, var_names = var_names)
+  
+  expect_type(result, "list")
+  expect_true(length(result) > 0)
+  expect_true(all(sapply(result, inherits, "SpatRaster")))
+})
+
+test_that("import_gcms assigns correct variable names", {
+  path <- system.file("extdata", package = "chooseGCM")
+  var_names <- c("bio1", "bio12")
+  
+  result <- import_gcms(path = path, var_names = var_names)
+  
+  expect_true(all(sapply(result, function(x) all(names(x) == var_names))))
+})
