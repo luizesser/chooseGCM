@@ -299,3 +299,17 @@ test_that("study_area is a stars with all vars", {
   expect_true(all(colnames(result[[1]]) == var_names))
 })
 
+test_that("transform_gcms works correctly with real data", {
+  var_names <- c("bio_1", "bio_12")
+  s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_names)
+  study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:4326")
+  expect_no_error(s_trans <- transform_gcms(s, var_names, study_area))
+  expect_true(length(s_trans) == 11)
+})
+
+test_that("transform_gcms handles empty input gracefully", {
+  var_names <- c("bio_1", "bio_12")
+  s <- list()
+  study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:4326")
+  expect_error(transform_gcms(s, var_names, study_area))
+})
