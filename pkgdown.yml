@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   README: README.html
-last_built: 2025-02-25T13:00Z
+last_built: 2025-02-25T13:03Z
 urls:
   reference: https://luizesser.github.io/chooseGCM/reference
   article: https://luizesser.github.io/chooseGCM/articles
