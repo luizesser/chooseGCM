@@ -83,7 +83,6 @@
 <p>This is a basic tutorial which shows you how to use the functions in chooseGCM. After installing the package, we need to open it:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://luizesser.github.io/chooseGCM/">chooseGCM</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: package 'chooseGCM' was built under R version 4.3.3</span></span>
 <span><span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
@@ -792,7 +791,7 @@
 <p>From our analysis, we can infer that something between two and three clusters is enough to inform regarding the environmental variation from given GCMs. In this way, if we use GCMs CNRM-ESM2-1 (cr), MPI-ESM1-2-LR (ml) and UKESM1-0-LL (uk) to project our models into future scenarios we would be able to inform a decent variation in our projections.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 46.823 sec elapsed</span></span></code></pre></div>
+<span><span class="co">#&gt; 46.476 sec elapsed</span></span></code></pre></div>
 </div>
 </div>
 </div>
@@ -837,6 +836,7 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://github.com/luizesser/chooseGCM/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/luizesser/chooseGCM/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://app.codecov.io/gh/luizesser/chooseGCM" class="external-link"><img src="https://codecov.io/gh/luizesser/chooseGCM/graph/badge.svg" alt="Codecov test coverage"></a></li>
 </ul>
 </div>
 
