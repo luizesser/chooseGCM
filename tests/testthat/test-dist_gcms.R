@@ -43,7 +43,7 @@ test_that("dist_gcms handles invalid var_names", {
 })
 
 test_that("dist_gcms handles invalid study_area", {
-  invalid_study_area <- terra::ext(c(-200, 200, -200, 200)) |> terra::vect(crs="epsg:4326")
+  invalid_study_area <- terra::ext(c(-30, -10, -60, -40)) |> terra::vect(crs="epsg:4326")
   expect_error(dist_gcms(s, var_names, invalid_study_area))
 })
 
@@ -64,3 +64,4 @@ test_that("dist_gcms handles non-SpatRaster input in list", {
 test_that("dist_gcms handles missing var_names", {
   expect_error(dist_gcms(s, NULL, study_area))
 })
+

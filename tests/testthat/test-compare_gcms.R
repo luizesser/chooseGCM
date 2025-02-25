@@ -3,7 +3,7 @@ s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_
 study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:4326")
 
 test_that("compare_gcms returns a list", {
-  result <- compare_gcms(s, var_names, study_area, k = 3)
+  suppressWarnings(result <- compare_gcms(s, var_names, study_area, k = 3))
   expect_type(result, "list")
 })
 
@@ -56,5 +56,5 @@ test_that("compare_gcms runs without a study area", {
 
 test_that("compare_gcms fails with invalid parameters", {
   expect_error(compare_gcms(s, var_names, study_area, k = -1), "Assertion on 'k' failed")
-  expect_error(compare_gcms(s, var_names, study_area, clustering_method = "invalid"), "must be one of")
+  expect_error(compare_gcms(s, var_names, study_area, clustering_method = "invalid"), "Assertion on 'clustering_method' failed")
 })

@@ -3,7 +3,7 @@ s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_
 study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:4326")
 
 test_that("env_gcms returns a ggplot object when no highlight is specified", {
-  plot <- env_gcms(s, var_names, study_area, highlight = NULL)
+  plot <- env_gcms(s, var_names, study_area)
   expect_true(is.ggplot(plot))
 })
 
@@ -53,7 +53,7 @@ test_that("env_gcms handles a single GCM", {
 })
 
 test_that("env_gcms handles a study area with a different CRS", {
-  study_area_diff_crs <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:3857")
+  study_area_diff_crs <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:4326") |> terra::project("+init=EPSG:6933")
   plot <- env_gcms(s, var_names, study_area_diff_crs)
   expect_true(is.ggplot(plot))
 })
