@@ -6,6 +6,8 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/luizesser/chooseGCM/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/luizesser/chooseGCM/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/luizesser/chooseGCM/graph/badge.svg)](https://app.codecov.io/gh/luizesser/chooseGCM)
 <!-- badges: end -->
 
 # chooseGCM <a href="https://luizesser.github.io/chooseGCM/"><img src="man/figures/logo.png" align="right" height="138" alt="chooseGCM website" /></a>
@@ -38,7 +40,6 @@ chooseGCM. After installing the package, we need to open it:
 
 ``` r
 library(chooseGCM)
-#> Warning: package 'chooseGCM' was built under R version 4.3.3
 tictoc::tic()
 set.seed(1)
 ```
@@ -948,5 +949,5 @@ would be able to inform a decent variation in our projections.
 
 ``` r
 tictoc::toc()
-#> 46.823 sec elapsed
+#> 46.476 sec elapsed
 ```
