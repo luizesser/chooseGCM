@@ -49,11 +49,3 @@ jobs:
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
-
-    language: r
-
-    r_packages:
-      - covr
-
-    after_success:
-      - Rscript -e 'library(covr); codecov()'
