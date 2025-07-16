@@ -1,9 +1,8 @@
 pandoc: 3.1.11
-pkgdown: 2.1.2
+pkgdown: 2.1.3
 pkgdown_sha: ~
-articles:
-  README: README.html
-last_built: 2025-05-23T19:01Z
+articles: {}
+last_built: 2025-07-16T12:36Z
 urls:
   reference: https://luizesser.github.io/chooseGCM/reference
   article: https://luizesser.github.io/chooseGCM/articles
