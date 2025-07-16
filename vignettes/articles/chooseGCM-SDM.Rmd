@@ -1,7 +1,13 @@
 ---
-author: "Luíz Fernando Esser"
-date: "2024-10-25"
-output: html_document
+title: "Using chooseGCM to improve SDM projections"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using chooseGCM to improve SDM projections}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::knitr}
+editor_options: 
+  markdown: 
+    wrap: 100
 ---
 
 ```{r setup, include=FALSE}

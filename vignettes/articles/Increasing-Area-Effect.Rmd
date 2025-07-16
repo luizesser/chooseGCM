@@ -1,0 +1,743 @@
+---
+title: "Increasing Area Effect"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Increasing Area Effect}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::knitr}
+editor_options: 
+  markdown: 
+    wrap: 100
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# How chooseGCM selection changes with increasing area?
+
+This Rmarkdown is part of the following article:
+
+Esser, L.F., Bailly, D., Lima, M.R., Ré, R. 2025. chooseGCM: A Toolkit to Select General Circulation Models in R. Global Change Biology , 31(1), e70008. Available at: https://doi.org/10.1111/gcb.70008.
+
+## Introduction
+
+chooseGCM is a solution for GCMs selection in Climate Change research. We built this Rmarkdown as a way to test the properties of the methods underlying chooseGCM. Results from each function will be presented side by side with changing variables, allowing better comparison. Here, we have already downloaded GCMs data.
+
+This Rmarkdown will apply different algorithms implemented in chooseGCM in an increasing area. The aim is to understand from which point the GCM selection starts to change. For that, we will use *Araucaria angustifolia* records and will create a buffer from increassing size.
+
+```{r libs, message=F, warning=F}
+# Install and open CRAN libraries
+for(x in c("devtools", "geodata", "terra", "tictoc") ){
+  if (!require(x, character.only = TRUE)) {
+      install.packages(x, dependencies = TRUE)
+      library(x, character.only = TRUE)
+  }
+}
+
+# Install and open chooseGCM
+if (!require("chooseGCM", character.only = TRUE)) {
+    devtools::install_github("luizesser/chooseGCM")
+    library("chooseGCM", character.only = TRUE)
+}
+
+# Install and open caretSDM
+if (!require("caretSDM", character.only = TRUE)) {
+    devtools::install_github("luizesser/caretSDM")
+    library("caretSDM", character.only = TRUE)
+}
+```
+
+## Preparing data
+
+### Download GCMs
+
+To obtain GCMs data, we recommend using `geodata` package, which links directly to the WorldClim 2.1 database. We have previously downloaded GCMs data, but an example code is supplied below.
+
+```{r download_gcms, eval=FALSE}
+gcms <- geodata:::.cmods
+for (r in c(10)) {
+  for ( g in gcms ) {
+    geodata::cmip6_world(model = g,
+                         ssp = "585",
+                         time = "2081-2100",
+                         var = "bioc",
+                         res = r,
+                         path = ""
+    )
+  }
+}
+```
+
+### Import GCMs
+
+The function `import_gcms` helps the user to import data in the correct way, which is a list of GCMs. Each element of the list is a `SpatRaster` from `terra` package, containing all variables. The list should be named with GCMs names to better plot results.
+
+```{r import_gcms10}
+tictoc::tic()
+s10 <- chooseGCM::import_gcms(path = "~/storage/WC_data/WC_data_all_gcms_10/", 
+                              gcm_names = c("ACCESS-CM2","ACCESS-ESM1-5",
+                                            "CanESM5-CanOE","CMCC-ESM2",
+                                            "CNRM-CM6-1-HR","CNRM-CM6-1",
+                                            "CNRM-ESM2-1","EC-Earth3-Veg",
+                                            "EC-Earth3-Veg-LR","FIO-ESM-2-0",
+                                            "GISS-E2-1-G","GISS-E2-1-H",
+                                            "HadGEM3-GC31-LL","INM-CM5-0",
+                                            "INM-CM4-8","IPSL-CM6A-LR",
+                                            "MIROC-ES2L","MIROC6",
+                                            "MPI-ESM1-2-LR","MPI-ESM1-2-HR",
+                                            "MRI-ESM2-0","UKESM1-0-LL"))
+tictoc::toc()
+```
+
+## Species Data
+
+For this demonstration, we will use Araucaria angustifolia, the brazilian pine, as a study case. This flagship species is widely modeled and know, and is a key species for the Atlantic Rainforest biodiversity hotspot. Species records were obtained from GBIF and cleaned by excluding records from outside the native region and NAs. This set of records was then used to build 10 buffers from growing size, each buffer 1 degree-wide bigger.
+
+```{r buffers}
+occ_data <- geodata::sp_occurrence("Araucaria", "angustifolia")
+occ_data <- occ_data |>
+  dplyr::filter(lon >= -64) |> 
+  dplyr::filter(lon <= -33) |> 
+  dplyr::filter(lat <= -19.5) |> 
+  dplyr::filter(lat >= -33)
+
+buffer50 <- na.omit(occ_data[,c("lon", "lat")]) |>
+  sf::st_as_sf(coords= c(1,2), crs = 4326) |> 
+  sf::st_transform(crs=sf::st_crs(6933)) |>
+  sf::st_buffer(dist = 50000) |> 
+  sf::st_union()
+buffer100 <- na.omit(occ_data[,c("lon", "lat")]) |>
+  sf::st_as_sf(coords= c(1,2), crs = 4326) |> 
+  sf::st_transform(crs=sf::st_crs(6933)) |>
+  sf::st_buffer(dist = 100000) |> 
+  sf::st_union()
+buffer150 <- na.omit(occ_data[,c("lon", "lat")]) |>
+  sf::st_as_sf(coords= c(1,2), crs = 4326) |> 
+  sf::st_transform(crs=sf::st_crs(6933)) |>
+  sf::st_buffer(dist = 150000) |> 
+  sf::st_union()
+buffer200 <- na.omit(occ_data[,c("lon", "lat")]) |>
+  sf::st_as_sf(coords= c(1,2), crs = 4326) |> 
+  sf::st_transform(crs=sf::st_crs(6933)) |>
+  sf::st_buffer(dist = 200000) |> 
+  sf::st_union()
+buffer250 <- na.omit(occ_data[,c("lon", "lat")]) |>
+  sf::st_as_sf(coords= c(1,2), crs = 4326) |> 
+  sf::st_transform(crs=sf::st_crs(6933)) |>
+  sf::st_buffer(dist = 250000) |> 
+  sf::st_union()
+buffer300 <- na.omit(occ_data[,c("lon", "lat")]) |>
+  sf::st_as_sf(coords= c(1,2), crs = 4326) |> 
+  sf::st_transform(crs=sf::st_crs(6933)) |>
+  sf::st_buffer(dist = 300000) |> 
+  sf::st_union()
+buffer350 <- na.omit(occ_data[,c("lon", "lat")]) |>
+  sf::st_as_sf(coords= c(1,2), crs = 4326) |> 
+  sf::st_transform(crs=sf::st_crs(6933)) |>
+  sf::st_buffer(dist = 350000) |> 
+  sf::st_union()
+buffer400 <- na.omit(occ_data[,c("lon", "lat")]) |>
+  sf::st_as_sf(coords= c(1,2), crs = 4326) |> 
+  sf::st_transform(crs=sf::st_crs(6933)) |>
+  sf::st_buffer(dist = 400000) |> 
+  sf::st_union()
+buffer450 <- na.omit(occ_data[,c("lon", "lat")]) |>
+  sf::st_as_sf(coords= c(1,2), crs = 4326) |> 
+  sf::st_transform(crs=sf::st_crs(6933)) |>
+  sf::st_buffer(dist = 450000) |> 
+  sf::st_union()
+buffer500 <- na.omit(occ_data[,c("lon", "lat")]) |>
+  sf::st_as_sf(coords= c(1,2), crs = 4326) |> 
+  sf::st_transform(crs=sf::st_crs(6933)) |>
+  sf::st_buffer(dist = 500000) |> 
+  sf::st_union()
+plot(buffer50, axes=T)
+```
+
+## Applying algorithms
+
+First we will set a seed to standardize randomic outputs.
+
+```{r seed}
+set.seed(1)
+```
+
+Now we will perform the Monte Carlo analysis to each type of algorithm and to different sets of variables.
+
+### Hierarchical Clustering selection
+
+```{r hclust_gcms50}
+tictoc::tic("Hierarchical Clustering 50")
+mc_hclust_50 <- montecarlo_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer50, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "hclust")
+mc_hclust_50
+hclust_50 <- mc_hclust_50$suggested_gcms$k3
+tictoc::toc()
+```
+
+```{r hclust_gcms100}
+tictoc::tic("Hierarchical Clustering 100")
+mc_hclust_100 <- montecarlo_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer100, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "hclust")
+mc_hclust_100
+hclust_100 <- mc_hclust_100$suggested_gcms$k3
+tictoc::toc()
+```
+
+```{r hclust_gcms150}
+tictoc::tic("Hierarchical Clustering 150")
+mc_hclust_150 <- montecarlo_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer150, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "hclust")
+mc_hclust_150
+hclust_150 <- mc_hclust_150$suggested_gcms$k3
+tictoc::toc()
+```
+
+```{r hclust_gcms200}
+tictoc::tic("Hierarchical Clustering 200")
+mc_hclust_200 <- montecarlo_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer200, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "hclust")
+mc_hclust_200
+hclust_200 <- mc_hclust_200$suggested_gcms$k3
+tictoc::toc()
+```
+
+```{r hclust_gcms250}
+tictoc::tic("Hierarchical Clustering 250")
+mc_hclust_250 <- montecarlo_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer250, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "hclust")
+mc_hclust_250
+hclust_250 <- mc_hclust_250$suggested_gcms$k3
+tictoc::toc()
+```
+
+```{r hclust_gcms300}
+tictoc::tic("Hierarchical Clustering 300")
+mc_hclust_300 <- montecarlo_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer300, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "hclust")
+mc_hclust_300
+hclust_300 <- mc_hclust_300$suggested_gcms$k3
+tictoc::toc()
+```
+
+```{r hclust_gcms350}
+tictoc::tic("Hierarchical Clustering 350")
+mc_hclust_350 <- montecarlo_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer350, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "hclust")
+mc_hclust_350
+hclust_350 <- mc_hclust_350$suggested_gcms$k3
+tictoc::toc()
+```
+
+```{r hclust_gcms400}
+tictoc::tic("Hierarchical Clustering 400")
+mc_hclust_400 <- montecarlo_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer400, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "hclust")
+mc_hclust_400
+hclust_400 <- mc_hclust_400$suggested_gcms$k3
+tictoc::toc()
+```
+
+```{r hclust_gcms450}
+tictoc::tic("Hierarchical Clustering 450")
+mc_hclust_450 <- montecarlo_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer450, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "hclust")
+mc_hclust_450
+hclust_450 <- mc_hclust_450$suggested_gcms$k3
+tictoc::toc()
+```
+
+```{r hclust_gcms500}
+tictoc::tic("Hierarchical Clustering 500")
+mc_hclust_500 <- montecarlo_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer500, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "hclust")
+mc_hclust_500
+hclust_500 <- mc_hclust_500$suggested_gcms$k3
+tictoc::toc()
+```
+
+
+### K-means Clustering selection
+
+```{r kmeans_gcms50}
+tictoc::tic("K-means Clustering 50")
+mc_kmeans_50 <- montecarlo_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer50, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "kmeans")
+mc_kmeans_50
+kmeans_50 <- mc_kmeans_50$suggested_gcms$k3
+tictoc::toc()
+```
+
+```{r kmeans_gcms100}
+tictoc::tic("K-means Clustering 100")
+mc_kmeans_100 <- montecarlo_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer100, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "kmeans")
+mc_kmeans_100
+kmeans_100 <- mc_kmeans_100$suggested_gcms$k3
+tictoc::toc()
+```
+
+```{r kmeans_gcms150}
+tictoc::tic("K-means Clustering 150")
+mc_kmeans_150 <- montecarlo_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer150, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "kmeans")
+mc_kmeans_150
+kmeans_150 <- mc_kmeans_150$suggested_gcms$k3
+tictoc::toc()
+```
+
+```{r kmeans_gcms200}
+tictoc::tic("K-means Clustering 200")
+mc_kmeans_200 <- montecarlo_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer200, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "kmeans")
+mc_kmeans_200
+kmeans_200 <- mc_kmeans_200$suggested_gcms$k3
+tictoc::toc()
+```
+
+```{r kmeans_gcms250}
+tictoc::tic("K-means Clustering 250")
+mc_kmeans_250 <- montecarlo_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer250, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "kmeans")
+mc_kmeans_250
+kmeans_250 <- mc_kmeans_250$suggested_gcms$k3
+tictoc::toc()
+```
+
+```{r kmeans_gcms300}
+tictoc::tic("K-means Clustering 300")
+mc_kmeans_300 <- montecarlo_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer300, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "kmeans")
+mc_kmeans_300
+kmeans_300 <- mc_kmeans_300$suggested_gcms$k3
+tictoc::toc()
+```
+
+```{r kmeans_gcms350}
+tictoc::tic("K-means Clustering 350")
+mc_kmeans_350 <- montecarlo_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer350, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "kmeans")
+mc_kmeans_350
+kmeans_350 <- mc_kmeans_350$suggested_gcms$k3
+tictoc::toc()
+```
+
+```{r kmeans_gcms400}
+tictoc::tic("K-means Clustering 400")
+mc_kmeans_400 <- montecarlo_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer400, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "kmeans")
+mc_kmeans_400
+kmeans_400 <- mc_kmeans_400$suggested_gcms$k3
+tictoc::toc()
+```
+
+```{r kmeans_gcms450}
+tictoc::tic("K-means Clustering 450")
+mc_kmeans_450 <- montecarlo_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer450, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "kmeans")
+mc_kmeans_450
+kmeans_450 <- mc_kmeans_450$suggested_gcms$k3
+tictoc::toc()
+```
+
+```{r kmeans_gcms500}
+tictoc::tic("K-means Clustering 500")
+mc_kmeans_500 <- montecarlo_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer500, 
+                             scale = TRUE,
+                             perm = 10000, 
+                             dist_method = "euclidean", 
+                             clustering_method = "kmeans")
+mc_kmeans_500
+kmeans_500 <- mc_kmeans_500$suggested_gcms$k3
+tictoc::toc()
+```
+
+
+### Closestdist selection
+
+```{r closestdist_gcms50}
+tictoc::tic("Closestdist 50")
+mc_closestdist_50 <- closestdist_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer50, 
+                             method = "euclidean")
+mc_closestdist_50
+closestdist_50 <- mc_closestdist_50$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist_gcms100}
+tictoc::tic("Closestdist 100")
+mc_closestdist_100 <- closestdist_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer100, 
+                             method = "euclidean")
+mc_closestdist_100
+closestdist_100 <- mc_closestdist_100$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist_gcms150}
+tictoc::tic("Closestdist 150")
+mc_closestdist_150 <- closestdist_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer150, 
+                             method = "euclidean")
+mc_closestdist_150
+closestdist_150 <- mc_closestdist_150$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist_gcms200}
+tictoc::tic("Closestdist 200")
+mc_closestdist_200 <- closestdist_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer200, 
+                             method = "euclidean")
+mc_closestdist_200
+closestdist_200 <- mc_closestdist_200$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist_gcms250}
+tictoc::tic("Closestdist 250")
+mc_closestdist_250 <- closestdist_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer250, 
+                             method = "euclidean")
+mc_closestdist_250
+closestdist_250 <- mc_closestdist_250$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist_gcms300}
+tictoc::tic("Closestdist 300")
+mc_closestdist_300 <- closestdist_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer300, 
+                             method = "euclidean")
+mc_closestdist_300
+closestdist_300 <- mc_closestdist_300$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist_gcms350}
+tictoc::tic("Closestdist 350")
+mc_closestdist_350 <- closestdist_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer350, 
+                             method = "euclidean")
+mc_closestdist_350
+closestdist_350 <- mc_closestdist_350$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist_gcms400}
+tictoc::tic("Closestdist 400")
+mc_closestdist_400 <- closestdist_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer400, 
+                             method = "euclidean")
+mc_closestdist_400
+closestdist_400 <- mc_closestdist_400$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist_gcms450}
+tictoc::tic("Closestdist 450")
+mc_closestdist_450 <- closestdist_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer450, 
+                             method = "euclidean")
+mc_closestdist_450
+closestdist_450 <- mc_closestdist_450$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist_gcms500}
+tictoc::tic("Closestdist 500")
+mc_closestdist_500 <- closestdist_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer500, 
+                             method = "euclidean")
+mc_closestdist_500
+closestdist_500 <- mc_closestdist_500$suggested_gcms
+tictoc::toc()
+```
+
+
+### Closestdist selection
+
+```{r closestdist3_gcms50}
+tictoc::tic("Closestdist3 50")
+mc_closestdist3_50 <- closestdist_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer50, 
+                             method = "euclidean",
+                             k = 3)
+mc_closestdist3_50
+closestdist3_50 <- mc_closestdist3_50$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist3_gcms100}
+tictoc::tic("Closestdist3 100")
+mc_closestdist3_100 <- closestdist_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer100, 
+                             method = "euclidean",
+                             k = 3)
+mc_closestdist3_100
+closestdist3_100 <- mc_closestdist3_100$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist3_gcms150}
+tictoc::tic("Closestdist3 150")
+mc_closestdist3_150 <- closestdist_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer150, 
+                             method = "euclidean",
+                             k = 3)
+mc_closestdist3_150
+closestdist3_150 <- mc_closestdist3_150$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist3_gcms200}
+tictoc::tic("Closestdist3 200")
+mc_closestdist3_200 <- closestdist_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer200, 
+                             method = "euclidean",
+                             k = 3)
+mc_closestdist3_200
+closestdist3_200 <- mc_closestdist3_200$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist3_gcms250}
+tictoc::tic("Closestdist3 250")
+mc_closestdist3_250 <- closestdist_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer250, 
+                             method = "euclidean",
+                             k = 3)
+mc_closestdist3_250
+closestdist3_250 <- mc_closestdist3_250$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist3_gcms300}
+tictoc::tic("Closestdist3 300")
+mc_closestdist3_300 <- closestdist_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer300, 
+                             method = "euclidean",
+                             k = 3)
+mc_closestdist3_300
+closestdist3_300 <- mc_closestdist3_300$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist3_gcms350}
+tictoc::tic("Closestdist3 350")
+mc_closestdist3_350 <- closestdist_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer350, 
+                             method = "euclidean",
+                             k = 3)
+mc_closestdist3_350
+closestdist3_350 <- mc_closestdist3_350$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist3_gcms400}
+tictoc::tic("Closestdist3 400")
+mc_closestdist3_400 <- closestdist_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer400, 
+                             method = "euclidean",
+                             k = 3)
+mc_closestdist3_400
+closestdist3_400 <- mc_closestdist3_400$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist3_gcms450}
+tictoc::tic("Closestdist3 450")
+mc_closestdist3_450 <- closestdist_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer450, 
+                             method = "euclidean",
+                             k = 3)
+mc_closestdist3_450
+closestdist3_450 <- mc_closestdist3_450$suggested_gcms
+tictoc::toc()
+```
+
+```{r closestdist3_gcms500}
+tictoc::tic("Closestdist3 500")
+mc_closestdist3_500 <- closestdist_gcms(s10, 
+                             var_names = c("bio1", "bio12"), 
+                             study_area = buffer500, 
+                             method = "euclidean",
+                             k = 3)
+mc_closestdist3_500
+closestdist3_500 <- mc_closestdist3_500$suggested_gcms
+tictoc::toc()
+```
+
+## Results
+
+The change in size highlights that every algorithm is very susceptible to area selection. K-means and Hierarchical Clustering were, respectivelly, the most stable algorithms. In terms of Species Distribution Modeling, we can say that the GCM selection is affected by the accessible area for the species (the M component of the BAM diagram).
+
+```{r result_hclust}
+rbind(sort(hclust_50 ), 
+      sort(hclust_100),
+      sort(hclust_150), 
+      sort(hclust_200),
+      sort(hclust_250), 
+      sort(hclust_300),
+      sort(hclust_350), 
+      sort(hclust_400),
+      sort(hclust_450), 
+      sort(hclust_500))
+```
+
+```{r result_kmeans}
+rbind(sort(kmeans_50 ), 
+      sort(kmeans_100),
+      sort(kmeans_150), 
+      sort(kmeans_200),
+      sort(kmeans_250), 
+      sort(kmeans_300),
+      sort(kmeans_350), 
+      sort(kmeans_400),
+      sort(kmeans_450), 
+      sort(kmeans_500))
+```
+
+```{r result_closestdist}
+list(sort(closestdist_50 ), 
+     sort(closestdist_100),
+     sort(closestdist_150), 
+     sort(closestdist_200),
+     sort(closestdist_250), 
+     sort(closestdist_300),
+     sort(closestdist_350), 
+     sort(closestdist_400),
+     sort(closestdist_450), 
+     sort(closestdist_500))
+```
+
+```{r result_closestdist3}
+rbind(sort(closestdist3_50 ), 
+      sort(closestdist3_100),
+      sort(closestdist3_150), 
+      sort(closestdist3_200),
+      sort(closestdist3_250), 
+      sort(closestdist3_300),
+      sort(closestdist3_350), 
+      sort(closestdist3_400),
+      sort(closestdist3_450), 
+      sort(closestdist3_500))
+```
