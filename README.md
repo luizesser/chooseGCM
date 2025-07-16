@@ -8,7 +8,8 @@
 [![R-CMD-check](https://github.com/luizesser/chooseGCM/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/luizesser/chooseGCM/actions/workflows/R-CMD-check.yaml)
 [![Coverage
 Status](https://coveralls.io/repos/github/luizesser/chooseGCM/badge.svg?branch=main)](https://coveralls.io/github/luizesser/chooseGCM?branch=main)
-
+[![CRAN
+status](https://www.r-pkg.org/badges/version/chooseGCM)](https://CRAN.R-project.org/package=chooseGCM)
 <!-- badges: end -->
 
 # chooseGCM <a href="https://luizesser.github.io/chooseGCM/"><img src="man/figures/logo.png" alt="chooseGCM website" align="right" height="138"/></a>
