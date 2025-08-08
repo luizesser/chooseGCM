@@ -49,5 +49,5 @@ URL: https://luizesser.github.io/chooseGCM/, https://github.com/luizesser/choose
 VignetteBuilder: knitr
 BugReports: https://github.com/luizesser/chooseGCM/issues
 Depends: 
-    R (>= 4.10)
+    R (>= 4.1)
 Config/Needs/website: rmarkdown
