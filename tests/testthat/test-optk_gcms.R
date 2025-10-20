@@ -4,8 +4,7 @@ test_that("optk_gcms works with kmeans and wss method", {
   study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:4326")
   result <- optk_gcms(s, var_names, study_area, cluster = "kmeans", method = "wss")
   expect_no_error(result)
-  expect_type(result, "list")
-  expect_true(length(result) > 0)
+  expect_true(ggplot2::is_ggplot(result))
 })
 
 test_that("optk_gcms works with kmeans and silhouette method", {
@@ -14,8 +13,7 @@ test_that("optk_gcms works with kmeans and silhouette method", {
   study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:4326")
   result <- optk_gcms(s, var_names, study_area, cluster = "kmeans", method = "silhouette")
   expect_no_error(result)
-  expect_type(result, "list")
-  expect_true(length(result) == 11)
+  expect_true(ggplot2::is_ggplot(result))
 })
 
 test_that("optk_gcms fails with invalid cluster method", {

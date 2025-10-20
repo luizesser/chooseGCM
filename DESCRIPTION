@@ -1,7 +1,7 @@
 Type: Package
 Package: chooseGCM
 Title: Selecting General Circulation Models for Species Distribution Modeling
-Version: 1.1
+Version: 1.2
 Authors@R: c(
     person("Dayani", "Bailly", role = "aut",
            comment = c(ORCID = "0000-0002-6954-9902")),
@@ -40,13 +40,11 @@ Suggests:
     tictoc,
     testthat,
     sf,
-    knitr,
     raster,
     rmarkdown,
     stars
 Config/testthat/edition: 3
 URL: https://luizesser.github.io/chooseGCM/, https://github.com/luizesser/chooseGCM
-VignetteBuilder: knitr
 BugReports: https://github.com/luizesser/chooseGCM/issues
 Depends: 
     R (>= 4.1)
