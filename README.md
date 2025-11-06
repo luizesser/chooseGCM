@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+[![CRAN
+downloads](https://cranlogs.r-pkg.org/badges/chooseGCM)](https://cran.r-project.org/package=chooseGCM)
 [![R-CMD-check](https://github.com/luizesser/chooseGCM/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/luizesser/chooseGCM/actions/workflows/R-CMD-check.yaml)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/chooseGCM)](https://CRAN.R-project.org/package=chooseGCM)
