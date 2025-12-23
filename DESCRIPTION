@@ -20,6 +20,7 @@ Description: Methods to help selecting General Circulation Models (GCMs)
 License: MIT + file LICENSE
 Imports:
     checkmate, 
+    cli,
     cluster, 
     cowplot, 
     factoextra, 
