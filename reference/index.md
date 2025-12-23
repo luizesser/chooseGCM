@@ -29,5 +29,5 @@
   : Summarize General Circulation Model (GCM) Data
 - [`transform_gcms()`](https://luizesser.github.io/chooseGCM/reference/transform_gcms.md)
   : Transform General Circulation Model (GCM) Stacks
-- [`worldclim_data()`](https://luizesser.github.io/chooseGCM/reference/worldclim_data.md)
-  : Download WorldClim v2.1 Bioclimatic Data
+- [`WorldClim_data()`](https://luizesser.github.io/chooseGCM/reference/worldclim_data.md)
+  : Download WorldClim v.2.1 bioclimatic data

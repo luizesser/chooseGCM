@@ -45,7 +45,7 @@ specified path.
 
 ## See also
 
-[`worldclim_data`](https://luizesser.github.io/chooseGCM/reference/worldclim_data.md)
+`worldclim_data`
 
 ## Author
 
