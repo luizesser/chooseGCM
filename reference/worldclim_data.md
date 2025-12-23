@@ -85,7 +85,10 @@ WorldClim_data(period = "future",
                gcm = "mi",
                ssp = "126",
                resolution = 10)
-#> Error in assert_character_cli(period): could not find function "assert_character_cli"
+#> Downloading WorldClim future data: mi_ssp126_10_2050 from
+#> <https://geodata.ucdavis.edu/cmip6/10m/MIROC6/ssp126/wc2.1_10m_bioc_MIROC6_ssp126_2041-2060.tif>
+#> Downloading WorldClim future data: mi_ssp126_10_2090 from
+#> <https://geodata.ucdavis.edu/cmip6/10m/MIROC6/ssp126/wc2.1_10m_bioc_MIROC6_ssp126_2081-2100.tif>
 
 # download data from one specific period
 WorldClim_data(period = "future",
@@ -94,6 +97,7 @@ WorldClim_data(period = "future",
                gcm = "mi",
                ssp = "585",
                resolution = 10)
-#> Error in assert_character_cli(period): could not find function "assert_character_cli"
+#> Downloading WorldClim future data: mi_ssp585_10_2070 from
+#> <https://geodata.ucdavis.edu/cmip6/10m/MIROC6/ssp585/wc2.1_10m_bioc_MIROC6_ssp585_2061-2080.tif>
 # }
 ```
