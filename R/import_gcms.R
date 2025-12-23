@@ -11,7 +11,7 @@
 #' @return A list of stacks, where each element corresponds to a GCM from the specified path.
 
 #'
-#' @seealso \code{\link{worldclim_data}}
+#' @seealso \code{\link{WorldClim_data}}
 #'
 #' @author Luíz Fernando Esser (luizesser@gmail.com)
 #' https://luizfesser.wordpress.com

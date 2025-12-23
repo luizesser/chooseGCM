@@ -58,6 +58,7 @@
 #' @importFrom httr2 request req_url req_error req_perform resp_is_error resp_status
 #' @importFrom cli cli_alert_warning cli_abort cli_inform
 #' @importFrom utils unzip
+#' @importFrom checkmate assertCharacter assertNumeric
 #'
 #' @export
 WorldClim_data <- function(path = NULL,
@@ -110,14 +111,13 @@ WorldClim_data <- function(path = NULL,
       "i" = "{.var resolution} must be element of set [10, 5, 2.5, 30]."
     ))
   }
-
-  assert_character_cli(period)
-  assert_character_cli(variable)
-  assert_character_cli(year)
-  assert_character_cli(gcm)
-  assert_character_cli(ssp)
-  assert_numeric_cli(resolution)
-  assert_character_cli(path, null.ok = TRUE, len = 1)
+  checkmate::assertCharacter(period)
+  checkmate::assertCharacter(variable)
+  checkmate::assertCharacter(year)
+  checkmate::assertCharacter(gcm)
+  checkmate::assertCharacter(ssp)
+  checkmate::assertNumeric(resolution)
+  checkmate::assertCharacter(path, null.ok = TRUE, len = 1)
 
   res <- ifelse(resolution == 30, "s", "m")
   l <- list()

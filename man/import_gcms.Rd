@@ -34,7 +34,7 @@ s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = c("b
 
 }
 \seealso{
-\code{\link{worldclim_data}}
+\code{\link{WorldClim_data}}
 }
 \author{
 Luíz Fernando Esser (luizesser@gmail.com)
