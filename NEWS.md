@@ -16,3 +16,4 @@ as articles in the website; Dependency now is for R >= 4.1.
 # chooseGCM 1.3
 
 * Update on package tests to follow terra package updates.
+* Now WorldClim_data function uses httr2 package to gracefully handle errors.
