@@ -1,0 +1,113 @@
+# `chooseGCM`: an R package with a toolkit to select General Circulation Models
+
+# chooseGCM
+
+The goal of `chooseGCM` is to help researchers aiming to project Species
+Distribution Models and Ecological Niche Models to future scenarios by
+applying a selection routine to the General Circulation Models.
+
+## Installation
+
+You can install the development version of `chooseGCM` from
+[GitHub](https://github.com/luizesser/chooseGCM) with:
+
+``` r
+install.packages("devtools")
+devtools::install_github("luizesser/chooseGCM")
+```
+
+The package is also available on CRAN. Users are able to install it
+using the following code:
+
+``` r
+install.packages("chooseGCM")
+```
+
+## Other packages
+
+If you liked `chooseGCM`, get to know our other packages. Currently, we
+have also the [`caretSDM`](https://github.com/luizesser/caretSDM)
+package, a package to run Species Distribution Modeling, which is also
+used in the article
+
+> Esser, L.F., Bailly, D., Lima, M.R., Ré, R. 2025. chooseGCM: A Toolkit
+> to Select General Circulation Models in R. Global Change Biology ,
+> 31(1), e70008. Available at: <https://doi.org/10.1111/gcb.70008>.
+
+to test `chooseGCM` using SDMs.
+
+Three breakthroughs distinguish `caretSDM`:
+
+1.  The strong geoprocessing background that allows for automation on
+    spatial data handling by rescaling data to a common grid, with the
+    possibility to model distributions using river networks (via
+    segmented lines), overcoming limitations for aquatic species, while
+    also enabling interactive data viewing without the use of an
+    external GIS software;
+
+2.  The underlying ML tools that allows for the integration of 115+
+    classification algorithms with automated workflows, from
+    hyperparameter tuning to ensemble prediction, eliminating coding
+    barriers for advanced techniques, while allowing flexibility for
+    experienced users;
+
+3.  The use of recyclable objects, designed to track all analysis steps
+    within a single class, enhancing transparency and scientific rigor.
+
+`caretSDM` is available on both GitHub and CRAN:
+
+``` r
+install.packages("devtools")
+devtools::install_github("luizesser/caretSDM")
+```
+
+``` r
+install.packages("caretSDM")
+```
+
+# Package index
+
+## All functions
+
+- [`closestdist_gcms()`](https://luizesser.github.io/chooseGCM/reference/closestdist_gcms.md)
+  : Distance between General Circulation Models (GCMs)
+- [`compare_gcms()`](https://luizesser.github.io/chooseGCM/reference/compare_gcms.md)
+  : Compare General Circulation Models (GCMs)
+- [`cor_gcms()`](https://luizesser.github.io/chooseGCM/reference/cor_gcms.md)
+  : Compute and Plot Correlation Matrix for a Set of General Circulation
+  Models
+- [`dist_gcms()`](https://luizesser.github.io/chooseGCM/reference/dist_gcms.md)
+  : Distance Between GCMs
+- [`env_gcms()`](https://luizesser.github.io/chooseGCM/reference/env_gcms.md)
+  : General Circulation Model (GCM) Environmental Distribution
+- [`flatten_gcms()`](https://luizesser.github.io/chooseGCM/reference/flatten_gcms.md)
+  : Flatten General Circulation Models (GCMs)
+- [`hclust_gcms()`](https://luizesser.github.io/chooseGCM/reference/hclust_gcms.md)
+  : Hierarchical Clustering of GCMs
+- [`import_gcms()`](https://luizesser.github.io/chooseGCM/reference/import_gcms.md)
+  : Import GCM Data to R
+- [`kmeans_gcms()`](https://luizesser.github.io/chooseGCM/reference/kmeans_gcms.md)
+  : Perform K-Means Clustering on GCMs
+- [`montecarlo_gcms()`](https://luizesser.github.io/chooseGCM/reference/montecarlo_gcms.md)
+  : Perform Monte Carlo Permutations on GCMs
+- [`optk_gcms()`](https://luizesser.github.io/chooseGCM/reference/optk_gcms.md)
+  : Optimize the number of clusters for a dataset
+- [`summary_gcms()`](https://luizesser.github.io/chooseGCM/reference/summary_gcms.md)
+  : Summarize General Circulation Model (GCM) Data
+- [`transform_gcms()`](https://luizesser.github.io/chooseGCM/reference/transform_gcms.md)
+  : Transform General Circulation Model (GCM) Stacks
+- [`worldclim_data()`](https://luizesser.github.io/chooseGCM/reference/worldclim_data.md)
+  : Download WorldClim v2.1 Bioclimatic Data
+
+# Articles
+
+### All vignettes
+
+- [The chooseGCM contribution for Species Distribution
+  Modeling](https://luizesser.github.io/chooseGCM/articles/chooseGCM-SDM.md):
+- [How chooseGCM selection changes with increasing
+  area?](https://luizesser.github.io/chooseGCM/articles/Increasing-Area-Effect.md):
+- [Is chooseGCM affected by
+  resolution?](https://luizesser.github.io/chooseGCM/articles/Resolution-Effect.md):
+- [Is chooseGCM affected by variable
+  selection?](https://luizesser.github.io/chooseGCM/articles/Variables-Effect.md):

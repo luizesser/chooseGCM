@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">chooseGCM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,7 +35,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Download WorldClim v2.1 Bioclimatic Data</h1>
-      <small class="dont-index">Source: <a href="https://github.com/luizesser/chooseGCM/blob/v1.2/R/WorldClim_data.R" class="external-link"><code>R/WorldClim_data.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/luizesser/chooseGCM/blob/main/R/WorldClim_data.R" class="external-link"><code>R/WorldClim_data.R</code></a></small>
       <div class="d-none name"><code>worldclim_data.Rd</code></div>
     </div>
 
@@ -110,13 +110,22 @@ https://luizfesser.wordpress.com</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co"># download data from multiple periods:</span></span></span>
 <span class="r-in"><span><span class="va">year</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2050"</span>, <span class="st">"2090"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">worldclim_data</span><span class="op">(</span><span class="st">"future"</span>, <span class="st">"bioc"</span>, <span class="va">year</span>, <span class="st">"mi"</span>, <span class="st">"126"</span>, <span class="fl">10</span>, path<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> mi_ssp126_10_2050</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> mi_ssp126_10_2090</span>
+<span class="r-in"><span><span class="fu">worldclim_data</span><span class="op">(</span>period <span class="op">=</span> <span class="st">"future"</span>,</span></span>
+<span class="r-in"><span>               variable <span class="op">=</span> <span class="st">"bioc"</span>,</span></span>
+<span class="r-in"><span>               year <span class="op">=</span> <span class="va">year</span>,</span></span>
+<span class="r-in"><span>               gcm <span class="op">=</span> <span class="st">"mi"</span>,</span></span>
+<span class="r-in"><span>               ssp <span class="op">=</span> <span class="st">"126"</span>,</span></span>
+<span class="r-in"><span>               resolution <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in worldclim_data(period = "future", variable = "bioc", year = year,     gcm = "mi", ssp = "126", resolution = 10):</span> Assertion on 'path' failed: Must be of type 'character', not 'NULL'.</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># download data from one specific period:</span></span></span>
-<span class="r-in"><span><span class="fu">worldclim_data</span><span class="op">(</span><span class="st">"future"</span>, <span class="st">"bioc"</span>, <span class="st">"2070"</span>, <span class="st">"mi"</span>, <span class="st">"585"</span>, <span class="fl">10</span>, path<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> mi_ssp585_10_2070</span>
+<span class="r-in"><span><span class="co"># download data from one specific period</span></span></span>
+<span class="r-in"><span><span class="fu">worldclim_data</span><span class="op">(</span>period <span class="op">=</span> <span class="st">"future"</span>,</span></span>
+<span class="r-in"><span>               variable <span class="op">=</span> <span class="st">"bioc"</span>,</span></span>
+<span class="r-in"><span>               year <span class="op">=</span> <span class="st">"2070"</span>,</span></span>
+<span class="r-in"><span>               gcm <span class="op">=</span> <span class="st">"mi"</span>,</span></span>
+<span class="r-in"><span>               ssp <span class="op">=</span> <span class="st">"585"</span>,</span></span>
+<span class="r-in"><span>               resolution <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in worldclim_data(period = "future", variable = "bioc", year = "2070",     gcm = "mi", ssp = "585", resolution = 10):</span> Assertion on 'path' failed: Must be of type 'character', not 'NULL'.</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
@@ -130,7 +139,7 @@ https://luizfesser.wordpress.com</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>
