@@ -1,6 +1,6 @@
 var_names <- c("bio_1", "bio_12")
 s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_names)
-study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:4326")
+study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="+proj=longlat +datum=WGS84 +no_defs")
 
 test_that("env_gcms returns a ggplot object when no highlight is specified", {
   plot <- env_gcms(s, var_names, study_area)
@@ -53,7 +53,9 @@ test_that("env_gcms handles a single GCM", {
 })
 
 test_that("env_gcms handles a study area with a different CRS", {
-  study_area_diff_crs <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:4326") |> terra::project("+init=EPSG:6933")
+  study_area_diff_crs <- terra::ext(c(-80, -30, -50, 10)) |>
+    terra::vect(crs="+proj=longlat +datum=WGS84 +no_defs") |>
+    terra::project("+proj=cea +lat_ts=30 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs")
   plot <- env_gcms(s, var_names, study_area_diff_crs)
   expect_true(ggplot2::is_ggplot(plot))
 })

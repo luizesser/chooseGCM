@@ -1,6 +1,6 @@
 var_names <- c("bio_1", "bio_12")
 s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_names)
-study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:4326")
+study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="+proj=longlat +datum=WGS84 +no_defs")
 
 test_that("dist_gcms returns a list with distances and heatmap", {
   result <- dist_gcms(s, var_names, study_area)
@@ -43,12 +43,12 @@ test_that("dist_gcms handles invalid var_names", {
 })
 
 test_that("dist_gcms handles invalid study_area", {
-  invalid_study_area <- terra::ext(c(-30, -10, -60, -40)) |> terra::vect(crs="epsg:4326")
+  invalid_study_area <- terra::ext(c(-30, -10, -60, -40)) |> terra::vect(crs="+proj=longlat +datum=WGS84 +no_defs")
   expect_error(dist_gcms(s, var_names, invalid_study_area))
 })
 
 test_that("dist_gcms handles empty study_area", {
-  empty_study_area <- terra::ext(c(0, 0, 0, 0)) |> terra::vect(crs="epsg:4326")
+  empty_study_area <- terra::ext(c(0, 0, 0, 0)) |> terra::vect(crs="+proj=longlat +datum=WGS84 +no_defs")
   expect_error(dist_gcms(s, var_names, empty_study_area))
 })
 

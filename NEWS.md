@@ -12,3 +12,7 @@ as articles in the website; Dependency now is for R >= 4.1.
 # chooseGCM 1.2
 
 * Package was updated to work with the new ggplot2 v.4.0.0.
+
+# chooseGCM 1.3
+
+* Update on package tests to follow terra package updates.

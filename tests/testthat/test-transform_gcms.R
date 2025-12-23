@@ -125,7 +125,7 @@ test_that("study_area as projected sf", {
   bio_2 <-  raster::raster(matrix(runif(1000), ncol = 50))
   bio_12 <- raster::raster(matrix(runif(1000), ncol = 50))
   ab <- raster::stack(bio_1, bio_2, bio_12)
-  raster::crs(ab) <- 4326
+  raster::crs(ab) <- "+proj=longlat +datum=WGS84 +no_defs"
   var_names <- c("bio_1", "bio_2", "bio_12")
   names(ab) <- var_names
   s <- list(ab, ab, ab)
@@ -141,12 +141,12 @@ test_that("study_area as projected sf (different projection)", {
   bio_2 <-  raster::raster(matrix(runif(1000), ncol = 50))
   bio_12 <- raster::raster(matrix(runif(1000), ncol = 50))
   ab <- raster::stack(bio_1, bio_2, bio_12)
-  raster::crs(ab) <- 4326
+  raster::crs(ab) <- "+proj=longlat +datum=WGS84 +no_defs"
   var_names <- c("bio_1", "bio_2", "bio_12")
   names(ab) <- var_names
   s <- list(ab, ab, ab)
   names(s) <- c("ab", "cd", "ef")
-  study_area <- sf::st_sf(sf::st_sfc(sf::st_buffer(sf::st_point(c(0.5, 0.5)), 0.2), crs = 4689))
+  study_area <- sf::st_sf(sf::st_sfc(sf::st_buffer(sf::st_point(c(0.5, 0.5)), 0.2), crs = "+proj=longlat +ellps=intl +no_defs"))
   expect_no_error(result <- transform_gcms(s, var_names = var_names, study_area))
   expect_true(length(result) == 3)
   expect_true(all(colnames(result[[1]]) == var_names))
@@ -157,13 +157,13 @@ test_that("study_area is a projected raster", {
   bio_2 <-  raster::raster(matrix(runif(1000), ncol = 50))
   bio_12 <- raster::raster(matrix(runif(1000), ncol = 50))
   ab <- raster::stack(bio_1, bio_2, bio_12)
-  raster::crs(ab) <- 4326
+  raster::crs(ab) <- "+proj=longlat +datum=WGS84 +no_defs"
   var_names <- c("bio_1", "bio_2", "bio_12")
   names(ab) <- var_names
   s <- list(ab, ab, ab)
   names(s) <- c("ab", "cd", "ef")
   study_area <- raster::raster(matrix(runif(100), ncol = 10))
-  raster::crs(study_area) <- 4326
+  raster::crs(study_area) <- "+proj=longlat +datum=WGS84 +no_defs"
   raster::extent(study_area) <- c(0.4, 0.5, 0.4, 0.5)
   expect_error(transform_gcms(s, var_names = var_names, study_area))
 })
@@ -173,13 +173,13 @@ test_that("study_area is a projected raster (different projection)", {
   bio_2 <-  raster::raster(matrix(runif(1000), ncol = 50))
   bio_12 <- raster::raster(matrix(runif(1000), ncol = 50))
   ab <- raster::stack(bio_1, bio_2, bio_12)
-  raster::crs(ab) <- 4326
+  raster::crs(ab) <- "+proj=longlat +datum=WGS84 +no_defs"
   var_names <- c("bio_1", "bio_2", "bio_12")
   names(ab) <- var_names
   s <- list(ab, ab, ab)
   names(s) <- c("ab", "cd", "ef")
   study_area <- raster::raster(matrix(runif(100), ncol = 10))
-  raster::crs(study_area) <- 4689
+  raster::crs(study_area) <- "+proj=longlat +ellps=intl +no_defs"
   raster::extent(study_area) <- c(0.4, 0.5, 0.4, 0.5)
   expect_error(transform_gcms(s, var_names = var_names, study_area))
 })
@@ -219,7 +219,7 @@ test_that("study_area is a stack( projected", {
   bio_2 <- raster::raster(matrix(runif(1000), ncol = 50))
   bio_12 <- raster::raster(matrix(runif(1000), ncol = 50))
   ab <- raster::stack(bio_1, bio_2, bio_12)
-  raster::crs(ab) <- 4326
+  raster::crs(ab) <- "+proj=longlat +datum=WGS84 +no_defs"
   var_names <- c("bio_1", "bio_2", "bio_12")
   names(ab) <- var_names
   s <- list(ab, ab, ab)
@@ -228,7 +228,7 @@ test_that("study_area is a stack( projected", {
     raster::raster(matrix(runif(100), ncol = 10)),
     raster::raster(matrix(runif(100), ncol = 10))
   )
-  raster::crs(study_area) <- 4689
+  raster::crs(study_area) <- "+proj=longlat +ellps=intl +no_defs"
   raster::extent(study_area) <- c(0.4, 0.5, 0.4, 0.5)
   expect_error(transform_gcms(s, var_names = var_names, study_area))
 })
@@ -255,7 +255,7 @@ test_that("study_area is a brick projected", {
   bio_2 <- raster::raster(matrix(runif(1000), ncol = 50))
   bio_12 <- raster::raster(matrix(runif(1000), ncol = 50))
   ab <- raster::stack(bio_1, bio_2, bio_12)
-  raster::crs(ab) <- 4326
+  raster::crs(ab) <- "+proj=longlat +datum=WGS84 +no_defs"
   var_names <- c("bio_1", "bio_2", "bio_12")
   names(ab) <- var_names
   s <- list(ab, ab, ab)
@@ -264,7 +264,7 @@ test_that("study_area is a brick projected", {
     raster::raster(matrix(runif(1000), ncol = 50)),
     raster::raster(matrix(runif(1000), ncol = 50))
   ))
-  raster::crs(study_area) <- 4689
+  raster::crs(study_area) <- "+proj=longlat +ellps=intl +no_defs"
   raster::extent(study_area) <- c(0.4, 0.5, 0.4, 0.5)
   expect_error(transform_gcms(s, var_names = var_names, study_area))
 })
@@ -274,7 +274,7 @@ test_that("study_area is a spatraster with all vars", {
   bio_2 <- terra::rast(matrix(runif(1000), ncol = 50))
   bio_12 <- terra::rast(matrix(runif(1000), ncol = 50))
   ab <- c(bio_1, bio_2, bio_12)
-  terra::crs(ab) <- "EPSG:4326"
+  terra::crs(ab) <- "+proj=longlat +datum=WGS84 +no_defs"
   var_names <- c("bio_1", "bio_2", "bio_12")
   names(ab) <- var_names
   s <- list(ab, ab, ab)
@@ -289,7 +289,7 @@ test_that("study_area is a stars with all vars", {
   bio_2 <- terra::rast(matrix(runif(1000), ncol = 50)) |> stars::st_as_stars()
   bio_12 <- terra::rast(matrix(runif(1000), ncol = 50)) |> stars::st_as_stars()
   ab <- c(bio_1, bio_2, bio_12)
-  sf::st_crs(ab) <- "EPSG:4326"
+  sf::st_crs(ab) <- "+proj=longlat +datum=WGS84 +no_defs"
   var_names <- c("bio_1", "bio_2", "bio_12")
   names(ab) <- var_names
   s <- list(ab, ab, ab)
@@ -302,7 +302,7 @@ test_that("study_area is a stars with all vars", {
 test_that("transform_gcms works correctly with real data", {
   var_names <- c("bio_1", "bio_12")
   s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_names)
-  study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:4326")
+  study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="+proj=longlat +datum=WGS84 +no_defs")
   expect_no_error(s_trans <- transform_gcms(s, var_names, study_area))
   expect_true(length(s_trans) == 11)
 })
@@ -310,6 +310,6 @@ test_that("transform_gcms works correctly with real data", {
 test_that("transform_gcms handles empty input gracefully", {
   var_names <- c("bio_1", "bio_12")
   s <- list()
-  study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:4326")
+  study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="+proj=longlat +datum=WGS84 +no_defs")
   expect_error(transform_gcms(s, var_names, study_area))
 })

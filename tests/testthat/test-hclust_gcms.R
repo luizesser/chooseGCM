@@ -1,6 +1,6 @@
 var_names <- c("bio_1", "bio_12")
 s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_names)
-study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:4326")
+study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="+proj=longlat +datum=WGS84 +no_defs")
 
 test_that("hclust_gcms returns a list with expected elements", {
   result <- hclust_gcms(s, var_names, study_area, k = 3, n = 500)
@@ -48,7 +48,9 @@ test_that("hclust_gcms returns an error if k is greater than available GCMs", {
 #})
 
 test_that("hclust_gcms handles incorrect CRS in study_area", {
-  study_area_invalid <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:4326") |> terra::project("+init=EPSG:6933")
+  study_area_invalid <- terra::ext(c(-80, -30, -50, 10)) |>
+    terra::vect(crs="+proj=longlat +datum=WGS84 +no_defs") |>
+    terra::project("+proj=longlat +ellps=intl +no_defs")
   result <- hclust_gcms(s, var_names, study_area_invalid, k = 3, n = 500)
   expect_length(result, 2)
   expect_true("suggested_gcms" %in% names(result))

@@ -63,10 +63,20 @@
 #' \donttest{
 #' # download data from multiple periods:
 #' year <- c("2050", "2090")
-#' worldclim_data("future", "bioc", year, "mi", "126", 10, path=tempdir())
+#' worldclim_data(period = "future",
+#'                variable = "bioc",
+#'                year = year,
+#'                gcm = "mi",
+#'                ssp = "126",
+#'                resolution = 10)
 #'
-#' # download data from one specific period:
-#' worldclim_data("future", "bioc", "2070", "mi", "585", 10, path=tempdir())
+#' # download data from one specific period
+#' worldclim_data(period = "future",
+#'                variable = "bioc",
+#'                year = "2070",
+#'                gcm = "mi",
+#'                ssp = "585",
+#'                resolution = 10)
 #' }
 #'
 #' @import checkmate

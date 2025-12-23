@@ -20,7 +20,8 @@
 #' @examples
 #' var_names <- c("bio_1", "bio_12")
 #' s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_names)
-#' study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:4326")
+#' study_area <- terra::ext(c(-80, -30, -50, 10)) |>
+#'   terra::vect(crs="+proj=longlat +datum=WGS84 +no_defs")
 #' transform_gcms(s, var_names, study_area)
 #'
 #' @import checkmate

@@ -44,7 +44,7 @@ test_that("flatten_gcms input error (list of one stack)", {
 test_that("flatten_gcms works correctly with real data", {
   var_names <- c("bio_1", "bio_12")
   s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_names)
-  study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="epsg:4326")
+  study_area <- terra::ext(c(-80, -30, -50, 10)) |> terra::vect(crs="+proj=longlat +datum=WGS84 +no_defs")
   s_trans <- transform_gcms(s, var_names, study_area)
   expect_no_error(result <- flatten_gcms(s_trans))
   expect_true(length(result) == 10340)
