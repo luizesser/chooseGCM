@@ -16,8 +16,8 @@
 #'
 #' @examples
 #' var_names <- c("bio_1", "bio_12")
-#' s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_names)
-#' study_area <- terra::ext(c(-80, -30, -50, 10)) |>
+#' s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_names)[1:5]
+#' study_area <- terra::ext(c(-80, -70, -50, -40)) |>
 #'   terra::vect(crs="+proj=longlat +datum=WGS84 +no_defs")
 #' summary_gcms(s, var_names, study_area)
 #'

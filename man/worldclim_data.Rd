@@ -47,20 +47,12 @@ recommended to do so, since the data is very heavy.
 \donttest{
 # download data from multiple periods:
 year <- c("2050", "2090")
-WorldClim_data(period = "future",
+try(WorldClim_data(period = "future",
                variable = "bioc",
                year = year,
                gcm = "mi",
                ssp = "126",
-               resolution = 10)
-
-# download data from one specific period
-WorldClim_data(period = "future",
-               variable = "bioc",
-               year = "2070",
-               gcm = "mi",
-               ssp = "585",
-               resolution = 10)
+               resolution = 10))
 }
 
 }
