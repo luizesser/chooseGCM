@@ -16,14 +16,14 @@
 Source:
 [`DESCRIPTION`](https://github.com/luizesser/chooseGCM/blob/main/DESCRIPTION)
 
-Bailly D, Ré R, R. Lima M, Esser L (2025). *chooseGCM: Selecting General
+Bailly D, Ré R, R. Lima M, Esser L (2026). *chooseGCM: Selecting General
 Circulation Models for Species Distribution Modeling*. R package version
 1.3, <https://luizesser.github.io/chooseGCM/>.
 
     @Manual{,
       title = {chooseGCM: Selecting General Circulation Models for Species Distribution Modeling},
       author = {Dayani Bailly and Reginaldo Ré and Marcos {R. Lima} and Luíz Esser},
-      year = {2025},
+      year = {2026},
       note = {R package version 1.3},
       url = {https://luizesser.github.io/chooseGCM/},
     }

@@ -64,34 +64,17 @@ https://luizfesser.wordpress.com
 
 ``` r
 var_names <- c("bio_1", "bio_12")
-s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_names)
-study_area <- terra::ext(c(-80, -30, -50, 10)) |>
+s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_names)[1:5]
+study_area <- terra::ext(c(-80, -70, -50, -40)) |>
   terra::vect(crs="+proj=longlat +datum=WGS84 +no_defs")
 dist_gcms(s, var_names, study_area, method = "euclidean")
 #> CRS from s and study_area are not identical. Reprojecting study area.
 #> $distances
-#>           ae        cc        ch        cr        ev        gg        hg
-#> cc 12.098570                                                            
-#> ch  8.969913  7.552224                                                  
-#> cr  8.514195  8.163410  4.086509                                        
-#> ev  9.754736  7.253076  4.989154  5.755512                              
-#> gg  8.111254  9.078551  5.713758  5.705027  6.511863                    
-#> hg  5.589097 10.904037  7.580155  7.217513  9.222617  8.074113          
-#> in 11.336510  7.728264  5.306804  7.057019  6.010795  6.224649 10.381061
-#> me  9.123887  8.189250  4.604741  5.604862  6.179877  6.365865  8.078647
-#> ml 10.160126  8.502065  6.040417  6.187604  7.007226  5.508376  8.708759
-#> mr  8.788592  8.784732  4.298812  5.906397  5.869130  5.112497  8.145027
-#>           in        me        ml
-#> cc                              
-#> ch                              
-#> cr                              
-#> ev                              
-#> gg                              
-#> hg                              
-#> in                              
-#> me  5.774464                    
-#> ml  6.445012  6.018782          
-#> mr  5.131127  4.670026  5.373297
+#>           ae        cc        ch        cr
+#> cc 0.2454582                              
+#> ch 0.9281454 1.0138236                    
+#> cr 0.8599514 0.9406321 0.1267409          
+#> ev 0.5924451 0.7399979 0.4275583 0.4008307
 #> 
 #> $heatmap
 

@@ -94,8 +94,8 @@ https://luizfesser.wordpress.com
 
 ``` r
 var_names <- c("bio_1", "bio_12")
-s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_names)
-study_area <- terra::ext(c(-80, -30, -50, 10)) |>
+s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_names)[1:5]
+study_area <- terra::ext(c(-80, -70, -50, -40)) |>
   terra::vect(crs="+proj=longlat +datum=WGS84 +no_defs")
 closestdist_gcms(s, var_names, study_area, method = "euclidean")
 #> CRS from s and study_area are not identical. Reprojecting study area.
@@ -105,12 +105,12 @@ closestdist_gcms(s, var_names, study_area, method = "euclidean")
 #> ℹ The deprecated feature was likely used in the factoextra package.
 #>   Please report the issue at <https://github.com/kassambara/factoextra/issues>.
 #> $suggested_gcms
-#> [1] "ae" "ch" "cr"
+#> [1] "ae" "cc" "cr" "ev"
 #> 
 #> $best_mean_diff
-#> [1] 0.0001577513
+#> [1] 0.002327551
 #> 
 #> $global_mean
-#> [1] 7.190363
+#> [1] 0.6275584
 #> 
 ```

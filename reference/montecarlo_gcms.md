@@ -82,8 +82,8 @@ https://luizfesser.wordpress.com
 
 ``` r
 var_names <- c("bio_1", "bio_12")
-s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_names)
-study_area <- terra::ext(c(-80, -30, -50, 10)) |>
+s <- import_gcms(system.file("extdata", package = "chooseGCM"), var_names = var_names)[1:5]
+study_area <- terra::ext(c(-80, -70, -50, -40)) |>
   terra::vect(crs="+proj=longlat +datum=WGS84 +no_defs")
 montecarlo_gcms(s, var_names, study_area)
 #> $montecarlo_plot
@@ -91,31 +91,13 @@ montecarlo_gcms(s, var_names, study_area)
 #> 
 #> $suggested_gcms
 #> $suggested_gcms$k2
-#> [1] "cr" "hg"
+#> [1] "ae" "ev"
 #> 
 #> $suggested_gcms$k3
-#> [1] "ae" "ch" "cr"
+#> [1] "ae" "cr" "ev"
 #> 
 #> $suggested_gcms$k4
-#> [1] "cc" "ev" "me" "ml"
-#> 
-#> $suggested_gcms$k5
-#> [1] "ae" "me" "mr" "cr" "in"
-#> 
-#> $suggested_gcms$k6
-#> [1] "ae" "ch" "cr" "ml" "ev" "in"
-#> 
-#> $suggested_gcms$k7
-#> [1] "ch" "mr" "ae" "hg" "ev" "gg" "in"
-#> 
-#> $suggested_gcms$k8
-#> [1] "cc" "ev" "me" "ml" "gg" "in" "hg" "mr"
-#> 
-#> $suggested_gcms$k9
-#> [1] "ae" "cc" "hg" "cr" "ch" "me" "mr" "gg" "ev"
-#> 
-#> $suggested_gcms$k10
-#>  [1] "ae" "cc" "hg" "cr" "ch" "me" "mr" "gg" "ev" "ml"
+#> [1] "ae" "cc" "cr" "ev"
 #> 
 #> 
 ```
