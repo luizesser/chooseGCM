@@ -36,7 +36,6 @@ Imports:
     utils
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.3
 Suggests: 
     tictoc,
     testthat,
@@ -50,3 +49,4 @@ BugReports: https://github.com/luizesser/chooseGCM/issues
 Depends: 
     R (>= 4.1)
 Config/Needs/website: rmarkdown
+Config/roxygen2/version: 8.0.0

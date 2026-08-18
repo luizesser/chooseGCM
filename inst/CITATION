@@ -1,0 +1,27 @@
+citHeader("To cite the 'chooseGCM' package in publications, please use:")
+
+citEntry(
+  entry    = "Article",
+  title    = "chooseGCM: A Toolkit to Select General Circulation Models in R",
+  author   = c(
+    person("Luíz Fernando", "Esser"),
+    person("Dayani", "Bailly"),
+    person("Marcos Robalinho", "Lima"),
+    person("Reginaldo", "Ré")
+  ),
+  journal  = "Global Change Biology",
+  volume   = "31",
+  number   = "1",
+  pages    = "e70008",
+  year     = "2025",
+  doi      = "10.1111/gcb.70008",
+  url      = "https://onlinelibrary.wiley.com/doi/abs/10.1111/gcb.70008",
+  note     = "e70008 GCB-24-2288.R1",
+  eprint   = "https://onlinelibrary.wiley.com/doi/pdf/10.1111/gcb.70008",
+  textVersion = paste(
+    "Esser, L.F., Bailly, D., Lima, M.R., & Ré, R. (2025).",
+    "chooseGCM: A Toolkit to Select General Circulation Models in R.",
+    "Global Change Biology, 31(1), e70008.",
+    "doi:10.1111/gcb.70008"
+  )
+)
