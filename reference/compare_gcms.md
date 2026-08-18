@@ -70,14 +70,6 @@ study_area <- terra::ext(c(-80, -70, -50, -40)) |>
   terra::vect(crs="+proj=longlat +datum=WGS84 +no_defs")
 compare_gcms(s, var_names, study_area, k = 3, clustering_method = "closestdist")
 #> CRS from s and study_area are not identical. Reprojecting study area.
-#> Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-#> ℹ Please use `linewidth` instead.
-#> ℹ The deprecated feature was likely used in the factoextra package.
-#>   Please report the issue at <https://github.com/kassambara/factoextra/issues>.
-#> Warning: The `<scale>` argument of `guides()` cannot be `FALSE`. Use "none" instead as
-#> of ggplot2 3.3.4.
-#> ℹ The deprecated feature was likely used in the factoextra package.
-#>   Please report the issue at <https://github.com/kassambara/factoextra/issues>.
 #> $suggested_gcms
 #> $suggested_gcms$k2
 #> [1] "ae" "ev"

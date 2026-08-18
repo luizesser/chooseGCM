@@ -12,6 +12,7 @@ You can install the development version of `chooseGCM` from
 [GitHub](https://github.com/luizesser/chooseGCM) with:
 
 ``` r
+
 install.packages("devtools")
 devtools::install_github("luizesser/chooseGCM")
 ```
@@ -20,6 +21,7 @@ The package is also available on CRAN. Users are able to install it
 using the following code:
 
 ``` r
+
 install.packages("chooseGCM")
 ```
 
@@ -57,10 +59,12 @@ Three breakthroughs distinguish `caretSDM`:
 `caretSDM` is available on both GitHub and CRAN:
 
 ``` r
+
 install.packages("devtools")
 devtools::install_github("luizesser/caretSDM")
 ```
 
 ``` r
+
 install.packages("caretSDM")
 ```

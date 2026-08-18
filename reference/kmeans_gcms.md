@@ -72,7 +72,7 @@ study_area <- terra::ext(c(-80, -70, -50, -40)) |>
 kmeans_gcms(s, var_names, study_area, k = 3)
 #> CRS from s and study_area are not identical. Reprojecting study area.
 #> $suggested_gcms
-#> [1] "ev" "ae" "cc"
+#> [1] "ae" "ev" "cc"
 #> 
 #> $kmeans_plot
 

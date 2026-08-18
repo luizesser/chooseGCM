@@ -14,16 +14,22 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/luizesser/chooseGCM/blob/main/DESCRIPTION)
+[`inst/CITATION`](https://github.com/luizesser/chooseGCM/blob/main/inst/CITATION)
 
-Bailly D, Ré R, R. Lima M, Esser L (2026). *chooseGCM: Selecting General
-Circulation Models for Species Distribution Modeling*. R package version
-1.3, <https://luizesser.github.io/chooseGCM/>.
+Esser, L.F., Bailly, D., Lima, M.R., & Ré, R. (2025). chooseGCM: A
+Toolkit to Select General Circulation Models in R. Global Change
+Biology, 31(1), e70008. doi:10.1111/gcb.70008
 
-    @Manual{,
-      title = {chooseGCM: Selecting General Circulation Models for Species Distribution Modeling},
-      author = {Dayani Bailly and Reginaldo Ré and Marcos {R. Lima} and Luíz Esser},
-      year = {2026},
-      note = {R package version 1.3},
-      url = {https://luizesser.github.io/chooseGCM/},
+    @Article{,
+      title = {chooseGCM: A Toolkit to Select General Circulation Models in R},
+      author = {Luíz Fernando Esser and Dayani Bailly and Marcos Robalinho Lima and Reginaldo Ré},
+      journal = {Global Change Biology},
+      volume = {31},
+      number = {1},
+      pages = {e70008},
+      year = {2025},
+      doi = {10.1111/gcb.70008},
+      url = {https://onlinelibrary.wiley.com/doi/abs/10.1111/gcb.70008},
+      note = {e70008 GCB-24-2288.R1},
+      eprint = {https://onlinelibrary.wiley.com/doi/pdf/10.1111/gcb.70008},
     }

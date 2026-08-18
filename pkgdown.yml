@@ -1,12 +1,12 @@
-pandoc: 3.1.11
-pkgdown: 2.2.0
+pandoc: 3.8.3
+pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   articles/chooseGCM-SDM: chooseGCM-SDM.html
   articles/Increasing-Area-Effect: Increasing-Area-Effect.html
   articles/Resolution-Effect: Resolution-Effect.html
   articles/Variables-Effect: Variables-Effect.html
-last_built: 2026-01-08T23:49Z
+last_built: 2026-08-18T17:37Z
 urls:
   reference: https://luizesser.github.io/chooseGCM/reference
   article: https://luizesser.github.io/chooseGCM/articles

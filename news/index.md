@@ -24,6 +24,8 @@ CRAN release: 2025-08-23
 
 ## chooseGCM 1.3
 
+CRAN release: 2026-01-08
+
 - Update on package tests to follow terra package updates.
 - Now WorldClim_data function uses httr2 package to gracefully handle
   errors.
